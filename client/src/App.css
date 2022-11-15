@@ -1,3 +1,4 @@
+@import "~antd/dist/antd.css";
 .App {
   text-align: center;
 }
@@ -35,4 +36,55 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: rgb(51 65 85);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(51 65 85);
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: rgb(30 41 59);
+}
+
+.scrollbar {
+  background-color: rgb(51 65 85);
+  float: left;
+  height: 300px;
+  margin-bottom: 25px;
+  margin-left: 22px;
+  margin-top: 40px;
+  width: 65px;
+  overflow-y: scroll;
+}
+
+/*  */
+.dropdown {
+  width: 100%;
+  background-color: rgb(17 24 39);
+  opacity: 60%;
+}
+.dropdown-enter {
+  /* position: absolute;
+  transform: translateY(-110%); */
+  transition-duration: 1s;
+}
+.dropdown-enter-done {
+  background-color: rgb(17 24 39);
+  opacity: 60%;
+  transform: translateY(0%);
+  transition: all ease(0.25);
+}
+.dropdown-exit {
+  position: absolute;
+  transform: translateY(-110%);
+}
+.dropdown-exit-active {
+  transform: translateY(0%);
+  transition: all ease;
 }
