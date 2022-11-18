@@ -6,6 +6,9 @@ const helmet = require("helmet");
 require('dotenv').config();
 const port = parseInt(process.env.PORT);
 
+//     app.use(morgan('combined'))
+// 	const route = require('./routes')
+//     route(app);
 
 const socket = require('./app/controllers/Io');
 const portSocket = parseInt(process.env.PORT_IO);

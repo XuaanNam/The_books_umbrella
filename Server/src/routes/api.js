@@ -8,6 +8,7 @@ const upload = require('../app/middleware/upload')
 // router.post('/register', api.register);
 // router.post('/login', api.login);
 // router.get('/logout', api.logout);
+router.get('/products', api.getProducts);
 
 
 module.exports = router;

@@ -97,6 +97,24 @@ class API {
     //         }
     //     });
     // }
+
+    //[GET] /api/products
+    getProducts(req, res, next) {
+        const selectSql = "select * from product";
+
+            pool.query(selectSql, function (err, results, fields) {
+                if (err) {
+                    res.status(200).send({ message: "Kết nối DataBase thất bại" });
+                } else {
+                    if (results) {
+                        res.send(results);
+                    } else {
+                        res.send({ message: "Không thể lấy dữ liệu" });
+                    }
+                }
+            });
+        //}
+    }
 }
 
 module.exports = new API();
