@@ -5,7 +5,7 @@ const express = require('express');
 const path = require('path');
 require('dotenv').config();
 const bcrypt = require("bcrypt");
-const saltRound = 10;
+const saltRound = 7;
 const encodeToken = require("../../util/encodeToken");
 const CronJob = require('cron').CronJob;
 const io = require("socket.io-client");
@@ -24,79 +24,77 @@ class API {
 
     }
 
-    // register(req, res, next) {
-    //     const insertSql = "insert into taikhoan (Ho, Ten, Email, TenDN, MatKhau) value (?,?,?,?,?)";
+    // [POST] /api/register
+    register(req, res, next) {
+        const insertSql = "insert into customerdata (lastname, firstname, email, username, password) value (?,?,?,?,?)";
 
-    //     const Ho = req.body.Ho;
-    //     const Ten = req.body.Ten;
-    //     const Email = req.body.Email;
-    //     const TenDN = req.body.TenDN;
-    //     const MatKhau = req.body.MatKhau;
-    //     const CFMatKhau = req.body.CFMatKhau;
+        const lastname = req.body.lastname;
+        const firstname = req.body.firstname;
+        const email = req.body.email;
+        const username = req.body.username;
+        const password = req.body.password;
 
-    //     if (CFMatKhau !== MatKhau) {
-    //         res.status(200).send({ message: "Mật khẩu xác nhận không khớp!" });
-    //     } else {
-    //         bcrypt.hash(MatKhau, saltRound, (err, hash) => {
-    //             if (err) {
-    //                 res.status(200).send({ message: "Mật khẩu không được mã hóa" });
-    //             }           
-    //             pool.query(
-    //                 insertSql,
-    //                 [Ho, Ten, Email, TenDN, hash],
-    //                 function (error, results, fields) {
-    //                     if (error) {
-    //                         res.send({ message: error.sqlMessage });
-    //                     } else {
-    //                         res.send(results);
-    //                     }
-    //                 }
-    //             );
-    //         });
-    //     }
-    // }
+        bcrypt.hash(password, saltRound, (err, hash) => {
+            if (err) {
+                res.status(200).send({ message: "Mật khẩu không được mã hóa" });
+            } else {           
+                pool.query(
+                    insertSql,
+                    [lastname, firstname, email, username, hash],
+                    function (error, results, fields) {
+                        if (error) {
+                            res.send({ message: error.sqlMessage });
+                        } else {
+                            res.send(results);
+                        }
+                    }
+                );
+            }
+        });
+        
+    }
 
-    // // [GET] /api/isAuth
-    // isAuth(req, res, next) {
-    //     const PQ = req.user[0].PhanQuyen;
-    //     res.status(200).send({ isAuth: true, PQ: PQ });
-    // }
+    // [GET] /api/isAuth
+    isAuth(req, res, next) {
+        const authentication = req.user[0].authentication;
+        res.status(200).send({ isAuth: true, authentication});
+    }
 
-    // // [POST] /api/login
-    // login(req, res, next) {
+    // [POST] /api/login
+    login(req, res, next) {
 
-    //     const sql = "select * from taikhoan where Email = ? ";
-    //     const Email = req.body.Email;
-    //     const MatKhau = req.body.MatKhau;
+        const sql = "select * from customerdata where username = ? ";
+        const username = req.body.username;
+        const password = req.body.password;
 
-    //     pool.query(sql, Email, function (error, results, fields) {
-    //         if (error) {
-    //             res.send({ error: error });
-    //         }
-    //         if (results.length > 0) {
-    //             bcrypt.compare(MatKhau, results[0].MatKhau, (err, response) => {
-    //                 if (response) {
-    //                     const payload = {
-    //                         iss: "grey panther auction site",
-    //                         idTK: results[0].idTK,
-    //                         TenDN: results[0].TenDN,
-    //                         PhanQuyen: results[0].PhanQuyen,
-    //                     };
-    //                     const token = "Bearer " + encodeToken(payload);
-    //                     res.setHeader("isAuth", token);
+        pool.query(sql, username, function (error, results, fields) {
+            if (error) {
+                res.send({ error: error });
+            }
+            if (results.length > 0) {
+                bcrypt.compare(password, results[0].password, (err, response) => {
+                    if (response) {
+                        const payload = {
+                            iss: "the books umbrella",
+                            id: results[0].id,
+                            username: results[0].username,
+                            authentication: results[0].authentication,
+                        };
+                        const token = "Bearer " + encodeToken(payload);
+                        res.setHeader("isAuth", token);
 
-    //                     res.send({ isAuth: response, TenDN: results[0].TenDN, PQ: results[0].PhanQuyen });
-    //                 } else {
-    //                     res
-    //                         .status(200)
-    //                         .send({ message: "Tên Đăng Nhập hoặc mật khẩu không đúng!" });
-    //                 }
-    //             });
-    //         } else {
-    //             res.status(200).send({ message: "Tài khoản không tồn tại!" });
-    //         }
-    //     });
-    // }
+                        res.send({ token, checkPW: response, username: results[0].username, authentication: results[0].authentication });
+                    } else {
+                        res
+                            .status(200)
+                            .send({ message: "Tên Đăng Nhập hoặc mật khẩu không đúng!" });
+                    }
+                });
+            } else {
+                res.status(200).send({ message: "Tên Đăng Nhập hoặc mật khẩu không đúng!" });
+            }
+        });
+    }
 
     //[GET] /api/products
     getProducts(req, res, next) {

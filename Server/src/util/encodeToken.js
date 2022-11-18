@@ -4,7 +4,7 @@ const secret_key = require('../app/config/token');
 
 
 module.exports = function encodeToken(payload){
-    return jwt.sign(
+     return jwt.sign(
         payload,
         secret_key.secret_key,
         {

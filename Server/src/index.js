@@ -5,13 +5,8 @@ const route = require('./routes');
 const helmet = require("helmet");
 require('dotenv').config();
 const port = parseInt(process.env.PORT);
-
-//     app.use(morgan('combined'))
-// 	const route = require('./routes')
-//     route(app);
-
-const socket = require('./app/controllers/Io');
-const portSocket = parseInt(process.env.PORT_IO);
+//const socket = require('./app/controllers/Io');
+//const portSocket = parseInt(process.env.PORT_IO);
 const { Server} = require('socket.io');
 const http = require('http');
 const server = http.createServer(app);
@@ -41,11 +36,11 @@ app.use(express.json());
 app.use(helmet());
 
 route(app);
-socket(io);
+//socket(io);
 
 app.listen(port, ()=> {
     console.log(`Server is running on: http://localhost:${port} `);
 });
-server.listen(portSocket, ()=> {
-    console.log(`Server socket is running on: http://localhost:${portSocket} `);
-});
+// server.listen(portSocket, ()=> {
+//     console.log(`Server socket is running on: http://localhost:${portSocket} `);
+// });

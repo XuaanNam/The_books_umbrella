@@ -4,7 +4,7 @@ const ExtractJwt = require("passport-jwt").ExtractJwt;
 const secret_key = require("../config/token");
 const pool = require("../models/pool");
 
-const sql = "select idTK, PhanQuyen from taikhoan where idTK = ? and TenDN = ?";
+const sql = "select id, authentication from customerdata where id = ? and username = ?";
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = secret_key.secret_key;
@@ -16,11 +16,11 @@ module.exports =  passport => {
       try {
         pool.query(
           sql,
-          [jwt_payload.idTK, jwt_payload.TenDN],
+          [jwt_payload.id, jwt_payload.username],
           function (error, user, fields) {
             if (error)
               throw error;
-            if (user.length > 0) {
+            if (user) {
               done(null, user);
             } else {
               done(null, false);

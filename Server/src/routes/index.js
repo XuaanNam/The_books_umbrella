@@ -4,7 +4,6 @@ const checkPassport = require('../app/middleware/passport')(passport);
 
 
 function route(app) {
-
     app.use(passport.initialize());
     checkPassport;
     app.use("/api", apiRouter);
