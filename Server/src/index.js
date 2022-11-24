@@ -1,34 +1,46 @@
-// const express = require('express')
-// 	const app = express()
-// 	const port = process.env.port || 5000;
-//     const path = require('path');
-//     const morgan = require('morgan')
-
-//     app.use(morgan('combined'))
-// 	const route = require('./routes')
-//     route(app);
-
-// 	app.listen(port, () => {
-//   	  console.log(`Example app listening at http://localhost:${port}`)
-// 	})
-const express = require("express");
+const express = require('express')
+const app = express()
 const cors = require("cors");
+const route = require('./routes');
+const helmet = require("helmet");
+require('dotenv').config();
+const port = parseInt(process.env.PORT);
+//const socket = require('./app/controllers/Io');
+//const portSocket = parseInt(process.env.PORT_IO);
+const { Server} = require('socket.io');
+const http = require('http');
+const server = http.createServer(app);
+const io = new Server (server, {
+    cors: {
+        origin: process.env.ORIGIN_PATH,
+        method: ["GET", "POST"]
+    }
+});
 
-const products = require("./products");
+app.use(
+    cors({
+        origin: [process.env.ORIGIN_PATH],
+        methods: ['GET','POST','PUT', 'DELETE', 'PATCH'],
+        credentials: true,
+        exposedHeaders: 'isAuth',
+    }
+));
 
-const app = express();
+if(process.env.NODE_ENV === 'development'){
+    const morgan = require("morgan");
+    app.use(morgan("combined"));
+}
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors());
+app.use(helmet());
 
-app.get("/", (req, res) => {
-  res.send("Welcome our to online shop API...");
+route(app);
+//socket(io);
+
+app.listen(port, ()=> {
+    console.log(`Server is running on: http://localhost:${port} `);
 });
-
-app.get("/products", (req, res) => {
-  res.send(products);
-});
-
-const port = process.env.PORT || 5000;
-
-app.listen(port, console.log(`Server running on port ${port}`));
+// server.listen(portSocket, ()=> {
+//     console.log(`Server socket is running on: http://localhost:${portSocket} `);
+// });
