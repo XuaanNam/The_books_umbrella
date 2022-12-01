@@ -9,8 +9,8 @@ const initialState = {
 };
 export const signInUser = createAsyncThunk("signinuser", async (body) => {
   const res = await fetch("http://localhost:5000/api/login", {
-    method: "post",
-    headers: "Content-Type: application/json",
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   return await res.json();

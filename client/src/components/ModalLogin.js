@@ -7,7 +7,7 @@ import { signInUser } from "../redux-toolkit/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState({});
   console.log(value);
   const user = useSelector((state) => state.user);
   console.log(user);
@@ -57,8 +57,8 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
               .required("Vui lòng điền vào trường trống")
               .min(8, "Mật khẩu chứa ít nhất 8 ký tự"),
           })}
-          onSubmit={(values) => {
-            setValue(values);
+          onSubmit={({ userName, passWord }) => {
+            setValue({ userName, passWord });
           }}
         >
           <Form>
