@@ -21,10 +21,6 @@ const cartSlice = createSlice({
   reducers: {
     totalPrice(state, action) {
       action.payload.map((item) => {
-        const existingIndex = state.orderItems.findIndex(
-          (item) => item.id === action.payload.id
-        );
-
         if (item.isChecked === true) state.orderItems.push(item);
         return state;
       });

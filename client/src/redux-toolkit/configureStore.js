@@ -3,7 +3,7 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import counterSlice from "./counterSlice";
 import { productsApi } from "./productsApi";
 import cartReducer, { getTotals } from "./cartSlice";
-
+import authReducer from "./authSlice";
 import productsReducer, { productsFetch } from "./productsSlice";
 // import globalSlice from "./globalSlice";
 // import createSagaMiddleware from "@redux-saga/core";
@@ -11,6 +11,7 @@ import productsReducer, { productsFetch } from "./productsSlice";
 // create the saga middleware
 // const sagaMiddleware = createSagaMiddleware();
 const reducer = combineReducers({
+  user: authReducer,
   counter: counterSlice,
   products: productsReducer,
   [productsApi.reducerPath]: productsApi.reducer,
