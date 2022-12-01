@@ -64,9 +64,9 @@ class API {
     login(req, res, next) {
 
         const sql = "select * from customerdata where username = ? ";
-        const username = req.body.username;
-        const password = req.body.password;
-
+        const username = req.body.userName;
+        const password = req.body.passWord;
+        
         pool.query(sql, username, function (error, results, fields) {
             if (error) {
                 res.send({ error: error });

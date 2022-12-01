@@ -11,6 +11,7 @@ import Order from "./pages/AdminPages/Order";
 import Homepage from "./pages/UserPages/Homepage";
 import BookDetail from "./pages/UserPages/BookDetail";
 import CartPage from "./pages/UserPages/CartPage";
+import CheckOrder from "./pages/UserPages/CheckOrder";
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
           <Route path="/order" element={<Order />} />
           <Route path="/detail" element={<BookDetail />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckOrder />} />
+
           <Route
             path="/detail/:bookId"
             element={<BookDetail></BookDetail>}

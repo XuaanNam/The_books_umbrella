@@ -5,6 +5,9 @@ const initialState = {
   cartItems: localStorage.getItem("cartItems")
     ? JSON.parse(localStorage.getItem("cartItems"))
     : [],
+  orderItems: localStorage.getItem("orderItems")
+    ? JSON.parse(localStorage.getItem("orderItems"))
+    : [],
   cartTotalQuantity: 0,
   cartTotalAmount: 0,
   // totalPrice: cartItems.maping((item) => {
@@ -16,6 +19,13 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    totalPrice(state, action) {
+      action.payload.map((item) => {
+        if (item.isChecked === true) state.orderItems.push(item);
+        return state;
+      });
+      localStorage.setItem("orderItems", JSON.stringify(state.orderItems));
+    },
     increment: (state) => ({
       ...state,
       count: state.count + 1,
@@ -123,6 +133,7 @@ const cartSlice = createSlice({
 });
 
 export const {
+  totalPrice,
   increment,
   decrement,
   addToCart,

@@ -1,5 +1,6 @@
 import React from "react";
 import HeaderUser from "../../layouts/HeaderUser";
+import Footer from "../../layouts/Footer";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { BsCart } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router-dom";
@@ -31,15 +32,15 @@ const BookDetail = () => {
   return (
     <div className="bg-slate-100">
       <HeaderUser />
-      <div className="pt-16">
-        <div className="px-5 py-4 cursor-pointer">
+      <div className="pt-20">
+        <div className="px-5 py-4 cursor-pointer text-base">
           Trang chủ {">"} Sách Tiếng Việt
         </div>
         {data ? (
           data.map(
             (item) =>
               parseInt(item.id) === parseInt(bookId) && (
-                <div>
+                <div className="text-base">
                   <div className="bg-white w-[90%] border mx-auto rounded-lg p-5 mb-5 drop-shadow-lg">
                     <div className="flex pb-7">
                       <img className="w-[380px]" src={item.image} alt="" />
@@ -91,7 +92,7 @@ const BookDetail = () => {
                             Số lượng:
                           </div>
                           <div className="ml-14">
-                            <div className="w-36 h-8 rounded-lg border border-black grid grid-cols-3 place-items-center">
+                            <div className="w-36 h-10 rounded-xl border border-black grid grid-cols-3 place-items-center">
                               <div
                                 className="cursor-pointer h-full w-full grid place-items-center"
                                 onClick={handleDecrement}
@@ -186,19 +187,19 @@ const BookDetail = () => {
         ) : (
           <div></div>
         )}
-        <div className="bg-white w-[90%] border mx-auto rounded-lg p-5 mb-5">
+        <div className="bg-white w-[90%] border mx-auto rounded-lg p-5 mb-5 text-base">
           <div className="text-xl font-semibold pb-5">Sản phẩm liên quan</div>
           <div className=" grid grid-cols-4 gap-5">
-            <div className="px-2 h-[330px] transition-all cursor-pointer mb-3">
+            <div className="px-2 w-full transition-all cursor-pointer mb-3">
               <div className="group relative cursor-pointer items-center justify-center overflow-hidden transition-shadow hover:shadow-xl hover:shadow-black/30">
                 <img
-                  className="h-60 w-full object-cover transition-transform duration-500 group-hover:scale-125"
+                  className=" object-cover transition-transform duration-500 group-hover:scale-125"
                   src="https://cdn0.fahasa.com/media/catalog/product/c/h/chu-thuat-hoi-chien---tap-4---ta-se-diet-tru-nguoi---obi.jpg"
                   alt=""
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black group-hover:from-black/70 group-hover:via-black/60 group-hover:to-black/70"></div>
                 <div className="absolute inset-0 flex translate-y-[60%] flex-col items-center justify-center px-6 transition-all duration-500 group-hover:translate-y-0">
-                  <p className="h-40 mb-3 italic text-ellipsis overflow-hidden  text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <p className="h-48 px-2 mb-3 italic text-ellipsis overflow-hidden  text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     Tại hiện trường án mạng do chú linh gây ra, Itadori đã gặp
                     gỡ Junpei, cả hai tâm đầu ý hợp. Nhưng Junpei lại tôn sùng
                     chú linh Mahito, thủ phạm của vụ án. Mahito lợi dụng Junpei,
@@ -206,7 +207,7 @@ const BookDetail = () => {
                     và...
                   </p>
                   <button
-                    className="rounded-full bg-violet-600 hover:bg-violet-500 py-1 mb-2 px-3 font-com text-sm capitalize text-white shadow shadow-black/60"
+                    className="rounded-full bg-violet-600 hover:bg-violet-500 py-2 my-5 px-8  font-com text-lg capitalize text-white shadow shadow-black/60"
                     onClick={() => Navigate("/detail")}
                   >
                     Xem thêm
@@ -231,6 +232,7 @@ const BookDetail = () => {
           </div>
         </div>
       </div>
+      <Footer></Footer>
     </div>
   );
 };

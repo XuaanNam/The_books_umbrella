@@ -1,12 +1,7 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const username = '';
-const password = '';
-const loginForm = {
-  username,
-  password,
-}
+
 
 // Define a service using a base URL and expected endpoints
 export const productsApi = createApi({
@@ -17,13 +12,7 @@ export const productsApi = createApi({
     getAllProducts: builder.query({
       query: () => `products`,
     }),
-    login: builder.mutation({
-      query: (body) => ({
-        url: `/login`,
-        method: 'POST',
-        body: loginForm,
-      }),
-    }),
+  
   }),
   
 });

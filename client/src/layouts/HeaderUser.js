@@ -11,7 +11,7 @@ const HeaderUser = () => {
   const [showModal, setShowModal] = useState(false);
   const [active, setActive] = useState(false);
   return (
-    <div className="h-16 fixed w-screen z-50">
+    <div className="h-20 fixed w-screen z-50 text-lg">
       <div className="font-medium h-full text-gray-700 bg-white grid grid-cols-12 place-items-center drop-shadow-[0_4px_5px_rgba(0,0,0,0.3)]">
         <a className="col-start-1 col-span-2 cursor-pointer" href="/">
           HOMEPAGE
@@ -106,9 +106,9 @@ export default HeaderUser;
 
 function MenuDropdown(props) {
   return (
-    <div className="bg-slate-100 mx-auto grid grid-cols-4 gap-7 grid-rows-2 p-5 rounded-lg drop-shadow-2xl">
+    <div className="bg-slate-100 mx-auto grid grid-cols-4 gap-7 grid-rows-2 p-5 rounded-lg drop-shadow-2xl text-base">
       <div className="">
-        <div className="text-sm font-semibold pb-2 cursor-pointer hover:text-orange-500">
+        <div className="text-base font-semibold pb-2 cursor-pointer hover:text-orange-500">
           VĂN HỌC
         </div>
         <div className="cursor-pointer hover:text-orange-500">Tiểu thuyết</div>
@@ -119,7 +119,7 @@ function MenuDropdown(props) {
         <div className="cursor-pointer hover:text-orange-500">Ngôn tình</div>
       </div>
       <div className="">
-        <div className="text-sm font-semibold pb-2 cursor-pointer hover:text-orange-500">
+        <div className="text-base font-semibold pb-2 cursor-pointer hover:text-orange-500">
           {" "}
           KINH TẾ
         </div>
@@ -137,7 +137,7 @@ function MenuDropdown(props) {
         </div>
       </div>
       <div className="">
-        <div className="text-sm font-semibold pb-2 cursor-pointer hover:text-orange-500">
+        <div className="text-base font-semibold pb-2 cursor-pointer hover:text-orange-500">
           TÂM LÝ - KỸ NĂNG SỐNG
         </div>
         <div className="cursor-pointer hover:text-orange-500">Kỹ năng sống</div>
@@ -150,7 +150,7 @@ function MenuDropdown(props) {
         </div>
       </div>
       <div className="">
-        <div className="text-sm font-semibold pb-2 cursor-pointer hover:text-orange-500">
+        <div className="text-base font-semibold pb-2 cursor-pointer hover:text-orange-500">
           NUÔI DẠY CON
         </div>
         <div className="cursor-pointer hover:text-orange-500">
@@ -167,7 +167,7 @@ function MenuDropdown(props) {
         </div>
       </div>
       <div className="">
-        <div className="text-sm font-semibold pb-2 cursor-pointer hover:text-orange-500">
+        <div className="text-base font-semibold pb-2 cursor-pointer hover:text-orange-500">
           SÁCH THIẾU NHI
         </div>
         <div className="cursor-pointer hover:text-orange-500">

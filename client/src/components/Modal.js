@@ -15,8 +15,6 @@ const Modal = ({ open = false, handleClose = () => {} }) => {
       }, 500);
     }
   }, [open]);
-  console.log(showModalLogin);
-
   const handleRegister = () => {
     setShowModalRegister(true);
     setShowModalLogin(false);

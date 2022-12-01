@@ -11,9 +11,9 @@ export default function Footer() {
   return (
     <MDBFooter
       bgColor="light"
-      className="bg-white text-center text-lg-start text-muted"
+      className="bg-white text-center-start text-muted"
     >
-      <section className="p-5">
+      <section className="p-5 text-base">
         <MDBContainer className="text-center text-md-start mt-5">
           <div className="grid grid-cols-4 place-items-center mb-3">
             <div></div>
@@ -21,7 +21,7 @@ export default function Footer() {
               <h6 className="text-uppercase fw-bold mb-4 text-left text-lg">
                 DỊCH VỤ
               </h6>
-              <div className="text-sm text-left ">
+              <div className=" text-left ">
                 <p>
                   <a href="#!" className="text-reset text-slate-700">
                     Điều khoản sử dụng
@@ -49,7 +49,7 @@ export default function Footer() {
               <h6 className="text-uppercase fw-bold mb-4 text-lg text-left">
                 HỖ TRỢ
               </h6>
-              <div className="text-sm text-left">
+              <div className=" text-left">
                 <p>
                   <a href="#!" className="text-reset text-slate-700">
                     Chính sách đổi - trả - hoàn tiền
@@ -74,10 +74,10 @@ export default function Footer() {
             </div>
 
             <div className="mx-auto">
-              <h6 className="text-uppercase fw-bold mb-4 text-left text-lg">
+              <h6 className="text-uppercase fw-bold mb-4 text-lg text-left ">
                 TÀI KHOẢN CỦA TÔI
               </h6>
-              <div className="text-sm text-left">
+              <div className=" text-left">
                 <p>
                   <a href="#!" className="text-reset text-slate-700">
                     <MDBIcon color="secondary" className="me-2" />

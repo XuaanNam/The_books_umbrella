@@ -3,24 +3,25 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import PropTypes from "prop-types";
 import Input from "./Input";
-import {useLoginMutation} from "../redux-toolkit/productsApi";
+import { signInUser } from "../redux-toolkit/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [login] = useLoginMutation();
-  const loginData = {
-    "username" : username,
-    "password" : password
-  }
-  const loginHandler = async() => {
-    await login(loginData)
-  }
-
+  const [value, setValue] = useState({});
+  console.log(value);
+  const user = useSelector((state) => state.user);
+  console.log(user);
+  const Navigate = useNavigate();
+  const dispatch = useDispatch();
+  const HandleLogin = () => {
+    dispatch(signInUser(value));
+    Navigate("/")
+  };
   return (
     <>
       <div
-        className="absolute inset-0 bg-black bg-opacity-25 overlay"
+        className="absolute inset-0 bg-black bg-opacity-60 overlay"
         onClick={handleClose}
       ></div>
       <div className="relative z-10 w-full p-10 bg-white rounded-lg modal-content max-w-[482px]">
@@ -59,29 +60,36 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
               .min(8, "Mật khẩu chứa ít nhất 8 ký tự"),
           })}
           onSubmit={(values) => {
-            //console.log(values);
+            setValue(values);
           }}
         >
           <Form>
-            <Input
-              type="text"
-              label="Tên đăng nhập"
-              name="userName"
-              placeholder="Nhập tên"
-              id="userName"
-            ></Input>
+            <div className="w-full h-14 rounded-xl text-lg mb-2">
+              <Field
+                className="w-[95%] h-[90%] border border-sky-500 hover:border-2  outline-none p-2 rounded-xl"
+                type="text"
+                label="Tên đăng nhập"
+                name="userName"
+                placeholder="Nhập tên"
+                id="userName"
+              ></Field>
+            </div>
+            <div className="w-full h-14 rounded-xl text-lg mb-5">
+              <Field
+                className="w-[95%] h-[90%] border border-sky-500 hover:border-2 outline-none p-2 rounded-xl"
+                type="password"
+                label="Mật khẩu"
+                name="passWord"
+                placeholder="Nhập
+              mật khẩu"
+                id="passWord"
+              ></Field>
+            </div>
 
-            <Input
-              type="password"
-              label="Mật khẩu"
-              name="passWord"
-              placeholder="Nhập mật khẩu"
-              id="passWord"
-              // onChange={(e) => {
-              //   setPassword(e.target.value);
-              // }}
-            ></Input>
-            <button onClick= {loginHandler} className="w-full p-4 text-base font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg">
+            <button
+              className="w-full p-4 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg "
+              onClick={HandleLogin}
+            >
               Đăng nhập
             </button>
           </Form>
