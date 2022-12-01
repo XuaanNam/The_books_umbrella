@@ -15,7 +15,7 @@ import {
 const Homepage = () => {
   // const { items: products, status } = useSelector((state) => state.products);
   const dispatch = useDispatch();
-  const { data, error, isLoading } = useGetAllProductsQuery();
+  const { data, error, isLoading } = useGetAllProductsQuery(); 
 
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));

@@ -83,7 +83,12 @@ class API {
                         const token = "Bearer " + encodeToken(payload);
                         res.setHeader("isAuth", token);
 
-                        res.send({ token, checkPW: response, username: results[0].username, authentication: results[0].authentication });
+                        res.send({ 
+                            token, 
+                            checkPW: response, 
+                            username: results[0].username, 
+                            authentication: results[0].authentication 
+                        });
                     } else {
                         res
                             .status(200)

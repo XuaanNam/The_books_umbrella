@@ -3,8 +3,20 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import PropTypes from "prop-types";
 import Input from "./Input";
+import {useLoginMutation} from "../redux-toolkit/productsApi";
 
 const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [login] = useLoginMutation();
+  const loginData = {
+    "username" : username,
+    "password" : password
+  }
+  const loginHandler = async() => {
+    await login(loginData)
+  }
+
   return (
     <>
       <div
@@ -65,8 +77,11 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
               name="passWord"
               placeholder="Nhập mật khẩu"
               id="passWord"
+              // onChange={(e) => {
+              //   setPassword(e.target.value);
+              // }}
             ></Input>
-            <button className="w-full p-4 text-base font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg">
+            <button onClick= {loginHandler} className="w-full p-4 text-base font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg">
               Đăng nhập
             </button>
           </Form>

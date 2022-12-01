@@ -1,17 +1,34 @@
 // Need to use the React-specific entry point to import createApi
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+const username = '';
+const password = '';
+const loginForm = {
+  username,
+  password,
+}
+
 // Define a service using a base URL and expected endpoints
 export const productsApi = createApi({
   reducerPath: "productsApi",
+  //header: "token",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
   endpoints: (builder) => ({
     getAllProducts: builder.query({
       query: () => `products`,
     }),
+    login: builder.mutation({
+      query: (body) => ({
+        url: `/login`,
+        method: 'POST',
+        body: loginForm,
+      }),
+    }),
   }),
+  
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetAllProductsQuery } = productsApi;
+export const { useGetAllProductsQuery, useLoginMutation } = productsApi;
+
