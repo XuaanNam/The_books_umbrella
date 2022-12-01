@@ -5,16 +5,18 @@ import PropTypes from "prop-types";
 import Input from "./Input";
 import { signInUser } from "../redux-toolkit/authSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
   const [value, setValue] = useState({});
   console.log(value);
   const user = useSelector((state) => state.user);
   console.log(user);
-
+  const Navigate = useNavigate();
   const dispatch = useDispatch();
   const HandleLogin = () => {
     dispatch(signInUser(value));
+    Navigate("/")
   };
   return (
     <>

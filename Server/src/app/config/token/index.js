@@ -1,5 +1,5 @@
-require('dotenv').config();
+require("dotenv").config();
 
 module.exports = {
-    secret_key: process.env.JWT_SECRET_KEY 
-}
+  secret_key: process.env.JWT_SECRET_KEY,
+};

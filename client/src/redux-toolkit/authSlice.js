@@ -10,11 +10,15 @@ const initialState = {
 export const signInUser = createAsyncThunk("signinuser", async (body) => {
   const res = await fetch("http://localhost:5000/api/login", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(body),
   });
+  console.log(res);
   return await res.json();
 });
+
 const authSlice = createSlice({
   name: "user",
   initialState,
