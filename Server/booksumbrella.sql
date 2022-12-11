@@ -7,8 +7,7 @@ flush privileges;
 
 create table customerdata(
 id int not null primary key AUTO_INCREMENT,
-lastname char(20) not null CHECK (lastname !=""),
-firstname char(15) not null CHECK (firstname !=""),
+fullname char(60),
 birthdate date,
 email char(50) not null UNIQUE CHECK (email !=""),
 username char(30) not null UNIQUE CHECK (username !=""),
@@ -21,8 +20,8 @@ authentication boolean default false
 )
 ;
 ALTER TABLE customerdata AUTO_INCREMENT = 659323832;
-insert into customerdata (lastname, firstname, email, username, password, authentication) value 
-('admin', 'admin', 'admin@gmail.com', 'admin', '$2b$07$wU8/x4Ke7v9Jq3f4./ZBo.7dCW1wYgBNbwaDMCSzIZ9CbXbZQgwYC', true);
+insert into customerdata (fullname, email, username, password, authentication) value 
+('admin', 'admin@gmail.com', 'admin', '$2b$07$wU8/x4Ke7v9Jq3f4./ZBo.7dCW1wYgBNbwaDMCSzIZ9CbXbZQgwYC', true);
 -- mật khẩu mặt định là 12345678
 -- drop table customerdata;
 
@@ -69,23 +68,24 @@ history int default 0
 
 create table transaction(
 id int not null primary key AUTO_INCREMENT,
-idProduct int  not null CHECK (idProduct !=""),
-idCustomer int  not null CHECK (idCustomer !=""),
+productId int  not null CHECK (productId !=""),
+customerId int  not null CHECK (customerId !=""),
 timeOfPurchase date,
 price double not null,
 amount int not null, 
 transactionInfor text(1000),
-foreign key (idCustomer) references customerdata(id),
-foreign key (idProduct) references product(id)
+foreign key (customerId) references customerdata(id),
+foreign key (productId) references product(id)
 )
 ;  -- drop table transaction;
 
 create table cart(
 id int not null primary key AUTO_INCREMENT,
-idProduct int  not null CHECK (idProduct !=""),
-idCustomer int  not null CHECK (idCustomer !=""),
-foreign key (idCustomer) references customerdata(id),
-foreign key (idProduct) references product(id)
+productId int  not null CHECK (productId !=""),
+customerId int  not null CHECK (customerId !=""),
+quantity int not null default 1,
+foreign key (customerId) references customerdata(id),
+foreign key (productId) references product(id)
 );
-
+-- drop table cart;
 
