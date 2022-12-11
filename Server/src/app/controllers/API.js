@@ -26,26 +26,25 @@ class API {
 
     // [POST] /api/register
     register(req, res, next) {
-        const insertSql = "insert into customerdata (lastname, firstname, email, username, password) value (?,?,?,?,?)";
-
-        const lastname = req.body.lastname;
-        const firstname = req.body.firstname;
+        const insertSql = "insert into customerdata (email, username, password) value (?,?,?)";
+        const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
+        const successMsg = "Tài khoản đã đăng kí thành công!";
         const email = req.body.email;
-        const username = req.body.username;
-        const password = req.body.password;
+        const username = req.body.userName;
+        const password = req.body.passWord;
 
         bcrypt.hash(password, saltRound, (err, hash) => {
             if (err) {
-                res.status(200).send({ message: "Mật khẩu không được mã hóa" });
+                res.status(200).send({ message: errorMsg });
             } else {           
                 pool.query(
                     insertSql,
-                    [lastname, firstname, email, username, hash],
+                    [email, username, hash],
                     function (error, results, fields) {
                         if (error) {
-                            res.send({ message: error.sqlMessage });
+                            res.send({ message: errorMsg });
                         } else {
-                            res.send(results);
+                            res.send({ message: successMsg });
                         }
                     }
                 );
@@ -54,7 +53,7 @@ class API {
         
     }
 
-    // [GET] /api/isAuth
+    // [GET] /api/isauth
     isAuth(req, res, next) {
         const authentication = req.user[0].authentication;
         res.status(200).send({ isAuth: true, authentication});
@@ -63,40 +62,80 @@ class API {
     // [POST] /api/login
     login(req, res, next) {
 
-        const sql = "select * from customerdata where username = ? ";
-        const username = req.body.userName;
+        const sql = "select * from customerdata where email = ? ";
+        const message = "Email hoặc mật khẩu không chính xác!";
+        const email = req.body.email;
         const password = req.body.passWord;
+        
+        pool.query(sql, email, function (error, results, fields) {
+            if (error) {
+                res.send({ message: error });
+            } 
+            else {
+                if (results.length > 0) {
+                    bcrypt.compare(password, results[0].password, (err, response) => {
+                        if (response) {
+                            const payload = {
+                                iss: "the books umbrella",
+                                id: results[0].id,
+                                username: results[0].username,
+                                authentication: results[0].authentication,
+                            };
+                            const token = "Bearer " + encodeToken(payload);
+
+                            res.setHeader("isAuth", token);
+                            res.send({ 
+                                token, 
+                                username: results[0].username, 
+                                authentication: results[0].authentication 
+                            });
+                        } else {
+                            res.status(200).send({ message });
+                        }
+                    });
+                } else {
+                    res.status(200).send({ message });
+                }
+            }
+        });
+    }
+
+    // [POST] /api/check/email
+    emailCheck(req, res, next) {
+        const sql = "select * from customerdata where email = ? ";
+        const message = "Email đã tồn tại, vui lòng nhấn \'Quên mật khẩu\'!";
+        const email = req.body.email;
+        
+        pool.query(sql, email, function (error, results, fields) {
+            if (error) {
+                res.send({ message, checked: false });
+            } 
+            else {
+                if (results.length > 0) {
+                    res.status(200).send({ message, checked: false });
+                } else {
+                    res.status(200).send({ checked: true });
+                }
+            }
+        });
+    }
+
+    // [POST] /api/check/usename
+    usernameCheck(req, res, next) {
+        const sql = "select * from customerdata where username = ? ";
+        const message = 'Username đã tồn tại!';
+        const username = req.body.userName;
         
         pool.query(sql, username, function (error, results, fields) {
             if (error) {
-                res.send({ error: error });
-            }
-            if (results.length > 0) {
-                bcrypt.compare(password, results[0].password, (err, response) => {
-                    if (response) {
-                        const payload = {
-                            iss: "the books umbrella",
-                            id: results[0].id,
-                            username: results[0].username,
-                            authentication: results[0].authentication,
-                        };
-                        const token = "Bearer " + encodeToken(payload);
-                        res.setHeader("isAuth", token);
-
-                        res.send({ 
-                            token, 
-                            checkPW: response, 
-                            username: results[0].username, 
-                            authentication: results[0].authentication 
-                        });
-                    } else {
-                        res
-                            .status(200)
-                            .send({ message: "Tên Đăng Nhập hoặc mật khẩu không đúng!" });
-                    }
-                });
-            } else {
-                res.status(200).send({ message: "Tên Đăng Nhập hoặc mật khẩu không đúng!" });
+                res.send({ message, checked: false });
+            } 
+            else {
+                if (results.length > 0) {
+                    res.status(200).send({ message, checked: false });
+                } else {
+                    res.status(200).send({ checked: true });
+                }
             }
         });
     }
@@ -118,6 +157,8 @@ class API {
             });
         //}
     }
+
+    
 }
 
 module.exports = new API();

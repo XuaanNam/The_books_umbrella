@@ -6,9 +6,13 @@ const passport = require('passport');
 
 router.post('/register', api.register);
 router.post('/login', api.login);
-// router.get('/logout', api.logout);
-router.get('/isAuth', passport.authenticate('jwt', { session: false }), api.isAuth);
+router.post('/check/email', api.emailCheck);
+router.post('/check/username', api.usernameCheck);
+
+router.get('/isauth', passport.authenticate('jwt', { session: false }), api.isAuth);
 router.get('/products', api.getProducts);
+//router.get('/cart/added', api.getProducts);
+
 
 
 module.exports = router;
