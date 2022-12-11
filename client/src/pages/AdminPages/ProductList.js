@@ -6,27 +6,28 @@ import Button from "../../components/Button";
 import HeaderAdmin from "../../layouts/HeaderAdmin";
 import { Dropdown } from "antd";
 import menu from "../../components/menu";
+import HeaderUser from "../../layouts/HeaderUser";
 
-const CustomerList = () => {
+const ProductList = () => {
   return (
-    <div className="w-screen h-auto flex">
+    <div className="w-screen h-auto flex text-lg">
       <DropDown></DropDown>
-      <div className="w-full">
-        <HeaderAdmin></HeaderAdmin>
-        <div className="w-full h-[90%] bg-slate-50 pt-5 text-slate-700 ">
+      <div className="w-full text-lg">
+        <HeaderUser></HeaderUser>
+        <div className="w-full h-[90%] bg-slate-50 pt-32 text-slate-700 ">
           <div className=" border w-[95%] rounded-lg h-[95%] mx-auto drop-shadow-xl">
-            <div className="bg-white h-32 rounded-t-lg">
-              <div className="grid grid-cols-6">
-                <div className="col-start-1 col-span-5 py-4 pl-6 text-base font-semibold">
+            <div className="bg-white h-36 rounded-t-lg">
+              <div className="grid grid-cols-6 h-16">
+                <div className="col-start-1 col-span-5 py-4 pl-6 text-2xl font-semibold">
                   Tất cả sản phẩm
                 </div>
-                <Button className="bg-teal-400 text-center h-10 py-2 px-1 w-32 mx-auto border hover:border-violet-200 drop-shadow-lg hover:drop-shadow-xl">
+                <Button className="bg-teal-400 text-center h-12 py-2 px-1 w-40 mx-auto border hover:border-violet-200 drop-shadow-lg hover:drop-shadow-xl">
                   Thêm sản phẩm
                 </Button>
               </div>
               <div>
                 <div className="flex">
-                  <div className="mt-4 ml-6 h-10 w-80 border border-teal-500 hover:border-teal-300 rounded flex cursor-pointer ">
+                  <div className="mt-4 ml-6 h-12 w-80 border border-teal-500 hover:border-teal-300 rounded flex cursor-pointer ">
                     <div className="grid place-items-center">
                       <FontAwesomeIcon
                         className="ml-5"
@@ -39,15 +40,15 @@ const CustomerList = () => {
                       placeholder="Tìm kiếm theo tên sản phẩm"
                     />
                   </div>
-                  <div className="mt-4 ml-6 h-10 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
+                  <div className="mt-4 ml-6 h-12 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
                     <Dropdown overlay={menu[1]} placement="bottom">
                       <div className="grid place-items-center w-36 rounded">
                         Loại
                       </div>
                     </Dropdown>
                   </div>
-                  <div className="mt-4 ml-6 h-10 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
-                    <Dropdown overlay={menu[2]} placement="bottom">
+                  <div className="mt-4 ml-6 h-12 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
+                    <Dropdown overlay={menu[2]} placement="bottomLeft">
                       <div className="grid place-items-center w-36 rounded">
                         Giá
                       </div>
@@ -57,13 +58,13 @@ const CustomerList = () => {
               </div>
             </div>
             <div className="bg-white rounded-b-lg">
-              <table className="w-full h-[370px] table-auto text-sm text-neutral-700">
+              <table className="w-full h-[370px] table-auto text-neutral-700">
                 <thead className="h-12">
                   <tr className="bg-slate-100">
                     <th className="w-10">
                       <input
                         type="checkbox"
-                        className=" checked:bg-blue-500 cursor-pointer"
+                        className=" checked:bg-blue-500 cursor-pointer w-6 h-6"
                       />
                     </th>
                     <th className="w-12">Ảnh</th>
@@ -78,7 +79,7 @@ const CustomerList = () => {
                     <td className="text-center">
                       <input
                         type="checkbox"
-                        className=" checked:bg-blue-500 cursor-pointer"
+                        className=" checked:bg-blue-500 cursor-pointer w-6 h-6"
                       />
                     </td>
                     <td>
@@ -137,4 +138,4 @@ const CustomerList = () => {
   );
 };
 
-export default CustomerList;
+export default ProductList;

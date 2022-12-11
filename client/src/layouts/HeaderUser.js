@@ -3,30 +3,45 @@ import Modal from "../components/Modal";
 import { Dropdown, Menu, Space } from "antd";
 
 import { IconContext } from "react-icons";
-import { BsCart } from "react-icons/bs";
+import { IoCart } from "react-icons/io5";
 import { BiSearchAlt } from "react-icons/bi";
 import { FiMenu } from "react-icons/fi";
-
+import { FaUserAlt } from "react-icons/fa";
+import { logout } from "../redux-toolkit/authSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 const HeaderUser = () => {
   const [showModal, setShowModal] = useState(false);
   const [active, setActive] = useState(false);
+  const dispatch = useDispatch();
+  const Navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logout());
+    window.location.reload(true);
+    Navigate("/");
+  };
+  const user = localStorage.getItem("user");
+  // console.log(user);
   return (
-    <div className="h-20 fixed w-screen z-50 text-lg">
-      <div className="font-medium h-full text-gray-700 bg-white grid grid-cols-12 place-items-center drop-shadow-[0_4px_5px_rgba(0,0,0,0.3)]">
-        <a className="col-start-1 col-span-2 cursor-pointer" href="/">
+    <div className="h-24 fixed w-screen z-50 text-lg">
+      <div className="font-medium h-full text-gray-700 bg-teal-500 grid grid-cols-10 place-items-center drop-shadow-[0_4px_5px_rgba(0,0,0,0.3)]">
+        <a
+          className="col-start-1 col-span-2 cursor-pointer text-slate-100 hover:text-slate-700 drop-shadow-lg"
+          href="/"
+        >
           HOMEPAGE
         </a>
         <div className="col-start-3">
           <IconContext.Provider
             value={{
-              size: "30px",
+              size: "40px",
               color: "white",
             }}
           >
             <Space direction="vertical">
               <Space wrap>
                 <Dropdown overlay={MenuDropdown} placement="bottomRight">
-                  <button className="h-10 w-16 rounded-lg bg-violet-500 hover:bg-violet-400">
+                  <button className="h-14 w-20 rounded-xl bg-violet-500 hover:bg-violet-400">
                     <div className="grid place-items-center">
                       <FiMenu className="" />
                     </div>
@@ -37,20 +52,20 @@ const HeaderUser = () => {
           </IconContext.Provider>
         </div>
 
-        <div className="col-start-4 col-span-4 h-10 w-96 border border-gray-400 hover:border-teal-300 rounded-lg flex cursor-pointer ">
+        <div className="col-start-4 col-span-4 h-14 w-[550px] rounded-xl flex cursor-pointer ">
           <input
-            className="w-72 font-normal pl-5 outline-none rounded-lg"
+            className="w-[410px] font-normal pl-5 outline-none rounded-xl focus:border-2 focus:border-slate-600"
             type="text"
             placeholder="Tìm kiếm sản phẩm"
           />
           <div className="grid place-items-center mx-auto">
             <IconContext.Provider
               value={{
-                size: "20px",
+                size: "30px",
                 color: "white",
               }}
             >
-              <button className="h-8 w-20 rounded-lg bg-red-400">
+              <button className="h-14 w-32 rounded-xl bg-violet-500 hover:bg-violet-400">
                 <div className="grid place-items-center">
                   <BiSearchAlt className="" />
                 </div>
@@ -58,32 +73,61 @@ const HeaderUser = () => {
             </IconContext.Provider>
           </div>
         </div>
-
         <a
-          className="col-start-10 grid-cols-2 place-items-center cursor-pointer hover:text-violet-500"
+          className="col-start-8 grid-cols-2 text-xl place-items-center cursor-pointer hover:drop-shadow-lg"
           href="/cart"
         >
           <IconContext.Provider
             value={{
-              size: "20px",
-              color: "gray",
+              size: "35px",
             }}
           >
-            <div className="grid place-items-center">
-              <BsCart />
+            <div className="grid place-items-center text-slate-100">
+              <IoCart />
             </div>
           </IconContext.Provider>
-          <span className=""> Giỏ hàng</span>
+          <span className="text-slate-100">Giỏ hàng</span>
         </a>
+        {user ? (
+          <div className="relative first-line:col-start-9 hover:text-slate-700 hover:drop-shadow-lg text-black text-xl cursor-pointer">
+            <Space direction="vertical">
+              <Space wrap>
+                <Dropdown
+                  overlay={ProfileDropdown({ handleLogout })}
+                  placement="bottomRight"
+                >
+                  <div className="flex gap-2 p-2 ">
+                    <IconContext.Provider
+                      value={{
+                        size: "25px",
+                      }}
+                    >
+                      <div className="grid place-items-center text-slate-100">
+                        <FaUserAlt />
+                      </div>
+                    </IconContext.Provider>
 
-        <button
-          className="col-start-11 w-24 text-white h-9 bg-violet-600 hover:bg-violet-500 rounded"
-          onClick={() => setShowModal(true)}
-        >
-          Login
-        </button>
+                    <div
+                      // onClick={() => setShowMenu(true)}
+                      className="text-ellipsis overflow-hidden col-span-2 text-slate-100 font-medium text-2xl"
+                    >
+                      Quoc Anh
+                    </div>
+                  </div>
+                </Dropdown>
+              </Space>
+            </Space>
+          </div>
+        ) : (
+          <button
+            className="col-start-9 w-24 text-white h-9 bg-violet-600 hover:bg-violet-500 rounded"
+            onClick={() => setShowModal(true)}
+          >
+            Login
+          </button>
+        )}
         <div
-          className={`col-start-12 w-20 h-8 border-2  border-slate-500 rounded-3xl my-auto flex items-center cursor-pointer ${
+          className={`col-start-10 w-28 h-10 border-2  border-slate-500 rounded-3xl my-auto flex items-center cursor-pointer ${
             active ? "bg-green-400" : "bg-gray-400"
           }`}
           onClick={() => {
@@ -91,11 +135,12 @@ const HeaderUser = () => {
           }}
         >
           <div
-            className={`rounded-full border-[2px] bg-white border-slate-500 w-5 h-5 ml-2 transition-all ${
-              active ? "translate-x-10" : ""
+            className={`rounded-full border-[2px] bg-white border-slate-500 w-7 h-7 ml-2 transition-all ${
+              active ? "translate-x-16" : ""
             }`}
           ></div>
         </div>
+
         <Modal open={showModal} handleClose={() => setShowModal(false)}></Modal>
       </div>
     </div>
@@ -103,7 +148,30 @@ const HeaderUser = () => {
 };
 
 export default HeaderUser;
-
+function ProfileDropdown({ handleLogout = () => {} }) {
+  return (
+    <Menu
+      items={[
+        {
+          key: "1",
+          label: (
+            <a className="text-lg" href="/Profile">
+              Thông tin cá nhân
+            </a>
+          ),
+        },
+        {
+          key: "2",
+          label: (
+            <button className="text-lg" onClick={handleLogout}>
+              Đăng xuất
+            </button>
+          ),
+        },
+      ]}
+    />
+  );
+}
 function MenuDropdown(props) {
   return (
     <div className="bg-slate-100 mx-auto grid grid-cols-4 gap-7 grid-rows-2 p-5 rounded-lg drop-shadow-2xl text-base">
@@ -120,7 +188,6 @@ function MenuDropdown(props) {
       </div>
       <div className="">
         <div className="text-base font-semibold pb-2 cursor-pointer hover:text-orange-500">
-          {" "}
           KINH TẾ
         </div>
         <div className="cursor-pointer hover:text-orange-500">

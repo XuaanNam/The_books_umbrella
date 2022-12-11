@@ -7,15 +7,27 @@ const menu = [
     items={[
       {
         key: "1",
-        label: <a href="https://www.antgroup.com">Đã hoàn thành</a>,
+        label: (
+          <a className="text-lg" href="https://www.antgroup.com">
+            Đã hoàn thành
+          </a>
+        ),
       },
       {
         key: "2",
-        label: <a href="https://www.aliyun.com">Chờ duyệt</a>,
+        label: (
+          <a className="text-lg" href="https://www.aliyun.com">
+            Chờ duyệt
+          </a>
+        ),
       },
       {
         key: "3",
-        label: <a href="https://www.luohanacademy.com">Đã hủy</a>,
+        label: (
+          <a className="text-lg" href="https://www.luohanacademy.com">
+            Đã hủy
+          </a>
+        ),
       },
     ]}
   />,
@@ -24,11 +36,19 @@ const menu = [
     items={[
       {
         key: "4",
-        label: <a href="https://www.antgroup.com">Bìa cứng</a>,
+        label: (
+          <a className="text-lg" href="https://www.antgroup.com">
+            Bìa cứng
+          </a>
+        ),
       },
       {
         key: "5",
-        label: <a href="https://www.aliyun.com">Bìa mềm</a>,
+        label: (
+          <a className="text-lg" href="https://www.aliyun.com">
+            Bìa mềm
+          </a>
+        ),
       },
     ]}
   />,
@@ -37,15 +57,27 @@ const menu = [
     items={[
       {
         key: "6",
-        label: <a href="https://www.antgroup.com">dưới 50.000 </a>,
+        label: (
+          <a className="text-lg" href="https://www.antgroup.com">
+            Dưới 50.000 đ
+          </a>
+        ),
       },
       {
         key: "7",
-        label: <a href="https://www.aliyun.com">50.000 {"->"} 120.000</a>,
+        label: (
+          <a className="text-lg" href="https://www.aliyun.com">
+            50.000 {"->"} 120.000 đ
+          </a>
+        ),
       },
       {
         key: "8",
-        label: <a href="https://www.aliyun.com">Trên 120.000</a>,
+        label: (
+          <a className="text-lg" href="https://www.aliyun.com">
+            Trên 120.000 đ
+          </a>
+        ),
       },
     ]}
   />,

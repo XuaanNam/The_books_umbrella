@@ -9,11 +9,8 @@ import {
 
 export default function Footer() {
   return (
-    <MDBFooter
-      bgColor="light"
-      className="bg-white text-center-start text-muted"
-    >
-      <section className="p-5 text-base">
+    <MDBFooter bgColor="light" className="bg-white text-center-start">
+      <section className="p-5 text-lg">
         <MDBContainer className="text-center text-md-start mt-5">
           <div className="grid grid-cols-4 place-items-center mb-3">
             <div></div>

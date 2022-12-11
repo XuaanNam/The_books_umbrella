@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import HeaderUser from "../../layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
@@ -15,6 +15,7 @@ import {
   removeFromCart,
 } from "../../redux-toolkit/cartSlice";
 import { useNavigate } from "react-router-dom";
+import ModalLogin from "../../components/ModalLogin";
 
 const CartPage = () => {
   const cart = useSelector((state) => state.cart);
@@ -22,31 +23,40 @@ const CartPage = () => {
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const [carts, setCarts] = useState([]);
+  const [disable, setDisable] = useState(true);
   console.log(carts);
 
   useEffect(() => {
     setCarts(cart.cartItems);
-    console.log(cart.cartItems);
   }, [cart.cartItems]);
 
+  const [total, setTotal] = useState(0);
   useEffect(() => {
-    dispatch(getTotals());
-  }, [cart, dispatch]);
+    let subtotal = 0;
+    setDisable(true);
+    carts.map((cart) => {
+      if (cart.isChecked) {
+        subtotal += cart.price * cart.cartQuantity;
+        setDisable(false);
+      }
+      return total;
+    });
+    setTotal(subtotal);
+  }, [carts]);
   const handleChange = (e) => {
     const { name, checked } = e.target;
-    console.log(name);
-
+    let tempCart = [];
     if (name === "allSelect") {
-      let tempCart = carts.map((cart) => {
+      tempCart = carts.map((cart) => {
         return { ...cart, isChecked: checked };
       });
       setCarts(tempCart);
+      setDisable(!disable);
     } else {
-      let tempCart = carts.map((cart) =>
-        cart.name === name ? { ...cart, isChecked: checked } : cart
+      tempCart = carts.map((cart) =>
+        cart.productName === name ? { ...cart, isChecked: checked } : cart
       );
       setCarts(tempCart);
-      console.log(...tempCart);
     }
   };
 
@@ -67,11 +77,16 @@ const CartPage = () => {
     dispatch(clearCart());
   };
   return (
-    <div className="bg-slate-100 text-base">
+    <div className="bg-slate-100 min-h-screen text-xl">
       <HeaderUser></HeaderUser>
-      <div className="pt-20">
+
+      {/* <ModalLogin
+      // handleClose={handleClose}
+      // handleRegister={handleRegister}
+      ></ModalLogin> */}
+      <div className="pt-24">
         <div className="p-5 text-xl font-semibold">GIỎ HÀNG</div>
-        <div className="mx-5 bg-white font-medium text-lg rounded p-7 grid grid-cols-12 drop-shadow-lg">
+        <div className="mx-5 bg-white font-medium text-xl rounded p-7 grid grid-cols-12 drop-shadow-lg">
           <div className="col-start-1 col-span-6 flex items-center pl-9">
             <input
               type="checkbox"
@@ -80,7 +95,7 @@ const CartPage = () => {
               checked={!carts.some((cart) => cart?.isChecked !== true)}
               onChange={handleChange}
             />
-            <span className="pl-2">Chọn tất cả (1 sản phẩm)</span>
+            <span className="pl-2">Chọn tất cả ({carts.length} sản phẩm)</span>
           </div>
           <div className="col-start-7 col-span-1 text-center">Đơn giá</div>
           <div className="col-start-8 col-span-2 text-center">Số lượng</div>
@@ -95,7 +110,7 @@ const CartPage = () => {
                 className="p-4 grid grid-cols-12 place-items-center text-xl  border-b"
               >
                 <input
-                  name={cartItem.name}
+                  name={cartItem.productName}
                   type="checkbox"
                   className="col-start-1 w-6 h-6 cursor-pointer rounded-lg"
                   checked={cartItem?.isChecked || false}
@@ -105,16 +120,16 @@ const CartPage = () => {
                   className="col-start-2 col-span-2 h-40 cursor-pointer"
                   onClick={() => Navigate(`/detail/${cartItem.id}`)}
                   src={cartItem.image}
-                  alt={cartItem.name}
+                  alt={cartItem.productName}
                 ></img>
                 <div
-                  className="col-start-4 col-span-3 text-xl font-medium text-cyan-700 text-left cursor-pointer"
+                  className="col-start-4 col-span-3 text-2xl font-medium text-cyan-700 text-left cursor-pointer"
                   onClick={() => Navigate(`/detail/${cartItem.id}`)}
                 >
-                  {cartItem.name}
+                  {cartItem.productName}
                 </div>
-                <div className="col-start-7 text-center text-xl font-medium text-red-600">
-                  {cartItem.price}
+                <div className="col-start-7 text-center text-2xl font-medium text-red-600">
+                  {cartItem.price} đ
                 </div>
                 <div className="col-start-8 col-span-2">
                   <div className="w-36 h-8 rounded-lg border border-black grid grid-cols-3 place-items-center">
@@ -133,8 +148,8 @@ const CartPage = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-start-10 text-center text-lg font-medium text-red-600">
-                  {cartItem.totalprice * cartItem.cartQuantity} đ
+                <div className="col-start-10 text-center text-2xl font-medium text-red-600">
+                  {cartItem.price * cartItem.cartQuantity} đ
                 </div>
                 <BsTrash
                   className="col-start-11 col-span-2 h-7 w-7 cursor-pointer"
@@ -148,13 +163,16 @@ const CartPage = () => {
               <div className="p-5 text-lg">Chú thích cho cửa hàng</div>
               <textarea className="ml-5 p-3 w-96 h-32 border border-slate-700 rounded-lg outline-none"></textarea>
             </div>
-            <div className="text-base font-normal my-auto">
+            <div className="font-normal my-auto">
               <div className="p-3">
                 Tổng tiền
-                <span className="text-2xl font-medium pl-3">sss</span>
+                <span className="text-2xl font-medium pl-3">{total}</span>
               </div>
               <button
-                className="p-2 bg-cyan-700 hover:bg-cyan-600 rounded-lg w-80 text-white text-base font-medium"
+                className={`${
+                  disable ? "bg-slate-300" : "bg-cyan-700 hover:bg-cyan-600"
+                } p-2 rounded-xl w-96 h-16 text-white text-xl font-medium`}
+                disabled={disable}
                 onClick={() => handleTotalPrice(carts)}
               >
                 THANH TOÁN

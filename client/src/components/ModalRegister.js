@@ -57,29 +57,29 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
         >
           <Form>
             <div className="grid grid-cols-2 gap-10">
-              <Input
+              <Field
                 type="text"
                 label="Tên đăng nhập"
                 name="userName"
                 placeholder="Nhập tên"
                 id="userName"
-              ></Input>
-              <Input
+              ></Field>
+              <Field
                 type="password"
                 label="Mật khẩu"
                 name="passWord"
                 placeholder="Nhập mật khẩu"
                 id="passWord"
-              ></Input>
+              ></Field>
             </div>
             <div className="grid grid-cols-2 gap-10">
-              <Input
+              <Field
                 type="email"
                 label="Email"
                 name="email"
                 placeholder="Nhập email"
                 id="email"
-              ></Input>
+              ></Field>
               <Input
                 type="text"
                 label="Số điện thoại"

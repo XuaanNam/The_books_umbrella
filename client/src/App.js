@@ -2,16 +2,17 @@ import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-// import AdminLayout from "./layouts/AdminLayout";
+import AdminLayout from "./layouts/AdminLayout";
 import ProductList from "./pages/AdminPages/ProductList";
 import CustomerList from "./pages/AdminPages/CustomerList";
 import Profile from "./pages/UserPages/Profile";
 import Warehouse from "./pages/AdminPages/Warehouse";
 import Order from "./pages/AdminPages/Order";
-import Homepage from "./pages/UserPages/Homepage";
+// import Homepage from "./pages/UserPages/Homepage";
 import BookDetail from "./pages/UserPages/BookDetail";
 import CartPage from "./pages/UserPages/CartPage";
 import CheckOrder from "./pages/UserPages/CheckOrder";
+import Homepage from "./pages/UserPages/Homepage";
 
 function App() {
   return (

@@ -1,13 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
+  auth: "",
   msg: "",
-  user: "",
+  username: "",
   token: "",
   loading: false,
   error: "",
 };
 export const signInUser = createAsyncThunk("signinuser", async (body) => {
+  console.log("body", body);
   const res = await fetch("http://localhost:5000/api/login", {
     method: "POST",
     headers: {
@@ -15,10 +17,19 @@ export const signInUser = createAsyncThunk("signinuser", async (body) => {
     },
     body: JSON.stringify(body),
   });
-  console.log(res);
   return await res.json();
 });
-
+export const signUpUser = createAsyncThunk("signupuser", async (body) => {
+  console.log("body", body);
+  const res = await fetch("http://localhost:5000/api/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
 const authSlice = createSlice({
   name: "user",
   initialState,
@@ -27,7 +38,7 @@ const authSlice = createSlice({
       state.token = localStorage.getItem("token");
     },
     addUser: (state, action) => {
-      state.user = localStorage.getItem("user");
+      state.username = localStorage.getItem("user");
     },
     logout: (state, action) => {
       state.token = null;
@@ -35,39 +46,40 @@ const authSlice = createSlice({
     },
   },
   extraReducers: {
-    // [signUpUser.pending]: (state, action) => {
-    //   state.loading = true;
-    // },
-    // [signUpUser.fullfilled]: (state, { payload: { error, msg } }) => {
-    //   state.loading = false;
-    //   if (error) {
-    //     state.error = error;
-    //   }
-    //   else{
-    //     state.msg = msg;
-    //   }
-    // },
-    // [signUpUser.rejected]: (state, action) => {
-    //   state.loading = true;
-    // },
+    [signUpUser.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [signUpUser.fullfilled]: (state, { payload: { error, msg } }) => {
+      state.loading = false;
+      if (error) {
+        state.error = error;
+      } else {
+        state.msg = msg;
+      }
+    },
+    [signUpUser.rejected]: (state, action) => {
+      state.loading = true;
+    },
 
     [signInUser.pending]: (state, action) => {
       state.loading = true;
     },
     [signInUser.fulfilled]: (
       state,
-      { payload: { error, msg, token, user } }
+      { payload: { error, authentication, token, username } }
     ) => {
-      state.loading = false;
       if (error) {
         state.error = error;
+        state.loading = true;
       } else {
-        state.msg = msg;
+        state.loading = false;
+
+        state.auth = authentication;
         state.token = token;
-        state.user = user;
-        localStorage.setItem("msg", 5);
+        state.username = username;
+        localStorage.setItem("auth", authentication);
         localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(username));
       }
     },
     [signInUser.rejected]: (state, action) => {

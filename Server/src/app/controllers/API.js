@@ -62,11 +62,13 @@ class API {
     const sql = "select * from customerdata where username = ? ";
     const username = req.body.userName;
     const password = req.body.passWord;
+    console.log("username: ", username);
 
     pool.query(sql, username, function (error, results, fields) {
       if (error) {
         res.send({ error: error });
       }
+      console.log("result: ", results);
       if (results.length > 0) {
         bcrypt.compare(password, results[0].password, (err, response) => {
           if (response) {
@@ -81,7 +83,6 @@ class API {
 
             res.send({
               token,
-              checkPW: response,
               username: results[0].username,
               authentication: results[0].authentication,
             });

@@ -1,5 +1,5 @@
 import React from "react";
-import CustomerList from "../pages/ProductList";
+import ProductList from "../pages/AdminPages/ProductList";
 import DropDown from "../components/DropDown";
 const AdminLayout = () => {
   return (
@@ -14,7 +14,7 @@ const AdminLayout = () => {
           </div>
         </div>
         <div className="h-[90%] bg-current pt-5">
-          {/* <CustomerList></CustomerList> */}
+          <ProductList></ProductList>
         </div>
       </div>
     </div>

@@ -2,21 +2,17 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import PropTypes from "prop-types";
-import Input from "./Input";
 import { signInUser } from "../redux-toolkit/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
-  const [value, setValue] = useState({});
-  console.log(value);
   const user = useSelector((state) => state.user);
-  console.log(user);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
-  const HandleLogin = () => {
-    dispatch(signInUser(value));
-    Navigate("/")
+  const HandleLogin = (values) => {
+    dispatch(signInUser(values));
+    handleClose();
   };
   return (
     <>
@@ -59,8 +55,8 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
               .required("Vui lòng điền vào trường trống")
               .min(8, "Mật khẩu chứa ít nhất 8 ký tự"),
           })}
-          onSubmit={({ userName, passWord }) => {
-            setValue({ userName, passWord });
+          onSubmit={(values) => {
+            HandleLogin(values);
           }}
         >
           <Form>
@@ -86,10 +82,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
               ></Field>
             </div>
 
-            <button
-              className="w-full p-4 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg "
-              onClick={HandleLogin}
-            >
+            <button className="w-full p-4 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg ">
               Đăng nhập
             </button>
           </Form>
