@@ -32,24 +32,24 @@ const BookDetail = () => {
   return (
     <div className="bg-slate-100">
       <HeaderUser />
-      <div className="pt-20">
-        <div className="px-5 py-4 cursor-pointer text-base">
+      <div className="pt-24  text-xl">
+        <div className="px-5 py-4 cursor-pointer">
           Trang chủ {">"} Sách Tiếng Việt
         </div>
         {data ? (
           data.map(
             (item) =>
               parseInt(item.id) === parseInt(bookId) && (
-                <div className="text-base">
+                <div className="text-lg">
                   <div className="bg-white w-[90%] border mx-auto rounded-lg p-5 mb-5 drop-shadow-lg">
-                    <div className="flex pb-7">
-                      <img className="w-[380px]" src={item.image} alt="" />
-                      <div className="pl-10 w-full">
-                        <div className="text-2xl font-semibold pb-5">
-                          {item.name}
+                    <div className="flex gap-x-28 pb-7">
+                      <img className="w-[450px]" src={item.image} alt="" />
+                      <div className="w-full">
+                        <div className="text-4xl text-slate-800 font-semibold pb-5">
+                          {item.productName}
                         </div>
-                        <div className="grid grid-cols-2 pb-2">
-                          <div className="flex">
+                        <div className="grid grid-cols-2 pb-3">
+                          <div className="flex pb-3">
                             <div className="">Nhà cung cấp:</div>
                             <span className="text-blue-600 font-medium pl-2">
                               Nhà xuất bản Kim Đồng
@@ -63,7 +63,7 @@ const BookDetail = () => {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 pb-2">
+                        <div className="grid grid-cols-2 pb-5">
                           <div className="flex">
                             <div className="">Nhà xuất bản:</div>
                             <span className="text-blue-600 font-medium pl-2">
@@ -78,17 +78,17 @@ const BookDetail = () => {
                           </div>
                         </div>
 
-                        <div className="pb-2">
+                        <div className="pb-5">
                           Bộ:
                           <span className="text-blue-600 font-medium pl-2">
                             Chú thuật hồi chiến
                           </span>
                         </div>
-                        <div className="py-3 text-red-600 text-3xl font-bold">
+                        <div className="pb-6 text-red-600 text-3xl font-bold">
                           {item.price}
                         </div>
                         <div className="flex">
-                          <div className="text-lg text-slate-700 font-semibold">
+                          <div className="text-xl text-slate-700 font-semibold">
                             Số lượng:
                           </div>
                           <div className="ml-14">
@@ -113,14 +113,14 @@ const BookDetail = () => {
                     </div>
                     <div className="flex gap-5">
                       <button
-                        className="border-2 border-violet-600 hover:border-violet-500 hover:shadow-xl h-10 w-48 rounded-xl p-2 font-medium text-center"
+                        className="border-2 border-violet-600 hover:border-violet-500 hover:shadow-xl h-12 w-60 rounded-xl p-2 font-medium text-center"
                         onClick={() => handleAddToCart(item)}
                       >
                         <div className="flex justify-center items-center gap-3 focus:bg-black">
                           <BsCart /> <span>Thêm vào giỏ hàng</span>
                         </div>
                       </button>
-                      <button className="bg-violet-600 hover:bg-violet-500 hover:shadow-xl h-10 w-48 rounded-xl p-2 font-medium text-center text-white">
+                      <button className="bg-violet-600 hover:bg-violet-500 hover:shadow-xl h-12 w-48 rounded-xl p-2 font-medium text-center text-white">
                         Mua ngay
                       </button>
                     </div>
@@ -187,7 +187,7 @@ const BookDetail = () => {
         ) : (
           <div></div>
         )}
-        <div className="bg-white w-[90%] border mx-auto rounded-lg p-5 mb-5 text-base">
+        <div className="bg-white w-[90%] border mx-auto rounded-lg p-5 mb-5 text-lg">
           <div className="text-xl font-semibold pb-5">Sản phẩm liên quan</div>
           <div className=" grid grid-cols-4 gap-5">
             <div className="px-2 w-full transition-all cursor-pointer mb-3">
@@ -215,7 +215,7 @@ const BookDetail = () => {
                 </div>
               </div>
               <a
-                className="py-2 cursor-pointer block text-slate-600"
+                className="py-3 cursor-pointer block text-xl text-violet-600 font-semibold"
                 href="./detail"
               >
                 Chú Thuật Hồi Chiến

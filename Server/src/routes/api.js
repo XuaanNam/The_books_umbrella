@@ -1,7 +1,7 @@
-const express = require('express');
-const api = require('../app/controllers/API');
+const express = require("express");
+const api = require("../app/controllers/API");
 const router = express.Router();
-const passport = require('passport');
+const passport = require("passport");
 
 
 router.post('/register', api.register);

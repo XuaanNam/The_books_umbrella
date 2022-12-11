@@ -1,12 +1,13 @@
 import { useField } from "formik";
 import React from "react";
 
-const Input = ({ label, ...props }) => {
+const SelectBox = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   return (
-    <div className="flex flex-col gap-3 mb-5">
-      <input
-        // className="w-full text-sm leading-normal bg-slate-100 rounded-lg p-4"
+    <div className="flex flex-col gap-2 mb-5">
+      <label htmlFor={props.id || props.name}>{label}</label>
+      <select
+        className="p-4 rounded-md border border-gray-100"
         {...field}
         {...props}
       />
@@ -17,4 +18,4 @@ const Input = ({ label, ...props }) => {
   );
 };
 
-export default Input;
+export default SelectBox;

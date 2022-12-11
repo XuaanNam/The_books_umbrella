@@ -1,28 +1,25 @@
-
 const pool = require("../models/pool");
-const fs = require('fs');
-const express = require('express');
-const path = require('path');
-require('dotenv').config();
+const fs = require("fs");
+const express = require("express");
+const path = require("path");
+require("dotenv").config();
 const bcrypt = require("bcrypt");
 const saltRound = 7;
 const encodeToken = require("../../util/encodeToken");
-const CronJob = require('cron').CronJob;
+const CronJob = require("cron").CronJob;
 const io = require("socket.io-client");
 const job = [];
 const trading = [];
-const paypal = require('paypal-rest-sdk');
+const paypal = require("paypal-rest-sdk");
 paypal.configure({
-    'mode': process.env.PP_MODE,
-    'client_id': process.env.CLIENT_ID, 
-    'client_secret': process.env.PP_SECRET_KEY
+  mode: process.env.PP_MODE,
+  client_id: process.env.CLIENT_ID,
+  client_secret: process.env.PP_SECRET_KEY,
 });
 
 class API {
-    // [POST] /api
-    index(req, res, next) {
-
-    }
+  // [POST] /api
+  index(req, res, next) {}
 
     // [POST] /api/register
     register(req, res, next) {
@@ -50,10 +47,8 @@ class API {
                 );
             }
         });
-        
     }
-
-    // [GET] /api/isauth
+ // [GET] /api/isauth
     isAuth(req, res, next) {
         const authentication = req.user[0].authentication;
         res.status(200).send({ isAuth: true, authentication});
@@ -61,7 +56,7 @@ class API {
 
     // [POST] /api/login
     login(req, res, next) {
-
+ 
         const sql = "select * from customerdata where email = ? ";
         const message = "Email hoặc mật khẩu không chính xác!";
         const email = req.body.email;
@@ -138,11 +133,11 @@ class API {
                 }
             }
         });
-    }
+     }
 
-    //[GET] /api/products
-    getProducts(req, res, next) {
-        const selectSql = "select * from product";
+  //[GET] /api/products
+  getProducts(req, res, next) {
+    const selectSql = "select * from product";
 
             pool.query(selectSql, function (err, results, fields) {
                 if (err) {

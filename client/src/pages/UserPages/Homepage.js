@@ -12,16 +12,15 @@ import {
   getTotals,
   removeFromCart,
 } from "../../redux-toolkit/cartSlice";
+// import HeaderAdmin from "../../layouts/HeaderAdmin";
 const Homepage = () => {
   // const { items: products, status } = useSelector((state) => state.products);
   const dispatch = useDispatch();
-  const { data, error, isLoading } = useGetAllProductsQuery(); 
+  const { data, error, isLoading } = useGetAllProductsQuery();
 
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
   };
-  console.log(data);
-  console.log("Api", isLoading);
   const Navigate = useNavigate();
   const handleChange = (value) => {
     console.log(`selected ${value}`);
@@ -29,7 +28,7 @@ const Homepage = () => {
   return (
     <div className="text-lg">
       <HeaderUser></HeaderUser>
-      <div className="bg-slate-100 pt-20">
+      <div className="bg-slate-100 pt-24">
         <div className="px-5 py-4 cursor-pointer">
           Trang chủ {">"} Sách Tiếng Việt
         </div>
