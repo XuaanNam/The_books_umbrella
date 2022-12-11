@@ -6,8 +6,11 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { totalPrice } from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
+import { useGetAllAddressQuery } from "../../redux-toolkit/addressApi";
 
 const CheckOrder = () => {
+  const { data, error, isLoading } = useGetAllAddressQuery();
+  console.log(data);
   const order = useSelector((state) => state.cart);
   console.log(order);
   const dispatch = useDispatch();
@@ -47,51 +50,37 @@ const CheckOrder = () => {
                 <Form>
                   <div className="w-full h-14 rounded-xl text-lg mb-2">
                     <Input
-                      className="w-[95%] h-[90%] border border-sky-500 hover:border-2 outline-none p-2 rounded-xl"
+                      type="text"
                       name="fullName"
                       placeholder="Tên đầy đủ"
                       id="firstName"
                     ></Input>
                   </div>
                   <div className="w-full h-14 rounded-xl text-lg mb-5">
-                    <Field
+                    <Input
                       type="email"
-                      label="Email"
                       name="email"
                       placeholder="Email"
                       id="email"
-                    ></Field>
+                    ></Input>
                   </div>
                   <div className="w-full h-14 rounded-xl text-lg mb-5">
-                    <Field
-                      className="w-[95%] h-[90%] border border-sky-500 hover:border-2 outline-none p-2 rounded-xl"
+                    <Input
                       type="number"
-                      label="PhoneNumber"
                       name="phoneNumber"
                       placeholder="Số điện thoại"
                       id="phoneNumber"
-                    ></Field>
+                    ></Input>
                   </div>
                   <div className="w-full h-14 rounded-xl text-lg mb-5">
-                    <Field
-                      className="w-[95%] h-[90%] border border-sky-500 hover:border-2 outline-none p-2 rounded-xl"
+                    <Input
                       type="text"
-                      label="Address"
                       name="address"
                       placeholder="Địa chỉ"
                       id="address"
-                    ></Field>
+                    ></Input>
                   </div>
-                  <div className="w-full h-14 rounded-xl text-lg mb-5">
-                    <Field
-                      className="w-[95%] h-[90%] border border-sky-500 hover:border-2 outline-none p-2 rounded-xl"
-                      type="text"
-                      label="Address"
-                      name="address"
-                      placeholder="Địa chỉ"
-                      id="address"
-                    ></Field>
-                  </div>
+
                   <button className="w-full p-4 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg ">
                     Đăng nhập
                   </button>

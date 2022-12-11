@@ -1,12 +1,12 @@
 import { useField } from "formik";
 import React from "react";
 
-const Input = ({ label, ...props }) => {
+const Input = ({ ...props }) => {
   const [field, meta] = useField(props);
   return (
     <div className="flex flex-col gap-3 mb-5">
       <input
-        // className="w-full text-sm leading-normal bg-slate-100 rounded-lg p-4"
+        className="w-[95%] h-[90%] border border-sky-500 hover:border-2 outline-none p-2 rounded-xl"
         {...field}
         {...props}
       />
