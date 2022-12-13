@@ -64,6 +64,7 @@ const HeaderUser = () => {
                 className="w-[410px] font-normal pl-5 outline-none rounded-xl focus:border-2 focus:border-slate-600"
                 type="text"
                 placeholder="Tìm kiếm sản phẩm"
+                name="keyword"
               />
               <div className="grid place-items-center mx-auto">
                 <IconContext.Provider
@@ -266,7 +267,7 @@ function MenuDropdown(props) {
           Tô màu - Luyện chữ
         </div>
         <div className="cursor-pointer hover:text-orange-500 pb-2">
-          Phát triển kỹ năng cho trẻ
+          Kiến Thức - Kỹ Năng Sống Cho Trẻ
         </div>
       </div>
     </div>

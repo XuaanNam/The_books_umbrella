@@ -15,17 +15,18 @@ import {
 // import HeaderAdmin from "../../layouts/HeaderAdmin";
 const Homepage = () => {
   // const { items: products, status } = useSelector((state) => state.products);
+  const Navigate = useNavigate();
   const dispatch = useDispatch();
   const { data, error, isLoading } = useGetAllProductsQuery();
   console.log(data);
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
   };
-  const Navigate = useNavigate();
+  const handleChange = (value) => {};
 
   return (
     <div className="text-lg">
-      {/* <HeaderUser></HeaderUser> */}
+      <HeaderUser></HeaderUser>
       <div className="bg-slate-100 pt-24">
         <div className="px-5 py-4 cursor-pointer">
           Trang chủ {">"} Sách Tiếng Việt
@@ -108,14 +109,14 @@ const Homepage = () => {
           <div className="ml-3 p-2 w-[80%] bg-white rounded drop-shadow-lg">
             <div className="grid grid-cols-2 w-[400px] place-items-center p-5 text-lg">
               <div className="font-medium text-slate-700">Sắp xếp theo</div>
-              {/* <Select
+              <Select
                 className="hover:bg-slate-800 text-lg"
                 defaultValue="Giá bán"
                 style={{
                   width: 200,
                   fontSize: 18,
                 }}
-                // onChange={handleChange}
+                onChange={handleChange}
                 options={[
                   {
                     value: "Giá bán",
@@ -130,7 +131,7 @@ const Homepage = () => {
                     label: "Bán chạy tháng",
                   },
                 ]}
-              /> */}
+              />
             </div>
 
             <div className="grid grid-cols-4 gap-2">
@@ -186,7 +187,7 @@ const Homepage = () => {
           </div>
         </div>
       </div>
-      {/* <Footer></Footer> */}
+      <Footer></Footer>
     </div>
   );
 };

@@ -10,32 +10,28 @@ import Input from "../components/Input";
 const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
   const user = useSelector((state) => state.user);
 
-  const Navigate = useNavigate();
   const dispatch = useDispatch();
   const formikRef = useRef();
   console.log(formikRef);
-  let [mess, setMess] = useState("");
-  const HandleLogin = (values, isValid) => {
-    if (isValid) {
+  const [mess, setMess] = useState("");
+  const handleLogin = (values, isValid) => {
+    console.log(values);
+    if (isValid && values.email !== "" && values.password !== "") {
       dispatch(signInUser(values));
       setMess(user.msg);
+    } else if (isValid && values.email === "" && values.password === "") {
+      setMess("Vui lòng điền vào trường trống");
     }
   };
 
   console.log(mess);
-  const resetForm = (msg) => {
+  const resetForm = () => {
     formikRef.current?.resetForm();
     setMess("");
+    // user.msg = "";
     console.log(mess);
-
     handleClose();
   };
-
-  // useEffect(() => {
-  //   if () {
-  //     formikRef.current?.resetForm();
-  //   }
-  // });
   return (
     <>
       <div
@@ -79,6 +75,9 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
               .min(8, "Mật khẩu chứa ít nhất 8 ký tự"),
           })}
           onSubmit={(values) => {}}
+          onChange={(values) => {
+            setMess("values");
+          }}
         >
           {(formik) => {
             console.log(formik);
@@ -98,14 +97,16 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
                   placeholder="Mật khẩu"
                   id="password"
                 ></Input>
-                {formik.isValid && user.msg && (
+                {mess && formik.isValid && (
                   <div className="text-red-500 text-lg">{mess}</div>
                 )}
+                {console.log(mess)}
+
                 <button
                   className="w-full mt-3 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl "
                   type="button"
                   onClick={() => {
-                    HandleLogin(formik.values, formik.isValid);
+                    handleLogin(formik.values, formik.isValid);
                   }}
                 >
                   Đăng nhập
