@@ -2,23 +2,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 import DropDown from "../../components/DropDown";
 import React from "react";
-import HeaderAdmin from "../../layouts/HeaderAdmin";
+import HeaderUser from "../../layouts/HeaderUser";
 
 const CustomerList = () => {
   return (
     <div className="w-screen flex">
       <DropDown></DropDown>
       <div className="w-full">
-        <HeaderAdmin></HeaderAdmin>
-        <div className=" h-[90%] bg-slate-50 pt-5">
+        <HeaderUser></HeaderUser>
+        <div className="w-full h-[90%] bg-slate-50 pt-32">
           <div className="w-full h-full text-slate-700 drop-shadow-lg">
             <div className=" border w-[95%] rounded-lg h-[95%] mx-auto">
-              <div className="bg-white h-32 rounded-t-lg">
+              <div className="bg-white h-36 rounded-t-lg">
                 <div>
-                  <div className="py-4 pl-6 font-semibold text-base">
+                  <div className="py-4 pl-6 font-semibold text-2xl">
                     Tất cả khách hàng
                   </div>
-                  <div className="mt-4 ml-6 h-10 w-80 border border-teal-500 hover:border-teal-300 rounded flex cursor-pointer ">
+                  <div className=" ml-6 h-14 w-[400px] text-lg border border-teal-500 hover:border-teal-300 rounded flex cursor-pointer ">
                     <div className="grid place-items-center">
                       <FontAwesomeIcon
                         className="ml-5"
@@ -34,13 +34,13 @@ const CustomerList = () => {
                 </div>
               </div>
               <div className="bg-white rounded-b-lg">
-                <table className="w-full h-[370px] table-auto text-sm text-neutral-700">
+                <table className="w-full h-[370px] table-auto text-lg text-neutral-700">
                   <thead className="h-12">
                     <tr className="bg-slate-100">
                       <th className="w-10">
                         <input
                           type="checkbox"
-                          className=" checked:bg-blue-500 cursor-pointer"
+                          className=" checked:bg-blue-500 cursor-pointer h-6 w-6 grid mx-auto"
                         />
                       </th>
                       <th className="w-24">Mã khách hàng</th>
@@ -50,20 +50,20 @@ const CustomerList = () => {
                       <th className="w-24 text-left">Tổng đơn hàng</th>
                     </tr>
                   </thead>
-                  <tbody className=" w-full h-32">
+                  <tbody className=" w-full h-32 text-xl">
                     {menu.map((item, index) => (
                       <tr className="" key={index}>
                         <td className="text-center">
                           <input
                             type="checkbox"
-                            className=" checked:bg-blue-500 cursor-pointer"
+                            className=" checked:bg-blue-500 cursor-pointer h-6 w-6"
                           />
                         </td>
                         <td className="text-center">{item.id}</td>
                         <td className="pl-6">{item.name}</td>
                         <td>{item.phone}</td>
-                        <td>{item.spend}</td>
-                        <td>{item.orders}</td>
+                        <td>{item.spend} đ</td>
+                        <td className="pl-12">{item.orders}</td>
                       </tr>
                     ))}
                   </tbody>

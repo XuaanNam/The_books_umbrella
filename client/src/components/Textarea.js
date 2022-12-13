@@ -5,9 +5,8 @@ const TextArea = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   return (
     <div className="flex flex-col gap-2 mb-5">
-      <label htmlFor={props.id || props.name}>{label}</label>
       <textarea
-        className="p-4 rounded-md border border-gray-100 h-[150px] resize-none"
+        className="w-[95%] h-[90%] border border-sky-500 hover:border-2 outline-none p-2 rounded-xl"
         {...field}
         {...props}
       />

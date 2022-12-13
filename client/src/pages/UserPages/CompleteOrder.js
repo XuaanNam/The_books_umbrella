@@ -8,10 +8,13 @@ import { totalPrice } from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
 import { useGetAllAddressQuery } from "../../redux-toolkit/addressApi";
 import useSWR from "swr";
-import { Navigate, useNavigate } from "react-router-dom";
+import InputRadio from "../../components/InputRadio";
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+import { IconContext } from "react-icons";
+
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
-const CheckOrder = () => {
+const CompleteOrder = () => {
   // const { data, error, isLoading } = useGetAllAddressQuery();
   const { data, error, isLoading } = useSWR(
     "thongtindoanhnghiep.co/api/city",
@@ -30,7 +33,6 @@ const CheckOrder = () => {
     });
     setTotal(totalPrice);
   });
-  const Navigate = useNavigate();
   const dispatch = useDispatch();
   return (
     <div className="bg-slate-200 h-screen text-lg">
@@ -39,93 +41,46 @@ const CheckOrder = () => {
         <div className="m-5 bg-white rounded-lg w-[98%]">
           <div className="px-16 py-12 w-full flex">
             <div className="pr-28 border-r-2 w-[880px]">
-              <div className="text-4xl font-medium text-slate-800 ">
+              <div className="text-4xl font-medium text-slate-800 mb-5">
                 Umbrella Bookstore
               </div>
-              <div className="py-5 text-lg">
-                Giỏ hàng {">"} Thông tin vận chuyển {">"} Phương thức thanh toán
-              </div>
-              <div className="pb-7 text-3xl text-slate-900">
-                Thông tin thanh toán
-              </div>
-              <div className="pb-5 text-lg text-slate-900">
-                <Formik
-                  initialValues={{
-                    fullname: "",
-                    emailOrder: "",
-                    phone: "",
-                    address: "",
-                  }}
-                  validationSchema={Yup.object({
-                    fullname: Yup.string()
-                      .max(20, "Tên đăng nhập chứa tối đa 20 ký tự")
-                      .required("Vui lòng điền vào trường trống"),
-                    emailOrder: Yup.string().required(
-                      "Vui lòng điền vào trường trống"
-                    ),
-                    phone: Yup.string().required(
-                      "Vui lòng điền vào trường trống"
-                    ),
-                    address: Yup.string().required(
-                      "Vui lòng điền vào trường trống"
-                    ),
-                  })}
-                  onSubmit={(values) => {
-                    // HandleLogin(values);
+              <div className="flex gap-5">
+                <IconContext.Provider
+                  value={{
+                    size: "70px",
                   }}
                 >
-                  {(formik) => {
-                    console.log(formik.values);
-                    return (
-                      <Form className="">
-                        <Input
-                          type="text"
-                          name="fullname"
-                          placeholder="Họ và tên"
-                          id="fullname"
-                        ></Input>
-                        <div className="grid grid-cols-5 gap-5 w-full">
-                          <div className="col-span-3 w-full ">
-                            <Input
-                              type="email"
-                              name="emailOrder"
-                              placeholder="Email"
-                              id="emailOrder"
-                            ></Input>
-                          </div>
-                          <div className="col-start-4 col-span-2 w-full ">
-                            <Input
-                              type="text"
-                              name="phone"
-                              placeholder="Điện thoại"
-                              id="phone"
-                            ></Input>
-                          </div>
-                        </div>
-                        <Input
-                          type="text"
-                          name="address"
-                          placeholder="Địa chỉ"
-                          id="address"
-                        ></Input>
-                        <div className="grid place-items-end ">
-                          <button
-                            className="w-[400px] h-20 mt-10 p-4 text-2xl text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl 
-                          "
-                            onClick={() => {
-                              Navigate("/method");
-                            }}
-                          >
-                            Phương thức thanh toán
-                          </button>
-                        </div>
-                        <div className="pl-20 w-full"></div>
-                      </Form>
-                    );
-                  }}
-                </Formik>
+                  <div className=" text-cyan-600 flex items-center">
+                    <IoIosCheckmarkCircleOutline />
+                  </div>
+                </IconContext.Provider>
+                <div>
+                  <div className=" text-3xl pb-2">Đặt hàng thành công!</div>
+                  <div className="text-xl pb-1">Mã đơn hàng CCO108674</div>
+                  <div className="text-xl pb-1">Cảm ơn bạn đã mua hàng!</div>
+                </div>
               </div>
-              {/* <hr className="mx-5"></hr> */}
+              <div className="p-5 mt-5 text-lg text-slate-900 border rounded-xl">
+                <div className="text-2xl pb-3 font-medium">
+                  Thông tin đơn hàng
+                </div>
+                <div className="text-xl pb-3 font-medium">
+                  Thông tin vận chuyển
+                </div>
+                <div className="text-xl pb-3">Tên người nhận: Quốc Anh</div>
+                <div className="text-xl pb-3">Điện thoại: 0933090546</div>
+                <div className="text-xl pb-3">Email: oruku8888@gmail.com</div>
+                <div className="text-xl pb-3">Địa chỉ</div>
+                <div className="text-xl pb-3">Huyện ...</div>
+                <div className="text-xl pb-3">Tỉnh ...</div>
+                <div className="text-xl pb-3">Việt Nam</div>
+                <div className="text-xl py-3 font-medium">
+                  Phương thức thanh toán
+                </div>
+                <div className="text-xl pb-3">
+                  Thanh toán khi giao hàng {"COD"}
+                </div>
+              </div>
             </div>
 
             <div className="pl-20">
@@ -177,4 +132,4 @@ const CheckOrder = () => {
   );
 };
 
-export default CheckOrder;
+export default CompleteOrder;

@@ -23,7 +23,7 @@ const DropDown = () => {
   };
   const Navigate = useNavigate();
   return (
-    <div className="h-screen w-72 overflow-auto bg-teal-600 top-0 bottom-0 left-0 text-slate-200">
+    <div className="h-screen w-72 overflow-auto bg-teal-600 top-0 bottom-0 left-0 text-slate-200 text-lg">
       <div className="h-24"></div>
       <Menu
         onClick={onClickHandlerUser}
@@ -40,7 +40,7 @@ const DropDown = () => {
       >
         {DropdownList([
           <Button
-            className="text-left bg-gray-600 rounded-none"
+            className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
             onClick={() => Navigate("/customerlist")}
           >
             Danh sách khách hàng
@@ -60,13 +60,13 @@ const DropDown = () => {
       >
         {DropdownList([
           <Button
-            className="text-left bg-gray-600 rounded-none"
+            className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
             onClick={() => Navigate("/productlist")}
           >
             Danh sách sản phẩm
           </Button>,
           <Button
-            className="text-left bg-gray-600 rounded-none"
+            className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
             onClick={() => Navigate("/warehouse")}
           >
             Quản lý kho
@@ -86,7 +86,7 @@ const DropDown = () => {
       >
         {DropdownList([
           <Button
-            className="text-left bg-gray-600 rounded-none"
+            className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
             onClick={() => Navigate("/order")}
           >
             Danh sách đơn hàng

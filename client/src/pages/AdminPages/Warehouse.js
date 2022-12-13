@@ -4,30 +4,27 @@ import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 import DropDown from "../../components/DropDown";
 import React from "react";
 import Button from "../../components/Button";
-import HeaderAdmin from "../../layouts/HeaderAdmin";
+import HeaderUser from "../../layouts/HeaderUser";
 import menu from "../../components/menu";
 
 const Warehouse = () => {
   return (
-    <div className="w-screen h-auto flex">
+    <div className="w-screen h-auto flex text-lg">
       <DropDown></DropDown>
-      <div className="w-full">
-        <HeaderAdmin></HeaderAdmin>
-        <div className="w-full h-[90%] bg-slate-50 pt-5 text-slate-700 ">
+      <div className="w-full text-lg">
+        <HeaderUser></HeaderUser>
+        <div className="w-full h-[90%] bg-slate-50 pt-32 text-slate-700 ">
           <div className=" border w-[95%] rounded-lg h-[95%] mx-auto drop-shadow-xl">
-            <div className="bg-white h-32 rounded-t-lg">
+            <div className="bg-white h-36 rounded-t-lg">
               <div>
                 <div className="grid grid-cols-6">
-                  <div className="col-start-1 col-span-5 py-4 pl-6 text-base font-semibold">
+                  <div className="col-start-1 col-span-5 pt-4  pl-6 text-2xl font-semibold">
                     Tất cả sản phẩm
                   </div>
-                  <Button className="bg-teal-400 text-center h-10 py-2 px-1 w-32 mx-auto border hover:border-violet-200 drop-shadow-lg hover:drop-shadow-xl">
-                    Thêm sản phẩm
-                  </Button>
                 </div>
                 <div>
                   <div className="flex">
-                    <div className="mt-4 ml-6 h-10 w-80 border border-teal-500 hover:border-teal-300 rounded flex cursor-pointer ">
+                    <div className="mt-4 ml-6 h-14 w-80 border border-teal-500 hover:border-teal-300 rounded flex cursor-pointer ">
                       <div className="grid place-items-center">
                         <FontAwesomeIcon
                           className="ml-5"
@@ -40,7 +37,7 @@ const Warehouse = () => {
                         placeholder="Tìm kiếm theo tên sản phẩm"
                       />
                     </div>
-                    <div className="mt-4 ml-6 h-10 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
+                    <div className="mt-4 ml-6 h-14 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
                       <Dropdown overlay={menu[0]} placement="bottom">
                         <div className="grid place-items-center w-40 rounded">
                           Trạng thái
@@ -48,7 +45,7 @@ const Warehouse = () => {
                       </Dropdown>
                     </div>
 
-                    <div className="mt-4 ml-6 h-10 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
+                    <div className="mt-4 ml-6 h-14 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
                       <Dropdown overlay={menu[1]} placement="bottom">
                         <div className="grid place-items-center w-36 rounded">
                           Loại
@@ -56,7 +53,7 @@ const Warehouse = () => {
                       </Dropdown>
                     </div>
 
-                    <div className="mt-4 ml-6 h-10 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
+                    <div className="mt-4 ml-6 h-14 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
                       <Dropdown overlay={menu[2]} placement="bottom">
                         <div className="grid place-items-center w-36 rounded">
                           Giá
@@ -68,13 +65,13 @@ const Warehouse = () => {
               </div>
             </div>
             <div className="bg-white rounded-b-lg">
-              <table className="w-full h-[370px] table-auto text-sm text-neutral-700">
+              <table className="w-full h-[370px] table-auto text-neutral-700">
                 <thead className="h-12">
                   <tr className="bg-slate-100">
                     <th className="w-10">
                       <input
                         type="checkbox"
-                        className=" checked:bg-blue-500 cursor-pointer"
+                        className=" checked:bg-blue-500 cursor-pointer h-6 w-6"
                       />
                     </th>
                     <th className="w-12">Ảnh</th>
@@ -90,7 +87,7 @@ const Warehouse = () => {
                     <td className="text-center">
                       <input
                         type="checkbox"
-                        className=" checked:bg-blue-500 cursor-pointer"
+                        className=" checked:bg-blue-500 cursor-pointer h-6 w-6"
                       />
                     </td>
                     <td>

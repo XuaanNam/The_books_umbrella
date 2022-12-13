@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import PropTypes from "prop-types";
 import { signInUser } from "../redux-toolkit/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Input from "../components/Input";
 
 const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
   const user = useSelector((state) => state.user);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const HandleLogin = (values) => {
-    console.log("value", values)
+    console.log("value", values);
     dispatch(signInUser(values));
+
     handleClose();
   };
   return (
@@ -21,7 +23,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
         className="absolute inset-0 bg-black bg-opacity-60 overlay"
         onClick={handleClose}
       ></div>
-      <div className="relative z-10 w-full p-10 bg-white rounded-lg modal-content max-w-[482px]">
+      <div className="relative z-10 p-10 bg-white rounded-xl modal-content h-[450px] w-[700px]">
         <span
           className="absolute top-0 right-0 flex items-center justify-center w-10 h-10 p-1 bg-white rounded-full cursor-pointer -translate-y-2/4 translate-x-2/4 hover:bg-gray-200"
           onClick={handleClose}
@@ -46,49 +48,52 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
         <Formik
           initialValues={{
             email: "",
-            passWord: "",
+            password: "",
           }}
           validationSchema={Yup.object({
             email: Yup.string()
               .max(20, "Tên đăng nhập chứa tối đa 20 ký tự")
               .required("Vui lòng điền vào trường trống"),
-            passWord: Yup.string()
+            password: Yup.string()
               .required("Vui lòng điền vào trường trống")
               .min(8, "Mật khẩu chứa ít nhất 8 ký tự"),
           })}
           onSubmit={(values) => {
+            console.log(values);
             HandleLogin(values);
           }}
         >
-          <Form>
-            <div className="w-full h-14 rounded-xl text-lg mb-2">
-              <Field
-                className="w-[95%] h-[90%] border border-sky-500 hover:border-2  outline-none p-2 rounded-xl"
-                type="text"
-                label="Email"
-                name="email"
-                placeholder="Nhập email"
-                id="email"
-              ></Field>
-            </div>
-            <div className="w-full h-14 rounded-xl text-lg mb-5">
-              <Field
-                className="w-[95%] h-[90%] border border-sky-500 hover:border-2 outline-none p-2 rounded-xl"
-                type="password"
-                label="Mật khẩu"
-                name="passWord"
-                placeholder="Nhập mật khẩu"
-                id="passWord"
-              ></Field>
-            </div>
+          {(formik) => {
+            return (
+              <Form className="">
+                <div className="w-full h-14 rounded-xl text-lg mb-5">
+                  <Input
+                    className="w-full h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    id="email"
+                  ></Input>
+                </div>
+                <div className="w-full h-14 rounded-xl text-lg mb-5">
+                  <Input
+                    className="w-full h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
+                    type="password"
+                    name="password"
+                    placeholder="Mật khẩu"
+                    id="password"
+                  ></Input>
+                </div>
 
-            <button className="w-full p-4 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg ">
-              Đăng nhập
-            </button>
-          </Form>
+                <button className="w-full mt-3 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl ">
+                  Đăng nhập
+                </button>
+              </Form>
+            );
+          }}
         </Formik>
         <div
-          className="text-base text-slate-600 mt-5 cursor-pointer w-60"
+          className="text-xl text-slate-600 mt-5 cursor-pointer w-full"
           onClick={handleRegister}
         >
           Chưa có tài khoản? Đăng ký ngay

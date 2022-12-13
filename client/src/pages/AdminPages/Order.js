@@ -3,7 +3,7 @@ import DropDown from "../../components/DropDown";
 
 import { DatePicker, Space } from "antd";
 import moment from "moment";
-import HeaderAdmin from "../../layouts/HeaderAdmin";
+import HeaderUser from "../../layouts/HeaderUser";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "DD/MM/YYYY";
@@ -19,20 +19,20 @@ const customWeekStartEndFormat = (value) =>
 const Order = () => {
   const [translate, setTranslate] = useState("translate-x-[0px]");
   return (
-    <div className="w-screen h-auto flex">
+    <div className="w-screen h-auto flex text-lg">
       <DropDown></DropDown>
-      <div className="w-full">
-        <HeaderAdmin></HeaderAdmin>
-        <div className="w-full text-slate-700 h-[90%] bg-slate-50 pt-5">
+      <div className="w-full text-lg">
+        <HeaderUser></HeaderUser>
+        <div className="w-full text-slate-700 h-[90%] bg-slate-50 pt-32">
           <div className=" border w-[95%] rounded-lg h-[95%] mx-auto drop-shadow-xl">
-            <div className="flex gap-5 bg-white p-4 rounded-t-lg">
+            <div className="flex gap-5 bg-white h-28 p-4 rounded-t-lg">
               <span className="grid place-items-center font-medium">
                 Lọc theo ngày:
               </span>
-              <div>
-                <Space direction="vertical" size={12}>
+              <div className="flex items-center text-lg">
+                <Space direction="vertical" size={16}>
                   <RangePicker
-                    className="text-center grid place-items-center"
+                    className="text-center grid place-items-center text-lg"
                     defaultValue={[
                       moment("27/10/2022", dateFormat),
                       moment("27/10/2022", dateFormat),
@@ -52,27 +52,27 @@ const Order = () => {
                 </div>
                 <div
                   className="w-full h-full grid place-items-center hover:bg-gray-100 cursor-pointer"
-                  onClick={() => setTranslate("translate-x-[247px]")}
+                  onClick={() => setTranslate("translate-x-[396px]")}
                 >
                   Đang giao hàng
                 </div>
                 <div
                   className="w-full h-full grid place-items-center hover:bg-gray-100 cursor-pointer"
-                  onClick={() => setTranslate("translate-x-[494px]")}
+                  onClick={() => setTranslate("translate-x-[792px]")}
                 >
                   Đã xác nhận
                 </div>
                 <div
                   className="w-full h-full grid place-items-center hover:bg-gray-100 cursor-pointer"
-                  onClick={() => setTranslate("translate-x-[741px]")}
+                  onClick={() => setTranslate("translate-x-[1188px]")}
                 >
                   Đơn trả
                 </div>
               </div>
               <div
-                className={`w-[247px] h-0.5 bg-sky-700 transition-all ${translate}`}
+                className={`w-[396px] h-0.5 bg-sky-700 transition-all ${translate}`}
               ></div>
-              <table className="w-full h-[370px] table-auto text-sm text-neutral-700">
+              <table className="w-full h-[370px] table-auto text-lg text-neutral-700">
                 <thead className="h-12 bg-slate-100 w-full">
                   <tr className="w-full">
                     <th className="w-28">Mã đơn hàng</th>

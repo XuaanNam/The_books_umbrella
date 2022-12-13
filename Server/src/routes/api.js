@@ -14,6 +14,9 @@ router.get('/isauth', PassportCheck, api.isAuth);
 router.get('/products', api.getProducts);
 router.get('/cart', PassportCheck, api.getCart);
 router.post('/cart/added', PassportCheck, api.addToCart);
+router.post('/cart/added', PassportCheck, api.addToCart);
+router.post('/cart/added', PassportCheck, api.addToCart);
+
 
 
 

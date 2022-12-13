@@ -19,9 +19,9 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    totalPrice(state, action) {
+    listOrder(state, action) {
       action.payload.map((item) => {
-        if (item.isChecked === true) state.orderItems.push(item);
+        if (item.isChecked) state.orderItems.push(item);
         return state;
       });
       localStorage.setItem("orderItems", JSON.stringify(state.orderItems));
@@ -105,6 +105,7 @@ const cartSlice = createSlice({
       });
     },
     getTotals(state, action) {
+      localStorage.clear("orderItems");
       let { total, quantity } = state.cartItems.reduce(
         (cartTotal, cartItem) => {
           const { price, cartQuantity } = cartItem;
@@ -123,6 +124,7 @@ const cartSlice = createSlice({
       total = parseFloat(total.toFixed(2));
       state.cartTotalQuantity = quantity;
       state.cartTotalAmount = total;
+      console.log(total);
     },
     clearCart(state, action) {
       state.cartItems = [];
@@ -133,7 +135,7 @@ const cartSlice = createSlice({
 });
 
 export const {
-  totalPrice,
+  listOrder,
   increment,
   decrement,
   addToCart,
