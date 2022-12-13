@@ -123,6 +123,124 @@ add foreign key (productId) references product(id);
 alter table cart add foreign key (customerId) references customerdata(id), 
 add foreign key (productId) references product(id);
 
+-- ========================================================= Trigger View Proccedure ============================================================
+
+-- call getProductByKeywords('%ănn%')
+delimiter $$
+create view ListProducts as
+select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+	c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+from bookgenredata b 
+inner join product p on p.id = b.productId 
+inner join productgenres g on g.id = b.productGenreId 
+inner join classifypublishers c on c.id = p.publisher 
+inner join productform f on f.id = p.form 
+inner join classifyproducts cp on cp.id = g.classifyProductsId
+$$
+
+delimiter $$
+create procedure getProductById(IN id int )
+begin
+    select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+			c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+    from bookgenredata b 
+	inner join product p on p.id = b.productId 
+	inner join productgenres g on g.id = b.productGenreId 
+	inner join classifypublishers c on c.id = p.publisher 
+	inner join productform f on f.id = p.form 
+	inner join classifyproducts cp on cp.id = g.classifyProductsId
+    WHERE p.id = id;
+end$$ 
+ 
+delimiter $$
+create procedure getProductByKeywords(IN keywords text )
+begin
+    select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+			c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+    from bookgenredata b 
+	inner join product p on p.id = b.productId 
+	inner join productgenres g on g.id = b.productGenreId 
+	inner join classifypublishers c on c.id = p.publisher 
+	inner join productform f on f.id = p.form 
+	inner join classifyproducts cp on cp.id = g.classifyProductsId
+    WHERE p.productName like  keywords  
+			or g.genre like keywords 
+            or cp.typeOfBooks like keywords 
+            or p.author like keywords 
+            or p.translator like keywords
+            or p.description like keywords;
+end$$ -- drop procedure getProductByKeywords
+
+delimiter $$
+create procedure getProductsByGenre(IN genre int )
+begin
+    select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+			c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+    from bookgenredata b 
+	inner join product p on p.id = b.productId 
+	inner join productgenres g on g.id = b.productGenreId 
+	inner join classifypublishers c on c.id = p.publisher 
+	inner join productform f on f.id = p.form 
+	inner join classifyproducts cp on cp.id = g.classifyProductsId
+    WHERE b.productGenreId = genre;
+end$$ -- drop procedure getProductsByGenre            
+
+delimiter $$
+create procedure getProductsByPrice(IN price double )
+begin
+    select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+			c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+    from bookgenredata b 
+	inner join product p on p.id = b.productId 
+	inner join productgenres g on g.id = b.productGenreId 
+	inner join classifypublishers c on c.id = p.publisher 
+	inner join productform f on f.id = p.form 
+	inner join classifyproducts cp on cp.id = g.classifyProductsId
+    WHERE p.price = price;
+end$$ -- drop procedure getProductsByPrice   
+
+delimiter $$
+create procedure getProductsByPublisher(IN publisher int )
+begin
+    select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+			c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+    from bookgenredata b 
+	inner join product p on p.id = b.productId 
+	inner join productgenres g on g.id = b.productGenreId 
+	inner join classifypublishers c on c.id = p.publisher 
+	inner join productform f on f.id = p.form 
+	inner join classifyproducts cp on cp.id = g.classifyProductsId
+    WHERE p.publisher = publisher;
+end$$ -- drop procedure getProductsByPublisher   
+
+delimiter $$
+create procedure getProductsByForm(IN form int )
+begin
+    select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+			c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+    from bookgenredata b 
+	inner join product p on p.id = b.productId 
+	inner join productgenres g on g.id = b.productGenreId 
+	inner join classifypublishers c on c.id = p.publisher 
+	inner join productform f on f.id = p.form 
+	inner join classifyproducts cp on cp.id = g.classifyProductsId
+    WHERE p.form = form;
+end$$ 
+
+delimiter $$
+create procedure getProductsByAge(IN age int )
+begin
+    select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+			c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+    from bookgenredata b 
+	inner join product p on p.id = b.productId 
+	inner join productgenres g on g.id = b.productGenreId 
+	inner join classifypublishers c on c.id = p.publisher 
+	inner join productform f on f.id = p.form 
+	inner join classifyproducts cp on cp.id = g.classifyProductsId
+    WHERE p.age = age;
+end$$ 
+
 -- ========================================================= SAMPLE DATA ============================================================
 
 INSERT INTO `thebooksumbrella`.`customergenres` (`id`, `genre`) VALUES 
@@ -170,7 +288,7 @@ INSERT INTO `thebooksumbrella`.`classifypublishers` (`id`, `publisher`) VALUES
 ('3', 'Skybooks'),
 ('4', 'NXB Hội Nhà Văn'),
 ('5', 'NXB Phụ Nữ'),
-('6', 'NXB Văn học'),
+('6', 'NXB Văn Học'),
 ('7', 'NXB Thế Giới'),
 ('8', 'NXB Hà Nội'),
 ('9', 'NXB Hồng Đức'),
@@ -311,4 +429,8 @@ INSERT INTO `thebooksumbrella`.`product` (`image`, `productName`, `chapter`, `au
 ('57', '19'),
 ('58', '20'),
 ('59', '20'),
-('60', '20');
+('60', '20'),
+('1', '4');
+
+
+

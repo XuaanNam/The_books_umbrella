@@ -138,14 +138,7 @@ class API {
 
     //[GET] /api/products
     getProducts(req, res, next) {
-        const selectSql = "select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, " +
-                        "p.price, c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description " +
-                        "from bookgenredata b " +
-                        "inner join product p on p.id = b.productId " +
-                        "inner join productgenres g on g.id = b.productGenreId " +
-                        "inner join classifypublishers c on c.id = p.publisher " + 
-                        "inner join productform f on f.id = p.form " +
-                        "inner join classifyproducts cp on cp.id = g.classifyProductsId";
+        const selectSql = "select * from ListProducts";
 
         const message = "Lỗi hệ thống, vui lòng thử lại!"
         pool.query(selectSql, function (error, results, fields) {
@@ -153,9 +146,50 @@ class API {
                 res.status(200).send({ message, checked: false });
             } else {
                 if (results.length > 0) {
-                    res.send({results, checked: true});
+                    res.send(results);
                 } else {
                     res.send({ message, checked: false});
+                }
+            }
+        });
+    }
+
+    //[GET] /api/products/detail/:id
+    getProductById(req, res, next) {
+        const id = req.params.id;
+        
+            const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
+            const selectSql = "call getProductById(?)";
+    
+            pool.query(selectSql, id, function (error, results, fields) {
+                if (error) {
+                    res.status(200).send({ message: errorMgs, checked: false});
+                } else {
+                    if (results[0].length > 0) {
+                        res.send({results: results[0], checked: true});
+                    } else {
+                        res.send({ message: errorMgs, checked: false});
+                    }
+                }
+            });
+    }
+    
+    //[GET] /api/products/search/keywords
+    getProductsByKeywords(req, res, next){
+        const keywords = '%' + req.query.keywords + '%';
+    
+        const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
+        const nullMgs = "Không tìm thấy sản phẩm nào!";
+        const selectSql = "call getProductByKeywords(?)";
+                        
+        pool.query(selectSql, keywords, function (error, results, fields) {
+            if (error) {
+                res.status(200).send({ message: errorMgs, checked: false });
+            } else {
+                if (results[0].length > 0) {
+                    res.send({results: results[0], checked: true});
+                } else {
+                    res.send({ message: nullMgs, checked: false });
                 }
             }
         });
@@ -166,24 +200,16 @@ class API {
         const genre = req.query.genre;
     
         const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
-        const selectSql = "select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, " +
-                        "p.price, c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description " +
-                        "from bookgenredata b " +
-                        "inner join product p on p.id = b.productId " +
-                        "inner join productgenres g on g.id = b.productGenreId " +
-                        "inner join classifypublishers c on c.id = p.publisher " + 
-                        "inner join productform f on f.id = p.form " +
-                        "inner join classifyproducts cp on cp.id = g.classifyProductsId " +
-                        "where productGenreId = ?";
+        const selectSql = "call getProductsByGenre(?)";
 
         pool.query(selectSql, genre, function (error, results, fields) {
             if (error) {
-                res.status(200).send({ errorMgs, checked: false });
+                res.status(200).send({ message: errorMgs, checked: false });
             } else {
-                if (results.length > 0) {
-                    res.send({results, checked: true});
+                if (results[0].length > 0) {
+                    res.send({results: results[0], checked: true});
                 } else {
-                    res.send({ errorMgs, checked: false });
+                    res.send({ message: errorMgs, checked: false });
                 }
             }
         });
@@ -194,24 +220,16 @@ class API {
         const price = req.query.price;
     
         const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
-        const selectSql = "select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, " +
-                        "p.price, c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description " +
-                        "from bookgenredata b " +
-                        "inner join product p on p.id = b.productId " +
-                        "inner join productgenres g on g.id = b.productGenreId " +
-                        "inner join classifypublishers c on c.id = p.publisher " + 
-                        "inner join productform f on f.id = p.form " +
-                        "inner join classifyproducts cp on cp.id = g.classifyProductsId " +
-                        "where p.price = ?";
+        const selectSql = "call getProductsByPrice(?)";
 
         pool.query(selectSql, price, function (error, results, fields) {
             if (error) {
-                res.status(200).send({ errorMgs, checked: false});
+                res.status(200).send({ message: errorMgs, checked: false});
             } else {
-                if (results.length > 0) {
-                    res.send({results, checked: true});
+                if (results[0].length > 0) {
+                    res.send({results: results[0], checked: true});
                 } else {
-                    res.send({ errorMgs, checked: false});
+                    res.send({ message: errorMgs, checked: false});
                 }
             }
         });
@@ -222,24 +240,16 @@ class API {
         const publisher = req.query.publisher;
     
         const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
-        const selectSql = "select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, " +
-                        "p.price, c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description " +
-                        "from bookgenredata b " +
-                        "inner join product p on p.id = b.productId " +
-                        "inner join productgenres g on g.id = b.productGenreId " +
-                        "inner join classifypublishers c on c.id = p.publisher " + 
-                        "inner join productform f on f.id = p.form " +
-                        "inner join classifyproducts cp on cp.id = g.classifyProductsId " +
-                        "where p.publisher = ?";
+        const selectSql = "call getProductsByPublisher(?)";
 
         pool.query(selectSql, publisher, function (error, results, fields) {
             if (error) {
-                res.status(200).send({ errorMgs, checked: false});
+                res.status(200).send({ message: errorMgs, checked: false});
             } else {
                 if (results.length > 0) {
-                    res.send({results, checked: true});
+                    res.send({results: results[0], checked: true});
                 } else {
-                    res.send({ errorMgs, checked: false});
+                    res.send({ message: errorMgs, checked: false});
                 }
             }
         });
@@ -251,24 +261,16 @@ class API {
     
         const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
         const msg = "Có vẻ như không có sản phẩm nào phù hợp!";
-        const selectSql = "select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, " +
-                        "p.price, c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description " +
-                        "from bookgenredata b " +
-                        "inner join product p on p.id = b.productId " +
-                        "inner join productgenres g on g.id = b.productGenreId " +
-                        "inner join classifypublishers c on c.id = p.publisher " + 
-                        "inner join productform f on f.id = p.form " +
-                        "inner join classifyproducts cp on cp.id = g.classifyProductsId " +
-                        "where p.form = ?";
+        const selectSql = "call getProductsByForm(?)";
 
         pool.query(selectSql, form, function (error, results, fields) {
             if (error) {
-                res.status(200).send({ errorMgs, checked: false});
+                res.status(200).send({ message: errorMgs, checked: false});
             } else {
-                if (results.length > 0) {
-                    res.send({results, checked: true});
+                if (results[0].length > 0) {
+                    res.send({results: results[0], checked: true});
                 } else {
-                    res.send({ msg, checked: false});
+                    res.send({ message: msg, checked: false});
                 }
             }
         });
@@ -280,24 +282,16 @@ class API {
     
         const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
         const msg = "Có vẻ như không có sản phẩm nào phù hợp!";
-        const selectSql = "select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, " +
-                        "p.price, c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description " +
-                        "from bookgenredata b " +
-                        "inner join product p on p.id = b.productId " +
-                        "inner join productgenres g on g.id = b.productGenreId " +
-                        "inner join classifypublishers c on c.id = p.publisher " + 
-                        "inner join productform f on f.id = p.form " +
-                        "inner join classifyproducts cp on cp.id = g.classifyProductsId " +
-                        "where p.age >= ?";
+        const selectSql = "call getProductsByAge(?)";
 
         pool.query(selectSql, age, function (error, results, fields) {
             if (error) {
-                res.status(200).send({ errorMgs, checked: false});
+                res.status(200).send({ message: errorMgs, checked: false});
             } else {
-                if (results.length > 0) {
-                    res.send({results, checked: true});
+                if (results[0].length > 0) {
+                    res.send({results: results[0], checked: true});
                 } else {
-                    res.send({ msg, checked: false});
+                    res.send({ message: msg, checked: false});
                 }
             }
         });

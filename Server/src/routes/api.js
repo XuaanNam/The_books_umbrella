@@ -12,6 +12,8 @@ router.post('/check/username', api.usernameCheck);
 router.get('/isauth', PassportCheck, api.isAuth);
 
 router.get('/products', api.getProducts);
+router.get('/products/detail/:id', api.getProductById);
+router.get('/products/search/keywords', api.getProductsByKeywords);
 router.get('/products/search/genre', api.getProductsByGenre);
 router.get('/products/search/price', api.getProductsByPrice);
 router.get('/products/search/publisher', api.getProductsByPublisher);
