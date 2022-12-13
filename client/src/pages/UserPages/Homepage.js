@@ -22,9 +22,7 @@ const Homepage = () => {
     dispatch(addToCart(product));
   };
   const Navigate = useNavigate();
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  };
+
   return (
     <div className="text-lg">
       {/* <HeaderUser></HeaderUser> */}
@@ -110,7 +108,7 @@ const Homepage = () => {
           <div className="ml-3 p-2 w-[80%] bg-white rounded drop-shadow-lg">
             <div className="grid grid-cols-2 w-[400px] place-items-center p-5 text-lg">
               <div className="font-medium text-slate-700">Sắp xếp theo</div>
-              <Select
+              {/* <Select
                 className="hover:bg-slate-800 text-lg"
                 defaultValue="Giá bán"
                 style={{
@@ -132,7 +130,7 @@ const Homepage = () => {
                     label: "Bán chạy tháng",
                   },
                 ]}
-              />
+              /> */}
             </div>
 
             <div className="grid grid-cols-4 gap-2">
