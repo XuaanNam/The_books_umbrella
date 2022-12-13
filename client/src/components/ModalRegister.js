@@ -8,10 +8,10 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
   return (
     <>
       <div
-        className="absolute inset-0 bg-black bg-opacity-25 overlay"
+        className="absolute inset-0 bg-black bg-opacity-60 overlay"
         onClick={handleClose}
       ></div>
-      <div className="relative z-10 w-full p-10 bg-white rounded-lg modal-content max-w-[600px]">
+      <div className="relative z-10 p-10 bg-white rounded-xl modal-content h-[500px] w-[850px]">
         <span
           className="absolute top-0 right-0 flex items-center justify-center w-10 h-10 p-1 bg-white rounded-full cursor-pointer -translate-y-2/4 translate-x-2/4 hover:bg-gray-200"
           onClick={handleClose}
@@ -56,8 +56,9 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
           }}
         >
           <Form>
-            <div className="grid grid-cols-2 gap-10">
+            <div className="grid grid-cols-2 gap-6">
               <Input
+                className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
                 type="text"
                 label="Tên đăng nhập"
                 name="userName"
@@ -65,6 +66,7 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
                 id="userName"
               ></Input>
               <Input
+                className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
                 type="password"
                 label="Mật khẩu"
                 name="passWord"
@@ -72,8 +74,9 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
                 id="passWord"
               ></Input>
             </div>
-            <div className="grid grid-cols-2 gap-10">
+            <div className="grid grid-cols-2 gap-6">
               <Input
+                className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
                 type="email"
                 label="Email"
                 name="email"
@@ -81,6 +84,7 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
                 id="email"
               ></Input>
               <Input
+                className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
                 type="text"
                 label="Số điện thoại"
                 name="phoneNumber"
@@ -90,11 +94,11 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
             </div>
           </Form>
         </Formik>
-        <button className="w-full mt-3 p-4 text-base font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg">
+        <button className="w-full mt-8 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg">
           Đăng ký
         </button>
         <div
-          className="text-base text-slate-600 mt-5 cursor-pointer w-52"
+          className="text-xl text-slate-600 mt-5 cursor-pointer w-full"
           onClick={handleLogin}
         >
           Đã có tài khoản? Đăng nhập

@@ -15,11 +15,13 @@ const HeaderUser = () => {
   const [active, setActive] = useState(false);
   const dispatch = useDispatch();
   const Navigate = useNavigate();
-  const username = localStorage.getItem('user');
+  const username = localStorage.getItem("user");
+  const isAuth = localStorage.getItem("auth");
   const handleLogout = () => {
     dispatch(logout());
-    window.location.reload(true);
-    Navigate("/");
+    setTimeout(() => {
+      Navigate("/");
+    }, 1500);
   };
   const user = localStorage.getItem("user");
   // console.log(user);
@@ -32,65 +34,70 @@ const HeaderUser = () => {
         >
           HOMEPAGE
         </a>
-        <div className="col-start-3">
-          <IconContext.Provider
-            value={{
-              size: "40px",
-              color: "white",
-            }}
-          >
-            <Space direction="vertical">
-              <Space wrap>
-                <Dropdown overlay={MenuDropdown} placement="bottomRight">
-                  <button className="h-14 w-20 rounded-xl bg-violet-500 hover:bg-violet-400">
-                    <div className="grid place-items-center">
-                      <FiMenu className="" />
-                    </div>
-                  </button>
-                </Dropdown>
-              </Space>
-            </Space>
-          </IconContext.Provider>
-        </div>
 
-        <div className="col-start-4 col-span-4 h-14 w-[550px] rounded-xl flex cursor-pointer ">
-          <input
-            className="w-[410px] font-normal pl-5 outline-none rounded-xl focus:border-2 focus:border-slate-600"
-            type="text"
-            placeholder="Tìm kiếm sản phẩm"
-          />
-          <div className="grid place-items-center mx-auto">
+        {/* {!isAuth && ( */}
+        <>
+          <div className="col-start-3">
             <IconContext.Provider
               value={{
-                size: "30px",
+                size: "40px",
                 color: "white",
               }}
             >
-              <button className="h-14 w-32 rounded-xl bg-violet-500 hover:bg-violet-400">
-                <div className="grid place-items-center">
-                  <BiSearchAlt className="" />
-                </div>
-              </button>
+              <Space direction="vertical">
+                <Space wrap>
+                  <Dropdown overlay={MenuDropdown} placement="bottomRight">
+                    <button className="h-14 w-20 rounded-xl bg-violet-500 hover:bg-violet-400">
+                      <div className="grid place-items-center">
+                        <FiMenu className="" />
+                      </div>
+                    </button>
+                  </Dropdown>
+                </Space>
+              </Space>
             </IconContext.Provider>
           </div>
-        </div>
-        <a
-          className="col-start-8 grid-cols-2 text-xl place-items-center cursor-pointer hover:drop-shadow-lg"
-          href="/cart"
-        >
-          <IconContext.Provider
-            value={{
-              size: "35px",
-            }}
-          >
-            <div className="grid place-items-center text-slate-100">
-              <IoCart />
+
+          <div className="col-start-4 col-span-4 h-14 w-[550px] rounded-xl flex cursor-pointer ">
+            <input
+              className="w-[410px] font-normal pl-5 outline-none rounded-xl focus:border-2 focus:border-slate-600"
+              type="text"
+              placeholder="Tìm kiếm sản phẩm"
+            />
+            <div className="grid place-items-center mx-auto">
+              <IconContext.Provider
+                value={{
+                  size: "30px",
+                  color: "white",
+                }}
+              >
+                <button className="h-14 w-32 rounded-xl bg-violet-500 hover:bg-violet-400">
+                  <div className="grid place-items-center">
+                    <BiSearchAlt className="" />
+                  </div>
+                </button>
+              </IconContext.Provider>
             </div>
-          </IconContext.Provider>
-          <span className="text-slate-100">Giỏ hàng</span>
-        </a>
+          </div>
+          <a
+            className="col-start-8 grid-cols-2 text-xl place-items-center cursor-pointer hover:drop-shadow-lg"
+            href="/cart"
+          >
+            <IconContext.Provider
+              value={{
+                size: "35px",
+              }}
+            >
+              <div className="grid place-items-center text-slate-100">
+                <IoCart />
+              </div>
+            </IconContext.Provider>
+            <span className="text-slate-100">Giỏ hàng</span>
+          </a>
+        </>
+        {/* )} */}
         {user ? (
-          <div className="relative first-line:col-start-9 hover:text-slate-700 hover:drop-shadow-lg text-black text-xl cursor-pointer">
+          <div className="relative col-start-9 hover:text-slate-700 hover:drop-shadow-lg text-black text-xl cursor-pointer">
             <Space direction="vertical">
               <Space wrap>
                 <Dropdown
@@ -110,7 +117,7 @@ const HeaderUser = () => {
 
                     <div
                       // onClick={() => setShowMenu(true)}
-                      className="text-ellipsis overflow-hidden col-span-2 text-slate-100 font-medium text-2xl"
+                      className="text-ellipsis overflow-hidden col-span-2 text-slate-100 font-medium text-xl"
                     >
                       {username}
                     </div>
@@ -175,79 +182,87 @@ function ProfileDropdown({ handleLogout = () => {} }) {
 }
 function MenuDropdown(props) {
   return (
-    <div className="bg-slate-100 mx-auto grid grid-cols-4 gap-7 grid-rows-2 p-5 rounded-lg drop-shadow-2xl text-base">
+    <div className="bg-slate-100 mx-auto grid grid-cols-4 gap-7 grid-rows-2 p-5 rounded-lg drop-shadow-2xl text-lg">
       <div className="">
-        <div className="text-base font-semibold pb-2 cursor-pointer hover:text-orange-500">
+        <div className="text-xl font-semibold cursor-pointer hover:text-orange-500 pb-2">
           VĂN HỌC
         </div>
-        <div className="cursor-pointer hover:text-orange-500">Tiểu thuyết</div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
+          Tiểu thuyết
+        </div>
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Truyện ngắn - Tản văn
         </div>
-        <div className="cursor-pointer hover:text-orange-500">Light novel</div>
-        <div className="cursor-pointer hover:text-orange-500">Ngôn tình</div>
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
+          Light novel
+        </div>
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
+          Ngôn tình
+        </div>
       </div>
       <div className="">
-        <div className="text-base font-semibold pb-2 cursor-pointer hover:text-orange-500">
+        <div className="text-xl font-semibold cursor-pointer hover:text-orange-500 pb-2">
           KINH TẾ
         </div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Khởi Nghiệp - Làm Giàu
         </div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Quản trị - Lãnh đạo
         </div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Marketing - Bán hàng
         </div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Phân tích kinh tế
         </div>
       </div>
       <div className="">
-        <div className="text-base font-semibold pb-2 cursor-pointer hover:text-orange-500">
+        <div className="text-xl font-semibold cursor-pointer hover:text-orange-500 pb-2">
           TÂM LÝ - KỸ NĂNG SỐNG
         </div>
-        <div className="cursor-pointer hover:text-orange-500">Kỹ năng sống</div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
+          Kỹ năng sống
+        </div>
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Rèn luyện nhân cách
         </div>
-        <div className="cursor-pointer hover:text-orange-500">Tâm lý</div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">Tâm lý</div>
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Sách cho tuổi mới lớn
         </div>
       </div>
       <div className="">
-        <div className="text-base font-semibold pb-2 cursor-pointer hover:text-orange-500">
+        <div className="text-xl font-semibold cursor-pointer hover:text-orange-500 pb-2">
           NUÔI DẠY CON
         </div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Cẩm nang làm mẹ
         </div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Phương pháp giáo dục trẻ em
         </div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Phát triển trí tuệ cho trẻ
         </div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Phát triển kỹ năng cho trẻ
         </div>
       </div>
       <div className="">
-        <div className="text-base font-semibold pb-2 cursor-pointer hover:text-orange-500">
+        <div className="text-xl font-semibold cursor-pointer hover:text-orange-500 pb-2">
           SÁCH THIẾU NHI
         </div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Manga - Comic
         </div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Kiến thức bách khoa
         </div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Tô màu - Luyện chữ
         </div>
-        <div className="cursor-pointer hover:text-orange-500">
+        <div className="cursor-pointer hover:text-orange-500 pb-2">
           Phát triển kỹ năng cho trẻ
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import PropTypes from "prop-types";
@@ -14,6 +14,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
   const HandleLogin = (values) => {
     console.log("value", values);
     dispatch(signInUser(values));
+
     handleClose();
   };
   return (
@@ -22,7 +23,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
         className="absolute inset-0 bg-black bg-opacity-60 overlay"
         onClick={handleClose}
       ></div>
-      <div className="relative z-10 w-full p-10 bg-white rounded-lg modal-content max-w-[482px]">
+      <div className="relative z-10 p-10 bg-white rounded-xl modal-content h-[450px] w-[700px]">
         <span
           className="absolute top-0 right-0 flex items-center justify-center w-10 h-10 p-1 bg-white rounded-full cursor-pointer -translate-y-2/4 translate-x-2/4 hover:bg-gray-200"
           onClick={handleClose}
@@ -63,11 +64,11 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
           }}
         >
           {(formik) => {
-            console.log(formik.values);
             return (
-              <Form>
-                <div className="w-full h-14 rounded-xl text-lg mb-2">
+              <Form className="">
+                <div className="w-full h-14 rounded-xl text-lg mb-5">
                   <Input
+                    className="w-full h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
                     type="email"
                     name="email"
                     placeholder="Email"
@@ -76,6 +77,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
                 </div>
                 <div className="w-full h-14 rounded-xl text-lg mb-5">
                   <Input
+                    className="w-full h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
                     type="password"
                     name="password"
                     placeholder="Mật khẩu"
@@ -83,7 +85,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
                   ></Input>
                 </div>
 
-                <button className="w-full p-4 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg ">
+                <button className="w-full mt-3 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl ">
                   Đăng nhập
                 </button>
               </Form>
@@ -91,7 +93,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
           }}
         </Formik>
         <div
-          className="text-base text-slate-600 mt-5 cursor-pointer w-60"
+          className="text-xl text-slate-600 mt-5 cursor-pointer w-full"
           onClick={handleRegister}
         >
           Chưa có tài khoản? Đăng ký ngay

@@ -43,13 +43,14 @@ const authSlice = createSlice({
     logout: (state, action) => {
       state.token = null;
       localStorage.clear();
+      window.location.reload();
     },
   },
   extraReducers: {
     [signUpUser.pending]: (state, action) => {
       state.loading = true;
     },
-    [signUpUser.fullfilled]: (state, { payload: { error, msg } }) => {
+    [signUpUser.fulfilled]: (state, { payload: { error, msg } }) => {
       state.loading = false;
       if (error) {
         state.error = error;
@@ -80,6 +81,7 @@ const authSlice = createSlice({
         localStorage.setItem("auth", authentication);
         localStorage.setItem("token", token);
         localStorage.setItem("user", username);
+        window.location.reload();
       }
     },
     [signInUser.rejected]: (state, action) => {

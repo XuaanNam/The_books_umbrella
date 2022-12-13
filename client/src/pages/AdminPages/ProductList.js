@@ -18,7 +18,7 @@ const ProductList = () => {
           <div className=" border w-[95%] rounded-lg h-[95%] mx-auto drop-shadow-xl">
             <div className="bg-white h-36 rounded-t-lg">
               <div className="grid grid-cols-6 h-16">
-                <div className="col-start-1 col-span-5 py-4 pl-6 text-2xl font-semibold">
+                <div className="col-start-1 col-span-5 pt-4 pl-6 text-2xl font-semibold">
                   Tất cả sản phẩm
                 </div>
                 <Button className="bg-teal-400 text-center h-12 py-2 px-1 w-40 mx-auto border hover:border-violet-200 drop-shadow-lg hover:drop-shadow-xl">
@@ -27,7 +27,7 @@ const ProductList = () => {
               </div>
               <div>
                 <div className="flex">
-                  <div className="mt-4 ml-6 h-12 w-80 border border-teal-500 hover:border-teal-300 rounded flex cursor-pointer ">
+                  <div className="ml-6 h-14 w-80 border border-teal-500 hover:border-teal-300 rounded flex cursor-pointer ">
                     <div className="grid place-items-center">
                       <FontAwesomeIcon
                         className="ml-5"
@@ -35,19 +35,19 @@ const ProductList = () => {
                       />
                     </div>
                     <input
-                      className="w-full font-normal pl-5 outline-none rounded"
+                      className="w-full h-full font-normal pl-5 outline-none rounded"
                       type="text"
                       placeholder="Tìm kiếm theo tên sản phẩm"
                     />
                   </div>
-                  <div className="mt-4 ml-6 h-12 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
+                  <div className="ml-6 h-14 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
                     <Dropdown overlay={menu[1]} placement="bottom">
                       <div className="grid place-items-center w-36 rounded">
                         Loại
                       </div>
                     </Dropdown>
                   </div>
-                  <div className="mt-4 ml-6 h-12 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
+                  <div className="ml-6 h-14 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
                     <Dropdown overlay={menu[2]} placement="bottomLeft">
                       <div className="grid place-items-center w-36 rounded">
                         Giá
@@ -64,7 +64,7 @@ const ProductList = () => {
                     <th className="w-10">
                       <input
                         type="checkbox"
-                        className=" checked:bg-blue-500 cursor-pointer w-6 h-6"
+                        className=" checked:bg-blue-500 cursor-pointer w-6 h-6 grid mx-auto"
                       />
                     </th>
                     <th className="w-12">Ảnh</th>

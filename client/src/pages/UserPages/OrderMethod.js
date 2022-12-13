@@ -8,10 +8,11 @@ import { totalPrice } from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
 import { useGetAllAddressQuery } from "../../redux-toolkit/addressApi";
 import useSWR from "swr";
-import { Navigate, useNavigate } from "react-router-dom";
+import InputRadio from "../../components/InputRadio";
+import { useNavigate } from "react-router-dom";
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
-const CheckOrder = () => {
+const OrderMethod = () => {
   // const { data, error, isLoading } = useGetAllAddressQuery();
   const { data, error, isLoading } = useSWR(
     "thongtindoanhnghiep.co/api/city",
@@ -45,30 +46,26 @@ const CheckOrder = () => {
               <div className="py-5 text-lg">
                 Giỏ hàng {">"} Thông tin vận chuyển {">"} Phương thức thanh toán
               </div>
-              <div className="pb-7 text-3xl text-slate-900">
-                Thông tin thanh toán
-              </div>
+
               <div className="pb-5 text-lg text-slate-900">
                 <Formik
                   initialValues={{
-                    fullname: "",
-                    emailOrder: "",
-                    phone: "",
-                    address: "",
+                    ship: "fast",
+                    pay: "cod",
                   }}
                   validationSchema={Yup.object({
-                    fullname: Yup.string()
-                      .max(20, "Tên đăng nhập chứa tối đa 20 ký tự")
-                      .required("Vui lòng điền vào trường trống"),
-                    emailOrder: Yup.string().required(
-                      "Vui lòng điền vào trường trống"
-                    ),
-                    phone: Yup.string().required(
-                      "Vui lòng điền vào trường trống"
-                    ),
-                    address: Yup.string().required(
-                      "Vui lòng điền vào trường trống"
-                    ),
+                    ship: Yup.string()
+                      .required("Please select your method shipping")
+                      .oneOf(
+                        ["fast", "save"],
+                        "You can only select fast or save"
+                      ),
+                    pay: Yup.string()
+                      .required("Please select your method payment")
+                      .oneOf(
+                        ["code", "bank"],
+                        "You can only select code or bank"
+                      ),
                   })}
                   onSubmit={(values) => {
                     // HandleLogin(values);
@@ -76,47 +73,68 @@ const CheckOrder = () => {
                 >
                   {(formik) => {
                     console.log(formik.values);
+                    const watchShip = formik.values.ship;
+                    const watchPay = formik.values.pay;
+                    console.log("Rendering formik", watchShip, watchPay);
+
                     return (
                       <Form className="">
-                        <Input
-                          type="text"
-                          name="fullname"
-                          placeholder="Họ và tên"
-                          id="fullname"
-                        ></Input>
-                        <div className="grid grid-cols-5 gap-5 w-full">
-                          <div className="col-span-3 w-full ">
-                            <Input
-                              type="email"
-                              name="emailOrder"
-                              placeholder="Email"
-                              id="emailOrder"
-                            ></Input>
-                          </div>
-                          <div className="col-start-4 col-span-2 w-full ">
-                            <Input
-                              type="text"
-                              name="phone"
-                              placeholder="Điện thoại"
-                              id="phone"
-                            ></Input>
-                          </div>
+                        <div className="pb-7 text-3xl text-slate-900">
+                          Phương thức vận chuyển
                         </div>
-                        <Input
-                          type="text"
-                          name="address"
-                          placeholder="Địa chỉ"
-                          id="address"
-                        ></Input>
+                        <div className="border border-slate-400 rounded-xl">
+                          <InputRadio
+                            type="radio"
+                            name="ship"
+                            id="fastship"
+                            value="fast"
+                            checked={watchShip === "fast" ? true : false}
+                            label="Giao hàng nhanh"
+                            price={30000}
+                          ></InputRadio>
+                          <hr className=""></hr>
+
+                          <InputRadio
+                            type="radio"
+                            name="ship"
+                            id="savingship"
+                            value="save"
+                            checked={watchShip === "save"}
+                            label="Giao hàng tiết kiệm"
+                            price={20000}
+                          ></InputRadio>
+                        </div>
+                        <div className="pt-10 pb-7 text-3xl text-slate-900">
+                          Phương thức thanh toán
+                        </div>
+                        <div className="border border-slate-400 rounded-xl">
+                          <InputRadio
+                            type="radio"
+                            name="pay"
+                            id="cod"
+                            value="cod"
+                            checked={watchPay === "cod"}
+                            label="Thanh toán khi giao hàng (COD)"
+                          ></InputRadio>
+                          <hr className=""></hr>
+
+                          <InputRadio
+                            type="radio"
+                            name="pay"
+                            id="bank"
+                            value="bank"
+                            checked={watchPay === "bank" ? true : false}
+                            label="Chuyển khoản qua ngân hàng"
+                          ></InputRadio>
+                        </div>
                         <div className="grid place-items-end ">
                           <button
-                            className="w-[400px] h-20 mt-10 p-4 text-2xl text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl 
-                          "
+                            className="w-[200px] h-20 mt-10 p-4 text-2xl text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl "
                             onClick={() => {
-                              Navigate("/method");
+                              Navigate("/complete");
                             }}
                           >
-                            Phương thức thanh toán
+                            Đặt hàng
                           </button>
                         </div>
                         <div className="pl-20 w-full"></div>
@@ -125,7 +143,6 @@ const CheckOrder = () => {
                   }}
                 </Formik>
               </div>
-              {/* <hr className="mx-5"></hr> */}
             </div>
 
             <div className="pl-20">
@@ -177,4 +194,4 @@ const CheckOrder = () => {
   );
 };
 
-export default CheckOrder;
+export default OrderMethod;

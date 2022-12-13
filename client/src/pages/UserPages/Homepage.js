@@ -33,8 +33,8 @@ const Homepage = () => {
           Trang chủ {">"} Sách Tiếng Việt
         </div>
         <div className="flex mx-5 pb-5 ">
-          <div className="w-[20%] h-[790px] bg-white rounded drop-shadow-md">
-            <div className="p-3 font-medium text-base hover:text-violet-700 cursor-pointer">
+          <div className="w-[20%] h-[810px] bg-white rounded drop-shadow-md">
+            <div className="p-3 font-medium text-lg hover:text-violet-700 cursor-pointer">
               Tất cả thể loại
             </div>
             <div className="pl-5">
@@ -52,7 +52,7 @@ const Homepage = () => {
               </div>
             </div>
             <div className="p-3 border-y">
-              <div className="pb-2 font-medium text-base">Giá</div>
+              <div className="pb-2 font-medium text-lg">Giá</div>
               <div className="pb-2 pl-2 flex hover:text-violet-700 cursor-pointer">
                 <input type="checkbox" className="cursor-pointer" />
                 <div className="pl-3">0đ - 150.000đ</div>
@@ -67,7 +67,7 @@ const Homepage = () => {
               </div>
             </div>
             <div className="p-3 border-b">
-              <div className="pb-2 font-medium text-base">Nhà cung cấp</div>
+              <div className="pb-2 font-medium text-lg">Nhà cung cấp</div>
               <div className="pl-2">
                 <div className="pb-2 hover:text-violet-700 cursor-pointer">
                   Nhà xuất bản Kim Đồng
@@ -81,7 +81,7 @@ const Homepage = () => {
               </div>
             </div>
             <div className="p-3 border-b">
-              <div className="pb-2 font-medium text-base">Độ tuổi</div>
+              <div className="pb-2 font-medium text-lg">Độ tuổi</div>
               <div className="pb-2 pl-2 flex hover:text-violet-700 cursor-pointer">
                 <input type="checkbox" className="cursor-pointer" />
                 <div className="pl-3">16+</div>
@@ -96,7 +96,7 @@ const Homepage = () => {
               </div>
             </div>
             <div className="p-3 border-b">
-              <div className="pb-2 font-medium text-base">Loại bìa</div>
+              <div className="pb-2 font-medium text-lg">Loại bìa</div>
               <div className="pb-2 pl-2 flex hover:text-violet-700 cursor-pointer">
                 <input type="checkbox" className="cursor-pointer" />
                 <div className="pl-3">Bìa cứng</div>
@@ -111,15 +111,16 @@ const Homepage = () => {
             <div className="grid grid-cols-2 w-[400px] place-items-center p-5 text-lg">
               <div className="font-medium text-slate-700">Sắp xếp theo</div>
               <Select
-                className="hover:bg-slate-800"
+                className="hover:bg-slate-800 text-lg"
                 defaultValue="Giá bán"
                 style={{
-                  width: 170,
-                  fontSize: 16,
+                  width: 200,
+                  fontSize: 18,
                 }}
                 onChange={handleChange}
                 options={[
                   {
+                    style: "fontSize",
                     value: "Giá bán",
                     label: "Giá bán",
                   },
@@ -140,13 +141,13 @@ const Homepage = () => {
                 data?.map((product) => (
                   <div
                     key={product.id}
-                    className="px-2 h-[full] transition-all cursor-pointer mb-7"
+                    className="px-2 h-[full] transition-all cursor-pointer mb-5"
                   >
                     <div className="group relative cursor-pointer items-center justify-center overflow-hidden transition-shadow hover:shadow-xl hover:shadow-black/30">
                       <img
-                        className="h-68 w-full object-cover transition-transform duration-500 group-hover:scale-125"
+                        className="max-h-[340px] w-full object-cover transition-transform duration-500 group-hover:scale-125"
                         src={product.image}
-                        alt={product.name}
+                        alt={product.productName}
                       />
                       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black group-hover:from-black/70 group-hover:via-black/60 group-hover:to-black/70"></div>
                       <div className="absolute inset-0 flex translate-y-[60%] flex-col items-center justify-center px-6 transition-all duration-500 group-hover:translate-y-0">
@@ -154,13 +155,13 @@ const Homepage = () => {
                           {product.description}
                         </p>
                         <button
-                          className="rounded-full bg-violet-600 hover:bg-violet-500 p-0.5 mb-2 px-5 py-1 font-com text-base capitalize text-white shadow shadow-black/60"
+                          className="rounded-full bg-violet-600 hover:bg-violet-500 p-0.5 mb-2 px-5 py-1 font-com text-lg capitalize text-white shadow shadow-black/60"
                           onClick={() => Navigate(`/detail/${product.id}`)}
                         >
                           Xem thêm
                         </button>
                         <button
-                          className="rounded-full bg-red-500 hover:bg-red-400 p-0.5 mb-2 px-5 py-1 font-com text-base capitalize text-white shadow shadow-black/60"
+                          className="rounded-full bg-red-500 hover:bg-red-400 p-0.5 mb-2 px-5 py-1 font-com text-lg capitalize text-white shadow shadow-black/60"
                           onClick={() => handleAddToCart(product)}
                         >
                           Thêm vào giỏ
@@ -168,19 +169,20 @@ const Homepage = () => {
                       </div>
                     </div>
                     <a
-                      className="py-2 h-16 cursor-pointer block text-slate-600 text-lg font-medium"
+                      className="p-2 h-16 text-ellipsis overflow-hidden  cursor-pointer block text-slate-600 text-xl"
                       href="./detail"
                     >
-                      {product.name}
+                      {product.productName}
                     </a>
-                    <div className="grid grid-cols-3 px-3">
-                      <span className="col-start-1 col-span-2 text-red-600 font-bold text-lg">
-                        75.000đ
+                    <div className="grid grid-cols-3 px-3 mt-3">
+                      <span className="col-start-1 col-span-2 text-red-500 font-bold text-xl">
+                        {product.price} đ
                       </span>
-                      <div className="bg-gray-600 text-white rounded-xl py-0.5 w-18 text-center text-base">
+                      <div className="bg-gray-600 text-white rounded-xl py-0.5 w-18 text-center text-lg">
                         Tập 11
                       </div>
                     </div>
+                    <hr className="my-5"></hr>
                   </div>
                 ))}
             </div>

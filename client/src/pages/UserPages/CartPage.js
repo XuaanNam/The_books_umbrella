@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import HeaderUser from "../../layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
@@ -6,7 +6,7 @@ import { BsTrash } from "react-icons/bs";
 // import Counter from "../../components/Counter";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  totalPrice,
+  listOrder,
   addToCart,
   clearCart,
   increaseCart,
@@ -15,34 +15,44 @@ import {
   removeFromCart,
 } from "../../redux-toolkit/cartSlice";
 import { useNavigate } from "react-router-dom";
-import ModalLogin from "../../components/ModalLogin";
 
 const CartPage = () => {
   const cart = useSelector((state) => state.cart);
+  // console.log(cart);
   // const initialtotalprice = 0;
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const [carts, setCarts] = useState([]);
   const [disable, setDisable] = useState(true);
-  console.log(carts);
-
+  const [total, setTotal] = useState(0);
   useEffect(() => {
     setCarts(cart.cartItems);
   }, [cart.cartItems]);
+  console.log(carts);
 
-  const [total, setTotal] = useState(0);
   useEffect(() => {
-    let subtotal = 0;
+    let subTotal = 0;
     setDisable(true);
     carts.map((cart) => {
       if (cart.isChecked) {
-        subtotal += cart.price * cart.cartQuantity;
+        subTotal += cart.price * cart.cartQuantity;
         setDisable(false);
       }
-      return total;
+      return subTotal;
     });
-    setTotal(subtotal);
+    setTotal(subTotal);
   }, [carts]);
+  // useEffect(() => {
+  //   setDisable(true);
+  //   carts.map((cart) => {
+  //     if (cart.isChecked) {
+  //       setDisable(false);
+  //       dispatch(getTotals());
+  //     } else {
+  //     }
+  //     return 0;
+  //   });
+  // }, [carts]);
   const handleChange = (e) => {
     const { name, checked } = e.target;
     let tempCart = [];
@@ -69,10 +79,21 @@ const CartPage = () => {
   const handleRemoveFromCart = (product) => {
     dispatch(removeFromCart(product));
   };
-  const handleTotalPrice = (product) => {
-    dispatch(totalPrice(product));
+  const handleOrder = (product) => {
+    let orderArr = [];
+    carts.map((cart) => {
+      if (cart.isChecked) {
+        orderArr.push(cart);
+      }
+      return orderArr;
+    });
+    console.log(orderArr);
+    localStorage.setItem("orderItems", JSON.stringify(orderArr));
+    // const a = JSON.parse(localStorage.getItem("orderItems"));
+    // console.log(a);
     Navigate("/checkout");
   };
+
   const handleClearCart = () => {
     dispatch(clearCart());
   };
@@ -113,7 +134,7 @@ const CartPage = () => {
                   name={cartItem.productName}
                   type="checkbox"
                   className="col-start-1 w-6 h-6 cursor-pointer rounded-lg"
-                  checked={cartItem?.isChecked || false}
+                  checked={cartItem.isChecked || false}
                   onChange={handleChange}
                 />
                 <img
@@ -173,7 +194,7 @@ const CartPage = () => {
                   disable ? "bg-slate-300" : "bg-cyan-700 hover:bg-cyan-600"
                 } p-2 rounded-xl w-96 h-16 text-white text-xl font-medium`}
                 disabled={disable}
-                onClick={() => handleTotalPrice(carts)}
+                onClick={() => handleOrder(carts)}
               >
                 THANH TOÁN
               </button>

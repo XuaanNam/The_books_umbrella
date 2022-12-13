@@ -1,8 +1,10 @@
 import React from "react";
-import { Button, Form, Input, InputNumber } from "antd";
 import DropDown from "../../components/DropDown";
-import HeaderAdmin from "../../layouts/HeaderAdmin";
+import HeaderUser from "../../layouts/HeaderUser";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import Input from "../../components/Input";
 
+import * as Yup from "yup";
 const layout = {
   labelCol: {
     span: 4,
@@ -17,79 +19,105 @@ const Profile = () => {
   };
   return (
     <div className="w-screen h-auto flex">
-      <DropDown></DropDown>
       <div className="w-full">
-        <HeaderAdmin></HeaderAdmin>
-        <div className="h-[90%] bg-slate-100 pt-5">
+        <HeaderUser></HeaderUser>
+        <div className="h-screen bg-slate-100 pt-32">
           <div className="w-full h-full text-slate-700 ">
-            <div className="w-[80%] rounded-lg h-[75%] mx-auto drop-shadow-xl">
-              <div className="bg-white p-12 drop-shadow-xl rounded-t-lg border">
-                <Form
-                  className="block"
-                  {...layout}
-                  name="nest-messages"
-                  onFinish={onFinish}
-                  validateMessages={validateMessages}
+            <div className="w-[1200px] rounded-xl h-[85%] mx-auto drop-shadow-xl">
+              <div className="bg-white h-[700px] p-12 drop-shadow-xl rounded-xl border">
+                <div className="text-2xl font-medium pb-5">
+                  Thông tin tài khoản
+                </div>
+                <Formik
+                  initialValues={{
+                    fullname: "",
+                    emailProfile: "",
+                    phone: "",
+                    address: "",
+                  }}
+                  validationSchema={Yup.object({
+                    fullname: Yup.string()
+                      .max(20, "Tên đăng nhập chứa tối đa 20 ký tự")
+                      .required("Vui lòng điền vào trường trống"),
+                    emailProfile: Yup.string().required(
+                      "Vui lòng điền vào trường trống"
+                    ),
+                    phone: Yup.string().required(
+                      "Vui lòng điền vào trường trống"
+                    ),
+                    address: Yup.string().required(
+                      "Vui lòng điền vào trường trống"
+                    ),
+                  })}
+                  onSubmit={(values) => {
+                    // HandleLogin(values);
+                  }}
                 >
-                  <Form.Item
-                    name={["user", "name"]}
-                    label="Tên người dùng"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    name={["user", "email"]}
-                    label="Email"
-                    rules={[
-                      {
-                        type: "email",
-                      },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    name={["user", "age"]}
-                    label="Phone number"
-                    rules={[
-                      {
-                        type: "number",
-                        min: 0,
-                        max: 99,
-                      },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item name={["user", "address"]} label="Địa chỉ">
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    wrapperCol={{
-                      ...layout.wrapperCol,
-                      offset: 4,
-                    }}
-                  >
-                    <Button
-                      className="w-24 bg-sky-500"
-                      type="primary"
-                      htmlType="submit"
-                    >
-                      Cập nhật
-                    </Button>
-                  </Form.Item>
-                </Form>
+                  {(formik) => {
+                    console.log(formik.values);
+                    return (
+                      <Form className="">
+                        <Input
+                          type="text"
+                          name="fullname"
+                          placeholder="Họ và tên"
+                          id="fullname"
+                        ></Input>
+                        <div className="grid grid-cols-3 gap-5 w-full">
+                          <div className="col-span-2 w-full ">
+                            <Input
+                              type="email"
+                              name="emailProfile"
+                              placeholder="Email"
+                              id="emailProfile"
+                            ></Input>
+                          </div>
+                          <div className="col-start-3 w-full ">
+                            <Input
+                              type="number"
+                              name="phone"
+                              placeholder="Điện thoại"
+                              id="phone"
+                            ></Input>
+                          </div>
+                        </div>
+                        <Input
+                          type="text"
+                          name="address"
+                          placeholder="Địa chỉ"
+                          id="address"
+                        ></Input>
+                        <div className="grid grid-cols-3 w-full">
+                          <div className="grid place-items-center col-start-1">
+                            <button
+                              className="w-[300px] h-14 mt-10 p-3 text-2xl text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl 
+                          "
+                              onClick={() => {}}
+                            >
+                              Đổi mật khẩu
+                            </button>
+                          </div>
+                          <div className="grid place-items-center col-start-3">
+                            <button
+                              className="w-[300px] h-14 mt-10 p-3 text-2xl text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl 
+                          "
+                              onClick={() => {}}
+                            >
+                              Cập nhật
+                            </button>
+                          </div>
+                        </div>
+                        <div className="pl-20 w-full"></div>
+                      </Form>
+                    );
+                  }}
+                </Formik>
               </div>
             </div>
-            <button className="bg-sky-600 text-white p-1.5 rounded hover:bg-sky-400 h-8 ml-28 mt-5">
-              Đổi mật khẩu
-            </button>
           </div>
+          {/* <button className="bg-sky-600 text-white p-1.5 rounded hover:bg-sky-400 h-8 ml-28 mt-5">
+              Đổi mật khẩu
+            </button> */}
         </div>
       </div>
     </div>
