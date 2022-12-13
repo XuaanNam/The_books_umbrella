@@ -7,6 +7,7 @@ const initialState = {
   token: "",
   loading: false,
   error: "",
+  checked: false,
 };
 export const signInUser = createAsyncThunk("signinuser", async (body) => {
   console.log("body", body);
@@ -67,21 +68,24 @@ const authSlice = createSlice({
     },
     [signInUser.fulfilled]: (
       state,
-      { payload: { error, authentication, token, username } }
+      { payload: { error, authentication, token, username, checked, message } }
     ) => {
       if (error) {
         state.error = error;
         state.loading = true;
       } else {
-        state.loading = false;
-
-        state.auth = authentication;
-        state.token = token;
-        state.username = username;
-        localStorage.setItem("auth", authentication);
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", username);
-        window.location.reload();
+        if (checked) {
+          state.loading = false;
+          state.auth = authentication;
+          state.token = token;
+          state.username = username;
+          localStorage.setItem("auth", authentication);
+          localStorage.setItem("token", token);
+          localStorage.setItem("user", username);
+          window.location.reload();
+        } else {
+          state.msg = message;
+        }
       }
     },
     [signInUser.rejected]: (state, action) => {

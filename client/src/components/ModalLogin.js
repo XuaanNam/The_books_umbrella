@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import PropTypes from "prop-types";
@@ -9,24 +9,43 @@ import Input from "../components/Input";
 
 const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
   const user = useSelector((state) => state.user);
+
   const Navigate = useNavigate();
   const dispatch = useDispatch();
-  const HandleLogin = (values) => {
-    console.log("value", values);
-    dispatch(signInUser(values));
+  const formikRef = useRef();
+  console.log(formikRef);
+  let [mess, setMess] = useState("");
+  const HandleLogin = (values, isValid) => {
+    if (isValid) {
+      dispatch(signInUser(values));
+      setMess(user.msg);
+    }
+  };
+
+  console.log(mess);
+  const resetForm = (msg) => {
+    formikRef.current?.resetForm();
+    setMess("");
+    console.log(mess);
 
     handleClose();
   };
+
+  // useEffect(() => {
+  //   if () {
+  //     formikRef.current?.resetForm();
+  //   }
+  // });
   return (
     <>
       <div
         className="absolute inset-0 bg-black bg-opacity-60 overlay"
-        onClick={handleClose}
+        onClick={resetForm}
       ></div>
-      <div className="relative z-10 p-10 bg-white rounded-xl modal-content h-[450px] w-[700px]">
+      <div className="relative z-10 p-10 bg-white rounded-xl modal-content h-[500px] w-[700px]">
         <span
           className="absolute top-0 right-0 flex items-center justify-center w-10 h-10 p-1 bg-white rounded-full cursor-pointer -translate-y-2/4 translate-x-2/4 hover:bg-gray-200"
-          onClick={handleClose}
+          onClick={resetForm}
         >
           <svg
             width="14"
@@ -46,6 +65,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
         </h2>
 
         <Formik
+          innerRef={formikRef}
           initialValues={{
             email: "",
             password: "",
@@ -58,34 +78,36 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
               .required("Vui lòng điền vào trường trống")
               .min(8, "Mật khẩu chứa ít nhất 8 ký tự"),
           })}
-          onSubmit={(values) => {
-            console.log(values);
-            HandleLogin(values);
-          }}
+          onSubmit={(values) => {}}
         >
           {(formik) => {
+            console.log(formik);
             return (
               <Form className="">
-                <div className="w-full h-14 rounded-xl text-lg mb-5">
-                  <Input
-                    className="w-full h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    id="email"
-                  ></Input>
-                </div>
-                <div className="w-full h-14 rounded-xl text-lg mb-5">
-                  <Input
-                    className="w-full h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
-                    type="password"
-                    name="password"
-                    placeholder="Mật khẩu"
-                    id="password"
-                  ></Input>
-                </div>
-
-                <button className="w-full mt-3 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl ">
+                <Input
+                  className="w-full h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  id="email"
+                ></Input>
+                <Input
+                  className="w-full h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
+                  type="password"
+                  name="password"
+                  placeholder="Mật khẩu"
+                  id="password"
+                ></Input>
+                {formik.isValid && user.msg && (
+                  <div className="text-red-500 text-lg">{mess}</div>
+                )}
+                <button
+                  className="w-full mt-3 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl "
+                  type="button"
+                  onClick={() => {
+                    HandleLogin(formik.values, formik.isValid);
+                  }}
+                >
                   Đăng nhập
                 </button>
               </Form>

@@ -17,6 +17,7 @@ const HeaderUser = () => {
   const Navigate = useNavigate();
   const username = localStorage.getItem("user");
   const isAuth = localStorage.getItem("auth");
+  console.log(isAuth);
   const handleLogout = () => {
     dispatch(logout());
     setTimeout(() => {
@@ -35,67 +36,69 @@ const HeaderUser = () => {
           HOMEPAGE
         </a>
 
-        {/* {!isAuth && ( */}
-        <>
-          <div className="col-start-3">
-            <IconContext.Provider
-              value={{
-                size: "40px",
-                color: "white",
-              }}
-            >
-              <Space direction="vertical">
-                <Space wrap>
-                  <Dropdown overlay={MenuDropdown} placement="bottomRight">
-                    <button className="h-14 w-20 rounded-xl bg-violet-500 hover:bg-violet-400">
-                      <div className="grid place-items-center">
-                        <FiMenu className="" />
-                      </div>
-                    </button>
-                  </Dropdown>
-                </Space>
-              </Space>
-            </IconContext.Provider>
-          </div>
-
-          <div className="col-start-4 col-span-4 h-14 w-[550px] rounded-xl flex cursor-pointer ">
-            <input
-              className="w-[410px] font-normal pl-5 outline-none rounded-xl focus:border-2 focus:border-slate-600"
-              type="text"
-              placeholder="Tìm kiếm sản phẩm"
-            />
-            <div className="grid place-items-center mx-auto">
+        {!isAuth || isAuth === "0" ? (
+          <>
+            <div className="col-start-3">
               <IconContext.Provider
                 value={{
-                  size: "30px",
+                  size: "40px",
                   color: "white",
                 }}
               >
-                <button className="h-14 w-32 rounded-xl bg-violet-500 hover:bg-violet-400">
-                  <div className="grid place-items-center">
-                    <BiSearchAlt className="" />
-                  </div>
-                </button>
+                <Space direction="vertical">
+                  <Space wrap>
+                    <Dropdown overlay={MenuDropdown} placement="bottomRight">
+                      <button className="h-14 w-20 rounded-xl bg-violet-500 hover:bg-violet-400">
+                        <div className="grid place-items-center">
+                          <FiMenu className="" />
+                        </div>
+                      </button>
+                    </Dropdown>
+                  </Space>
+                </Space>
               </IconContext.Provider>
             </div>
-          </div>
-          <a
-            className="col-start-8 grid-cols-2 text-xl place-items-center cursor-pointer hover:drop-shadow-lg"
-            href="/cart"
-          >
-            <IconContext.Provider
-              value={{
-                size: "35px",
-              }}
-            >
-              <div className="grid place-items-center text-slate-100">
-                <IoCart />
+
+            <div className="col-start-4 col-span-4 h-14 w-[550px] rounded-xl flex cursor-pointer ">
+              <input
+                className="w-[410px] font-normal pl-5 outline-none rounded-xl focus:border-2 focus:border-slate-600"
+                type="text"
+                placeholder="Tìm kiếm sản phẩm"
+              />
+              <div className="grid place-items-center mx-auto">
+                <IconContext.Provider
+                  value={{
+                    size: "30px",
+                    color: "white",
+                  }}
+                >
+                  <button className="h-14 w-32 rounded-xl bg-violet-500 hover:bg-violet-400">
+                    <div className="grid place-items-center">
+                      <BiSearchAlt className="" />
+                    </div>
+                  </button>
+                </IconContext.Provider>
               </div>
-            </IconContext.Provider>
-            <span className="text-slate-100">Giỏ hàng</span>
-          </a>
-        </>
-        {/* )} */}
+            </div>
+            <a
+              className="col-start-8 grid-cols-2 text-xl place-items-center cursor-pointer hover:drop-shadow-lg"
+              href="/cart"
+            >
+              <IconContext.Provider
+                value={{
+                  size: "35px",
+                }}
+              >
+                <div className="grid place-items-center text-slate-100">
+                  <IoCart />
+                </div>
+              </IconContext.Provider>
+              <span className="text-slate-100">Giỏ hàng</span>
+            </a>
+          </>
+        ) : (
+          <div></div>
+        )}
         {user ? (
           <div className="relative col-start-9 hover:text-slate-700 hover:drop-shadow-lg text-black text-xl cursor-pointer">
             <Space direction="vertical">
