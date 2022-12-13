@@ -12,19 +12,23 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
 
   const dispatch = useDispatch();
   const formikRef = useRef();
-  console.log(formikRef);
   const [mess, setMess] = useState("");
+
+  useEffect(() => { console.log(user)
+    if (user.msg !== "") {
+      setMess(user.msg); 
+    }
+  }, [user]);
+
   const handleLogin = (values, isValid) => {
-    console.log(values);
     if (isValid && values.email !== "" && values.password !== "") {
-      dispatch(signInUser(values));
-      setMess(user.msg);
-    } else if (isValid && values.email === "" && values.password === "") {
+      dispatch(signInUser(values))
+    } 
+    else if (isValid && values.email === "" && values.password === "") {
       setMess("Vui lòng điền vào trường trống");
     }
   };
-
-  console.log(mess);
+  
   const resetForm = () => {
     formikRef.current?.resetForm();
     setMess("");
@@ -80,7 +84,6 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
           }}
         >
           {(formik) => {
-            console.log(formik);
             return (
               <Form className="">
                 <Input
@@ -100,8 +103,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
                 {mess && formik.isValid && (
                   <div className="text-red-500 text-lg">{mess}</div>
                 )}
-                {console.log(mess)}
-
+                
                 <button
                   className="w-full mt-3 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl "
                   type="button"

@@ -20,7 +20,7 @@ const Homepage = () => {
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const { data, error, isLoading } = useGetAllProductsQuery();
-  console.log(data);
+  
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
   };
