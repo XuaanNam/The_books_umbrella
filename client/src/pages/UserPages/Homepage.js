@@ -117,10 +117,9 @@ const Homepage = () => {
                   width: 200,
                   fontSize: 18,
                 }}
-                onChange={handleChange}
+                // onChange={handleChange}
                 options={[
                   {
-                    style: "fontSize",
                     value: "Giá bán",
                     label: "Giá bán",
                   },
