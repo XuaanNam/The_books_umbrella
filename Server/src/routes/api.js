@@ -12,10 +12,18 @@ router.post('/check/username', api.usernameCheck);
 router.get('/isauth', PassportCheck, api.isAuth);
 
 router.get('/products', api.getProducts);
+router.get('/products/search/genre', api.getProductsByGenre);
+router.get('/products/search/price', api.getProductsByPrice);
+router.get('/products/search/publisher', api.getProductsByPublisher);
+router.get('/products/search/age', api.getProductsByAge);
+router.get('/products/search/form', api.getProductsByForm);
+
 router.get('/cart', PassportCheck, api.getCart);
-router.post('/cart/added', PassportCheck, api.addToCart);
-router.post('/cart/added', PassportCheck, api.addToCart);
-router.post('/cart/added', PassportCheck, api.addToCart);
+router.post('/cart/add', PassportCheck, api.addToCart);
+router.post('/cart/remove', PassportCheck, api.removeFromCart);
+router.post('/cart/update', PassportCheck, api.updateCart);
+
+
 
 
 

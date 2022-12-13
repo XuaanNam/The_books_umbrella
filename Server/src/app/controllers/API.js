@@ -32,16 +32,16 @@ class API {
 
         bcrypt.hash(password, saltRound, (err, hash) => {
             if (err) {
-                res.status(200).send({ message: errorMsg });
+                res.status(200).send({ message: errorMsg, checked: false });
             } else {           
                 pool.query(
                     insertSql,
                     [email, username, hash],
                     function (error, results, fields) {
                         if (error) {
-                            res.send({ message: errorMsg });
+                            res.send({ message: errorMsg, checked: false });
                         } else {
-                            res.send({ message: successMsg });
+                            res.send({ message: successMsg, checked: true });
                         }
                     }
                 );
@@ -79,17 +79,18 @@ class API {
                             const token = "Bearer " + encodeToken(payload);
 
                             res.setHeader("isAuth", token);
-                            res.send({ 
+                            res.send({
+                                checked: true, 
                                 token, 
                                 username: results[0].username, 
                                 authentication: results[0].authentication 
                             });
                         } else {
-                            res.status(200).send({ message });
+                            res.status(200).send({ message, checked: false});
                         }
                     });
                 } else {
-                    res.status(200).send({ message });
+                    res.status(200).send({ message, checked: false });
                 }
             }
         });
@@ -137,15 +138,166 @@ class API {
 
     //[GET] /api/products
     getProducts(req, res, next) {
-        const selectSql = "select * from product";
+        const selectSql = "select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, " +
+                        "p.price, c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description " +
+                        "from bookgenredata b " +
+                        "inner join product p on p.id = b.productId " +
+                        "inner join productgenres g on g.id = b.productGenreId " +
+                        "inner join classifypublishers c on c.id = p.publisher " + 
+                        "inner join productform f on f.id = p.form " +
+                        "inner join classifyproducts cp on cp.id = g.classifyProductsId";
+
+        const message = "Lỗi hệ thống, vui lòng thử lại!"
         pool.query(selectSql, function (error, results, fields) {
             if (error) {
-                res.status(200).send({ message: "Kết nối DataBase thất bại" });
+                res.status(200).send({ message, checked: false });
             } else {
-                if (results) {
-                    res.send(results);
+                if (results.length > 0) {
+                    res.send({results, checked: true});
                 } else {
-                    res.send({ message: "Không thể lấy dữ liệu" });
+                    res.send({ message, checked: false});
+                }
+            }
+        });
+    }
+
+    //[GET] /api/products/search/genre
+    getProductsByGenre(req, res, next) {
+        const genre = req.query.genre;
+    
+        const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
+        const selectSql = "select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, " +
+                        "p.price, c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description " +
+                        "from bookgenredata b " +
+                        "inner join product p on p.id = b.productId " +
+                        "inner join productgenres g on g.id = b.productGenreId " +
+                        "inner join classifypublishers c on c.id = p.publisher " + 
+                        "inner join productform f on f.id = p.form " +
+                        "inner join classifyproducts cp on cp.id = g.classifyProductsId " +
+                        "where productGenreId = ?";
+
+        pool.query(selectSql, genre, function (error, results, fields) {
+            if (error) {
+                res.status(200).send({ errorMgs, checked: false });
+            } else {
+                if (results.length > 0) {
+                    res.send({results, checked: true});
+                } else {
+                    res.send({ errorMgs, checked: false });
+                }
+            }
+        });
+    }
+
+    //[GET] /api/products/search/price
+    getProductsByPrice(req, res, next) {
+        const price = req.query.price;
+    
+        const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
+        const selectSql = "select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, " +
+                        "p.price, c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description " +
+                        "from bookgenredata b " +
+                        "inner join product p on p.id = b.productId " +
+                        "inner join productgenres g on g.id = b.productGenreId " +
+                        "inner join classifypublishers c on c.id = p.publisher " + 
+                        "inner join productform f on f.id = p.form " +
+                        "inner join classifyproducts cp on cp.id = g.classifyProductsId " +
+                        "where p.price = ?";
+
+        pool.query(selectSql, price, function (error, results, fields) {
+            if (error) {
+                res.status(200).send({ errorMgs, checked: false});
+            } else {
+                if (results.length > 0) {
+                    res.send({results, checked: true});
+                } else {
+                    res.send({ errorMgs, checked: false});
+                }
+            }
+        });
+    }
+
+    //[GET] /api/products/search/publisher
+    getProductsByPublisher(req, res, next) {
+        const publisher = req.query.publisher;
+    
+        const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
+        const selectSql = "select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, " +
+                        "p.price, c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description " +
+                        "from bookgenredata b " +
+                        "inner join product p on p.id = b.productId " +
+                        "inner join productgenres g on g.id = b.productGenreId " +
+                        "inner join classifypublishers c on c.id = p.publisher " + 
+                        "inner join productform f on f.id = p.form " +
+                        "inner join classifyproducts cp on cp.id = g.classifyProductsId " +
+                        "where p.publisher = ?";
+
+        pool.query(selectSql, publisher, function (error, results, fields) {
+            if (error) {
+                res.status(200).send({ errorMgs, checked: false});
+            } else {
+                if (results.length > 0) {
+                    res.send({results, checked: true});
+                } else {
+                    res.send({ errorMgs, checked: false});
+                }
+            }
+        });
+    }
+
+    //[GET] /api/products/search/form
+    getProductsByForm(req, res, next) {
+        const form = req.query.form;
+    
+        const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
+        const msg = "Có vẻ như không có sản phẩm nào phù hợp!";
+        const selectSql = "select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, " +
+                        "p.price, c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description " +
+                        "from bookgenredata b " +
+                        "inner join product p on p.id = b.productId " +
+                        "inner join productgenres g on g.id = b.productGenreId " +
+                        "inner join classifypublishers c on c.id = p.publisher " + 
+                        "inner join productform f on f.id = p.form " +
+                        "inner join classifyproducts cp on cp.id = g.classifyProductsId " +
+                        "where p.form = ?";
+
+        pool.query(selectSql, form, function (error, results, fields) {
+            if (error) {
+                res.status(200).send({ errorMgs, checked: false});
+            } else {
+                if (results.length > 0) {
+                    res.send({results, checked: true});
+                } else {
+                    res.send({ msg, checked: false});
+                }
+            }
+        });
+    }
+
+    //[GET] /api/products/search/age
+    getProductsByAge(req, res, next) {
+        const age = req.query.age;
+    
+        const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
+        const msg = "Có vẻ như không có sản phẩm nào phù hợp!";
+        const selectSql = "select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, " +
+                        "p.price, c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description " +
+                        "from bookgenredata b " +
+                        "inner join product p on p.id = b.productId " +
+                        "inner join productgenres g on g.id = b.productGenreId " +
+                        "inner join classifypublishers c on c.id = p.publisher " + 
+                        "inner join productform f on f.id = p.form " +
+                        "inner join classifyproducts cp on cp.id = g.classifyProductsId " +
+                        "where p.age >= ?";
+
+        pool.query(selectSql, age, function (error, results, fields) {
+            if (error) {
+                res.status(200).send({ errorMgs, checked: false});
+            } else {
+                if (results.length > 0) {
+                    res.send({results, checked: true});
+                } else {
+                    res.send({ msg, checked: false});
                 }
             }
         });
@@ -171,7 +323,7 @@ class API {
         });
     }
 
-    //[POST] /api/cart/added
+    //[POST] /api/cart/add
     addToCart(req, res, next) {
         const customerId = req.user[0].id;
         const productId = req.body.productId;
@@ -186,16 +338,66 @@ class API {
             function (error, results, fields) {
                 if (error) {
                     if(error.errno = 1062){
-                        res.send({ message: existMsg });
+                        res.send({ message: existMsg, checked: false});
                     } else {
-                        res.send({ message: errorMsg });
+                        res.send({ message: errorMsg, checked: false });
                     }
                 } 
                 else {
-                    if (results.length > 0) {
-                        res.status(200).send({ message: successMsg });
+                    if (results) {
+                        res.status(200).send({ message: successMsg, checked: true });
                     } else {
-                        res.status(200).send({ results });
+                        res.status(200).send({ message: errorMsg, checked: false });
+                    }
+                }
+            }
+        );
+    }
+
+    //[POST] /api/cart/remove
+    removeFromCart(req, res, next) {
+        const customerId = req.user[0].id;
+        const productId = req.body.productId;
+
+        const deleteSql = "delete from cart where customerId = ? and productId = ?";
+        const errorMsg = "Lỗi hệ thống, không thể xóa sản phẩm khỏi giỏ hàng!"
+        const successMsg = "Sản phẩm đã được xóa khỏi giỏ hàng!"
+
+        pool.query(deleteSql, [customerId, productId], 
+            function (error, results, fields) {
+                if (error) {
+                    res.send({ message: errorMsg, checked: false });
+                } 
+                else { 
+                    if (results) {
+                        res.status(200).send({ message: successMsg, checked: true });
+                    } else {
+                        res.status(200).send({ message: errorMsg, checked: false });
+                    }
+                }
+            }
+        );
+    }
+
+    //[POST] /api/cart/update
+    updateCart(req, res, next) {
+        const customerId = req.user[0].id;
+        const productId = req.body.productId;        
+        const quantity = req.body.quantity;
+
+        const updateSql = "update cart set quantity = ? where customerId = ? and productId = ?";
+        const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!"
+
+        pool.query(updateSql, [quantity, customerId, productId], 
+            function (error, results, fields) {
+                if (error) {
+                    res.send({ message: errorMsg, checked: false });
+                } 
+                else { console.log(results)
+                    if (results) {
+                        res.status(200).send({checked: true });
+                    } else {
+                        res.status(200).send({ message: errorMsg, checked: false });
                     }
                 }
             }

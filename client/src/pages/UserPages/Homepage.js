@@ -17,13 +17,13 @@ const Homepage = () => {
   // const { items: products, status } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const { data, error, isLoading } = useGetAllProductsQuery();
-  console.log(data);
+  
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
   };
   const Navigate = useNavigate();
   const handleChange = (value) => {
-    console.log(`selected ${value}`);
+   // console.log(`selected ${value}`);
   };
   return (
     <div className="text-lg">
@@ -120,7 +120,6 @@ const Homepage = () => {
                 onChange={handleChange}
                 options={[
                   {
-                    style: "fontSize",
                     value: "Giá bán",
                     label: "Giá bán",
                   },
@@ -137,54 +136,58 @@ const Homepage = () => {
             </div>
 
             <div className="grid grid-cols-4 gap-2">
-              {data &&
-                data?.map((product) => (
-                  <div
-                    key={product.id}
-                    className="px-2 h-[full] transition-all cursor-pointer mb-5"
-                  >
-                    <div className="group relative cursor-pointer items-center justify-center overflow-hidden transition-shadow hover:shadow-xl hover:shadow-black/30">
-                      <img
-                        className="max-h-[340px] w-full object-cover transition-transform duration-500 group-hover:scale-125"
-                        src={product.image}
-                        alt={product.productName}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black group-hover:from-black/70 group-hover:via-black/60 group-hover:to-black/70"></div>
-                      <div className="absolute inset-0 flex translate-y-[60%] flex-col items-center justify-center px-6 transition-all duration-500 group-hover:translate-y-0">
-                        <p className="h-44 p-2 italic text-ellipsis overflow-hidden  text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                          {product.description}
-                        </p>
-                        <button
-                          className="rounded-full bg-violet-600 hover:bg-violet-500 p-0.5 mb-2 px-5 py-1 font-com text-lg capitalize text-white shadow shadow-black/60"
-                          onClick={() => Navigate(`/detail/${product.id}`)}
-                        >
-                          Xem thêm
-                        </button>
-                        <button
-                          className="rounded-full bg-red-500 hover:bg-red-400 p-0.5 mb-2 px-5 py-1 font-com text-lg capitalize text-white shadow shadow-black/60"
-                          onClick={() => handleAddToCart(product)}
-                        >
-                          Thêm vào giỏ
-                        </button>
-                      </div>
-                    </div>
-                    <a
-                      className="p-2 h-16 text-ellipsis overflow-hidden  cursor-pointer block text-slate-600 text-xl"
-                      href="./detail"
-                    >
-                      {product.productName}
-                    </a>
-                    <div className="grid grid-cols-3 px-3 mt-3">
-                      <span className="col-start-1 col-span-2 text-red-500 font-bold text-xl">
-                        {product.price} đ
-                      </span>
-                      <div className="bg-gray-600 text-white rounded-xl py-0.5 w-18 text-center text-lg">
-                        Tập 11
-                      </div>
-                    </div>
-                    <hr className="my-5"></hr>
-                  </div>
-                ))}
+              {console.log(data)
+
+                // data.results.map((product) => (
+                //   <div
+                //     key={product.id}
+                //     className="px-2 h-[full] transition-all cursor-pointer mb-5"
+                //   >
+                //     <div className="group relative cursor-pointer items-center justify-center overflow-hidden transition-shadow hover:shadow-xl hover:shadow-black/30">
+                //       <img
+                //         className="max-h-[340px] w-full object-cover transition-transform duration-500 group-hover:scale-125"
+                //         src={product.image}
+                //         alt={product.productName}
+                //       />
+                //       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black group-hover:from-black/70 group-hover:via-black/60 group-hover:to-black/70"></div>
+                //       <div className="absolute inset-0 flex translate-y-[60%] flex-col items-center justify-center px-6 transition-all duration-500 group-hover:translate-y-0">
+                //         <p className="h-44 p-2 italic text-ellipsis overflow-hidden  text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                //           {product.description}
+                //         </p>
+                //         <button
+                //           className="rounded-full bg-violet-600 hover:bg-violet-500 p-0.5 mb-2 px-5 py-1 font-com text-lg capitalize text-white shadow shadow-black/60"
+                //           onClick={() => Navigate(`/detail/${product.id}`)}
+                //         >
+                //           Xem thêm
+                //         </button>
+                //         <button
+                //           className="rounded-full bg-red-500 hover:bg-red-400 p-0.5 mb-2 px-5 py-1 font-com text-lg capitalize text-white shadow shadow-black/60"
+                //           onClick={() => handleAddToCart(product)}
+                //         >
+                //           Thêm vào giỏ
+                //         </button>
+                //       </div>
+                //     </div>
+                //     <a
+                //       className="p-2 h-16 text-ellipsis overflow-hidden  cursor-pointer block text-slate-600 text-xl"
+                //       href="./detail"
+                //     >
+                //       {product.productName}
+                //     </a>
+                //     <div className="grid grid-cols-3 px-3 mt-3">
+                //       <span className="col-start-1 col-span-2 text-red-500 font-bold text-xl">
+                //         {product.price} đ
+                //       </span>
+                //       <div className="bg-gray-600 text-white rounded-xl py-0.5 w-18 text-center text-lg">
+                //         Tập 11
+                //       </div>
+                //     </div>
+                //     <hr className="my-5"></hr>
+                //   </div>
+                  
+                // ))
+                
+                }
             </div>
           </div>
         </div>
