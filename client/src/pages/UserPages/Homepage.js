@@ -17,17 +17,15 @@ import {
 
 const Homepage = () => {
   // const { items: products, status } = useSelector((state) => state.products);
+  const Navigate = useNavigate();
   const dispatch = useDispatch();
   const { data, error, isLoading } = useGetAllProductsQuery();
-  
-
+  console.log(data);
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
   };
-  const Navigate = useNavigate();
-  const handleChange = (value) => {
-   // console.log(`selected ${value}`);
-  };
+  const handleChange = (value) => {};
+
   return (
     <div className="text-lg">
       <HeaderUser></HeaderUser>
@@ -139,8 +137,8 @@ const Homepage = () => {
             </div>
 
             <div className="grid grid-cols-4 gap-2">
-              { data &&
-                data.map((product) => (
+              {data &&
+                data?.map((product) => (
                   <div
                     key={product.id}
                     className="px-2 h-[full] transition-all cursor-pointer mb-5"
@@ -186,9 +184,7 @@ const Homepage = () => {
                     </div>
                     <hr className="my-5"></hr>
                   </div>
-                  
-                ))
-              } 
+                ))}
             </div>
           </div>
         </div>

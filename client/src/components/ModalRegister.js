@@ -1,20 +1,59 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import PropTypes from "prop-types";
 import Input from "./Input";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { signUpUser } from "../redux-toolkit/authSlice";
 
 const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
+  const user = useSelector((state) => state.user);
+
+  const Navigate = useNavigate();
+  const dispatch = useDispatch();
+  const formikRef = useRef();
+  console.log(formikRef);
+  let [mess, setMess] = useState("");
+  const handleRegister = (values, isValid) => {
+    console.log(values);
+    if (
+      isValid &&
+      values.email !== "" &&
+      values.password !== "" &&
+      values.username !== ""
+    ) {
+      dispatch(signUpUser(values));
+      setMess(user.msg);
+      setTimeout(handleLogin(), 3000);
+    } else if (
+      isValid &&
+      values.email === "" &&
+      values.password === "" &&
+      values.username === ""
+    ) {
+      setMess("Vui lòng điền vào trường trống");
+    }
+  };
+
+  console.log(mess);
+  const resetForm = () => {
+    formikRef.current?.resetForm();
+    setMess("");
+    console.log(mess);
+
+    handleClose();
+  };
   return (
     <>
       <div
         className="absolute inset-0 bg-black bg-opacity-60 overlay"
-        onClick={handleClose}
+        onClick={resetForm}
       ></div>
       <div className="relative z-10 p-10 bg-white rounded-xl modal-content h-[500px] w-[850px]">
         <span
           className="absolute top-0 right-0 flex items-center justify-center w-10 h-10 p-1 bg-white rounded-full cursor-pointer -translate-y-2/4 translate-x-2/4 hover:bg-gray-200"
-          onClick={handleClose}
+          onClick={resetForm}
         >
           <svg
             width="14"
@@ -34,69 +73,74 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
         </h2>
 
         <Formik
+          innerRef={formikRef}
           initialValues={{
-            userName: "",
-            passWord: "",
+            username: "",
+            password: "",
+            email: "",
           }}
           validationSchema={Yup.object({
-            userName: Yup.string()
+            username: Yup.string()
               .max(20, "Tên đăng nhập chứa tối đa 20 ký tự")
               .required("Vui lòng điền vào trường trống"),
-            passWord: Yup.string()
+            password: Yup.string()
               .required("Vui lòng điền vào trường trống")
               .min(8, "Mật khẩu chứa ít nhất 8 ký tự"),
             email: Yup.string().required("Vui lòng điền vào trường trống"),
-            phoneNumber: Yup.string()
-              .required("Vui lòng điền vào trường trống")
-              .min(10, "Số điện thoại không hợp lệ")
-              .max(10, "Số điện thoại không hợp lệ"),
           })}
           onSubmit={(values) => {
             //console.log(values);
           }}
         >
-          <Form>
-            <div className="grid grid-cols-2 gap-6">
-              <Input
-                className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
-                type="text"
-                label="Tên đăng nhập"
-                name="userName"
-                placeholder="Nhập tên"
-                id="userName"
-              ></Input>
-              <Input
-                className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
-                type="password"
-                label="Mật khẩu"
-                name="passWord"
-                placeholder="Nhập mật khẩu"
-                id="passWord"
-              ></Input>
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-              <Input
-                className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
-                type="email"
-                label="Email"
-                name="email"
-                placeholder="Nhập email"
-                id="email"
-              ></Input>
-              <Input
-                className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
-                type="text"
-                label="Số điện thoại"
-                name="phoneNumber"
-                placeholder="Nhập số điện thoại"
-                id="phoneNumber"
-              ></Input>
-            </div>
-          </Form>
+          {(formik) => {
+            console.log(formik);
+            return (
+              <Form>
+                <div className="grid grid-cols-2 gap-6">
+                  <Input
+                    className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
+                    type="text"
+                    label="Tên đăng nhập"
+                    name="username"
+                    placeholder="Nhập tên"
+                    id="username"
+                  ></Input>
+                  <Input
+                    className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
+                    type="password"
+                    label="Mật khẩu"
+                    name="password"
+                    placeholder="Nhập mật khẩu"
+                    id="password"
+                  ></Input>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <Input
+                    className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
+                    type="email"
+                    label="Email"
+                    name="email"
+                    placeholder="Nhập email"
+                    id="email"
+                  ></Input>
+                </div>
+                {formik.isValid && user.msg && (
+                  <div className="text-red-500 text-lg">{mess}</div>
+                )}
+                <button
+                  className="w-full mt-8 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg"
+                  type="button"
+                  onClick={() => {
+                    handleRegister(formik.values, formik.isValid);
+                  }}
+                >
+                  Đăng ký
+                </button>
+              </Form>
+            );
+          }}
         </Formik>
-        <button className="w-full mt-8 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg">
-          Đăng ký
-        </button>
+
         <div
           className="text-xl text-slate-600 mt-5 cursor-pointer w-full"
           onClick={handleLogin}

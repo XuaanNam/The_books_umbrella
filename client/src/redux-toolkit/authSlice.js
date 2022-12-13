@@ -51,12 +51,19 @@ const authSlice = createSlice({
     [signUpUser.pending]: (state, action) => {
       state.loading = true;
     },
-    [signUpUser.fulfilled]: (state, { payload: { error, msg } }) => {
+    [signUpUser.fulfilled]: (
+      state,
+      { payload: { error, message, checked } }
+    ) => {
       state.loading = false;
       if (error) {
         state.error = error;
+        state.msg = message;
       } else {
-        state.msg = msg;
+        if (checked) {
+          state.msg = message;
+          state.checked = checked;
+        }
       }
     },
     [signUpUser.rejected]: (state, action) => {
@@ -82,6 +89,7 @@ const authSlice = createSlice({
           localStorage.setItem("auth", authentication);
           localStorage.setItem("token", token);
           localStorage.setItem("user", username);
+          state.msg = "";
           window.location.reload();
         } else {
           state.msg = message;

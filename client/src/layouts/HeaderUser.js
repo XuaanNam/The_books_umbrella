@@ -64,6 +64,7 @@ const HeaderUser = () => {
                 className="w-[410px] font-normal pl-5 outline-none rounded-xl focus:border-2 focus:border-slate-600"
                 type="text"
                 placeholder="Tìm kiếm sản phẩm"
+                name="keyword"
               />
               <div className="grid place-items-center mx-auto">
                 <IconContext.Provider
