@@ -27,7 +27,7 @@ const Homepage = () => {
   };
   return (
     <div className="text-lg">
-      <HeaderUser></HeaderUser>
+      {/* <HeaderUser></HeaderUser> */}
       <div className="bg-slate-100 pt-24">
         <div className="px-5 py-4 cursor-pointer">
           Trang chủ {">"} Sách Tiếng Việt
@@ -188,7 +188,7 @@ const Homepage = () => {
           </div>
         </div>
       </div>
-      <Footer></Footer>
+      {/* <Footer></Footer> */}
     </div>
   );
 };
