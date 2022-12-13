@@ -248,7 +248,7 @@ function MenuDropdown(props) {
           Tô màu - Luyện chữ
         </div>
         <div className="cursor-pointer hover:text-orange-500">
-          Phát triển kỹ năng cho trẻ
+          Kiến Thức - Kỹ Năng Sống Cho Trẻ
         </div>
       </div>
     </div>
