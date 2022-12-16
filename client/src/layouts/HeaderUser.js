@@ -17,7 +17,7 @@ const HeaderUser = () => {
   const Navigate = useNavigate();
   const username = localStorage.getItem("user");
   const isAuth = localStorage.getItem("auth");
-  console.log(isAuth);
+  
   const handleLogout = () => {
     dispatch(logout());
     setTimeout(() => {

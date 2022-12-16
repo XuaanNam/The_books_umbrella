@@ -13,12 +13,14 @@ import {
   removeFromCart,
 } from "../../redux-toolkit/cartSlice";
 // import HeaderAdmin from "../../layouts/HeaderAdmin";
+
+
 const Homepage = () => {
   // const { items: products, status } = useSelector((state) => state.products);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const { data, error, isLoading } = useGetAllProductsQuery();
-  console.log(data);
+  
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
   };
