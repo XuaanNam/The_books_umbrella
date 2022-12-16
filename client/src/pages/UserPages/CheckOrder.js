@@ -113,7 +113,7 @@ const CheckOrder = () => {
                             className="w-[400px] h-20 mt-10 p-4 text-2xl text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl 
                           "
                             onClick={() => {
-                              // Navigate("/method");
+                              Navigate("/method");
                             }}
                           >
                             Phương thức thanh toán
