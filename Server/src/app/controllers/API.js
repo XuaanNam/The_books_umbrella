@@ -148,8 +148,8 @@ class API {
           res.send({ message, checked: false });
         }
       }
-    });
-  }
+    }); 
+  } 
 
   //[GET] /api/products/detail/:id
   getProductById(req, res, next) {
@@ -364,6 +364,34 @@ class API {
         } else {
           if (results) {
             res.status(200).send({ message: successMsg, checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
+      }
+    );
+  }
+
+  //[POST] /api/cart/update
+  updateCart(req, res, next) {
+    const customerId = req.user[0].id;
+    const productId = req.body.productId;
+    const quantity = req.body.quantity;
+
+    const updateSql =
+      "update cart set quantity = ? where customerId = ? and productId = ?";
+    const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
+
+    pool.query(
+      updateSql,
+      [quantity, customerId, productId],
+      function (error, results, fields) {
+        if (error) {
+          res.send({ message: errorMsg, checked: false });
+        } else {
+          console.log(results);
+          if (results) {
+            res.status(200).send({ checked: true });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
