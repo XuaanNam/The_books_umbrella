@@ -14,7 +14,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
   const formikRef = useRef();
   const [mess, setMess] = useState("");
 
-  useEffect(() => { console.log(user)
+  useEffect(() => { 
     if (user.msg !== "") {
       setMess(user.msg); 
     }
