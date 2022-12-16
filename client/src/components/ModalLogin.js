@@ -4,7 +4,6 @@ import * as Yup from "yup";
 import PropTypes from "prop-types";
 import { signInUser } from "../redux-toolkit/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 
 const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
@@ -14,21 +13,21 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
   const formikRef = useRef();
   const [mess, setMess] = useState("");
 
-  useEffect(() => { 
+  useEffect(() => {
     if (user.msg !== "") {
-      setMess(user.msg); 
+      setMess(user.msg);
     }
   }, [user]);
 
   const handleLogin = (values, isValid) => {
     if (isValid && values.email !== "" && values.password !== "") {
-      dispatch(signInUser(values))
-    } 
-    else if (isValid && values.email === "" && values.password === "") {
+      dispatch(signInUser(values));
+      localStorage.clear("cartItems");
+    } else if (isValid && values.email === "" && values.password === "") {
       setMess("Vui lòng điền vào trường trống");
     }
   };
-  
+
   const resetForm = () => {
     formikRef.current?.resetForm();
     setMess("");
@@ -103,7 +102,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
                 {mess && formik.isValid && (
                   <div className="text-red-500 text-lg">{mess}</div>
                 )}
-                
+
                 <button
                   className="w-full mt-3 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl "
                   type="button"

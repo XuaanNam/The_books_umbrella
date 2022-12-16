@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 
 const initialState = {
@@ -15,6 +15,18 @@ const initialState = {
   // })
   count: 1,
 };
+export const cartFetch = createAsyncThunk("cartfetch", async () => {
+  const res = await fetch("http://localhost:5000//api/cart", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      // Authorization: localStorage.getItem("token"),
+    },
+  });
+  console.log(res);
+  return await res.json();
+});
+
 const cartSlice = createSlice({
   name: "cart",
   initialState,
@@ -130,6 +142,18 @@ const cartSlice = createSlice({
       state.cartItems = [];
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
       toast.error("Cart cleared", { position: "bottom-right" });
+    },
+  },
+  extraReducers: {
+    [cartFetch.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [cartFetch.fulfilled]: (state, { payload: { results, checked } }) => {
+      state.cartItems = results;
+    },
+    [cartFetch.rejected]: (state, { payload }) => {
+      state.loading = true;
+      state.message = payload.message;
     },
   },
 });

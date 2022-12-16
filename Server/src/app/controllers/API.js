@@ -143,13 +143,14 @@ class API {
         res.status(200).send({ message, checked: false });
       } else {
         if (results.length > 0) {
-          res.send(results);
+          console.log(checked);
+          res.send({ results, checked: true });
         } else {
           res.send({ message, checked: false });
         }
       }
-    }); 
-  } 
+    });
+  }
 
   //[GET] /api/products/detail/:id
   getProductById(req, res, next) {
@@ -305,6 +306,7 @@ class API {
         res.send({ message: errorMsg });
       } else {
         if (results.length > 0) {
+          console.log(results);
           res.status(200).send({ results });
         } else {
           res.status(200).send({ message: successMsg });

@@ -1,31 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Select } from "antd";
 import HeaderUser from "../.././layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
 import { useGetAllProductsQuery } from "../../redux-toolkit/productsApi";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addToCart,
-  clearCart,
-  decreaseCart,
-  getTotals,
-  removeFromCart,
-} from "../../redux-toolkit/cartSlice";
-// import HeaderAdmin from "../../layouts/HeaderAdmin";
-
-
+import { addToCart, cartFetch } from "../../redux-toolkit/cartSlice";
+import { productsFetch } from "../../redux-toolkit/productsSlice";
 const Homepage = () => {
-  // const { items: products, status } = useSelector((state) => state.products);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
-  const { data, error, isLoading } = useGetAllProductsQuery();
-  
+  const { items, loading, error } = useSelector((state) => state.products);
+  console.log(items);
+  useEffect(() => {
+    dispatch(productsFetch());
+  }, [dispatch]);
+  const handleFetchCart = (product) => {
+    dispatch(cartFetch(product));
+  };
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
   };
   const handleChange = (value) => {};
-
+  console.log();
   return (
     <div className="text-lg">
       <HeaderUser></HeaderUser>
@@ -137,8 +134,8 @@ const Homepage = () => {
             </div>
 
             <div className="grid grid-cols-4 gap-2">
-              {data &&
-                data?.map((product) => (
+              {items &&
+                items.map((product) => (
                   <div
                     key={product.id}
                     className="px-2 h-[full] transition-all cursor-pointer mb-5"

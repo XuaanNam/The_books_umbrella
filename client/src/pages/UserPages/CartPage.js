@@ -3,7 +3,7 @@ import HeaderUser from "../../layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
-// import Counter from "../../components/Counter";
+import cartFetch from "../../redux-toolkit/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   listOrder,
@@ -18,8 +18,7 @@ import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const cart = useSelector((state) => state.cart);
-  // console.log(cart);
-  // const initialtotalprice = 0;
+  console.log(cart.cartItems);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const [carts, setCarts] = useState([]);
@@ -28,8 +27,6 @@ const CartPage = () => {
   useEffect(() => {
     setCarts(cart.cartItems);
   }, [cart.cartItems]);
-  console.log(carts);
-
   useEffect(() => {
     let subTotal = 0;
     setDisable(true);
@@ -42,6 +39,9 @@ const CartPage = () => {
     });
     setTotal(subTotal);
   }, [carts]);
+  useEffect(() => {
+    dispatch(cartFetch());
+  }, [dispatch]);
   // useEffect(() => {
   //   setDisable(true);
   //   carts.map((cart) => {
@@ -124,6 +124,8 @@ const CartPage = () => {
         </div>
 
         <div className="m-5 pb-5 bg-white rounded drop-shadow-lg">
+          {console.log(carts)}
+
           {carts &&
             carts.map((cartItem) => (
               <div

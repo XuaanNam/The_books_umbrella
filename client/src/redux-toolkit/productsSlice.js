@@ -5,22 +5,21 @@ const initialState = {
   items: [],
   count: 1,
   status: null,
+  loading: false,
+  error: "",
+  checked: true,
 };
 
-export const productsFetch = createAsyncThunk(
-  "products/productsFetch",
-  async () => {
-    try {
-      const response = await axios.get(
-        "https://chaoo-online-shop.herokuapp.com/products"
-      );
-      console.log(response.data);
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-);
+export const productsFetch = createAsyncThunk("productsFetch", async () => {
+  const res = await fetch("http://localhost:5000/api/products", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  console.log(res);
+  return await res.json();
+});
 
 const productsSlice = createSlice({
   name: "products",
@@ -28,14 +27,16 @@ const productsSlice = createSlice({
   reducers: {},
   extraReducers: {
     [productsFetch.pending]: (state, action) => {
-      state.status = "pending";
+      state.loading = true;
     },
-    [productsFetch.fulfilled]: (state, action) => {
-      state.items = action.payload;
-      state.status = "success";
+    [productsFetch.fulfilled]: (state, { payload: { results, checked } }) => {
+      state.items = results;
+      state.checked = checked;
     },
-    [productsFetch.rejected]: (state, action) => {
-      state.status = "rejected";
+    [productsFetch.rejected]: (state, { payload }) => {
+      state.loading = payload.loading;
+      state.message = payload.message;
+      state.checked = payload.checked;
     },
   },
 });
