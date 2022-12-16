@@ -143,7 +143,6 @@ class API {
         res.status(200).send({ message, checked: false });
       } else {
         if (results.length > 0) {
-          console.log(checked);
           res.send({ results, checked: true });
         } else {
           res.send({ message, checked: false });
