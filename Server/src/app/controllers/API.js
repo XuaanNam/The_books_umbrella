@@ -399,6 +399,57 @@ class API {
     );
   }
 
+  // [POST] /api/cart/order
+  createOrder(req, res, next) {
+    const quantity = req.body.quantity;
+    const customerId = req.user[0].id;
+    const productId = req.body.productId;
+    if (quantity <= 0) {
+      quantity = 1;
+    }
+    const fullname = req.body.fullname;
+    const email = req.body.email;
+    const phone = req.body.phone;
+    const address = req.body.address;
+    const deliveryMethod = req.body.deliveryMethod;
+    const timeOfOrder = new Date(Date.now());
+    const discount = req.body.voucher ? req.body.voucher : null;
+
+    const insertSql =
+      "insert into orders (productId, customerId, quantity, fullname, email, phone, address, deliveryMethod, timeOfOrder, discount) value (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
+    const successMsg = "Đặt hàng thành công!";
+    let i = 0;
+    for (i; i < productId.length; i++) {
+      pool.query(
+        insertSql,
+        [
+          productId[i],
+          customerId,
+          quantity[i],
+          fullname,
+          email,
+          phone,
+          address,
+          deliveryMethod,
+          timeOfOrder,
+          discount,
+        ],
+        function (error, results, fields) {
+          if (error) {
+            res.send({ message: errorMsg, checked: false });
+          } else {
+            if (results) {
+              res.status(200).send({ message: successMsg, checked: true });
+            } else {
+              res.status(200).send({ message: errorMsg, checked: false });
+            }
+          }
+        }
+      );
+    }
+  }
+
   //[GET] /api/profile
   getProfile(req, res, next) {
     const customerId = req.user[0].id;
@@ -450,6 +501,39 @@ class API {
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
+        }
+      }
+    );
+  }
+
+  // [GET] /api/paymentsuccess?id=${customerId}&totalprice=${totalPrice}`
+  paymentSuccess(req, res) {
+    const customerId = req.query.id;
+    const totalPrice = req.query.totalPrice;
+    const updateSql = "update orders set pay = 2 where customerId = ?";
+    const payerId = req.query.PayerID;
+    const paymentId = req.query.paymentId;
+    const excute_payment_json = {
+      payer_id: payerId,
+      transactions: [
+        {
+          amount: {
+            currency: "USD",
+            total: totalPrice,
+          },
+        },
+      ],
+    };
+    paypal.payment.execute(
+      paymentId,
+      excute_payment_json,
+      function (error, payment) {
+        if (error) {
+          res.redirect(process.env.cancel_url + `/cart`);
+        } else {
+          pool.query(updateSql, customerId);
+
+          res.redirect(process.env.cancel_url);
         }
       }
     );
