@@ -521,7 +521,7 @@ class API {
                     "sku": 'Gồm ' + quantity + ' sản phẩm',
                     "price": totalPrice,
                     "currency": "USD",
-                    "quantity": 1
+                    "quantity": 1 
                 }]
             },
             "amount": {
