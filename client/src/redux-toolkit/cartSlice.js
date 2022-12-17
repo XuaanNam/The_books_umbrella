@@ -11,6 +11,9 @@ const initialState = {
   cartTotalQuantity: 0,
   cartTotalAmount: 0,
   count: 1,
+  loading: false,
+  message: "",
+  error: "",
 };
 export const cartFetch = createAsyncThunk("cartfetch", async () => {
   const res = await fetch("http://localhost:5000/api/cart", {
@@ -19,6 +22,18 @@ export const cartFetch = createAsyncThunk("cartfetch", async () => {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem("token"),
     },
+  });
+  return await res.json();
+});
+
+export const addCart = createAsyncThunk("addcart", async (body) => {
+  const res = await fetch("http://localhost:5000/api/cart/add", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(body),
   });
   return await res.json();
 });
@@ -149,6 +164,36 @@ const cartSlice = createSlice({
       state.loading = false;
     },
     [cartFetch.rejected]: (state, { payload }) => {
+      state.loading = true;
+      state.message = payload.message;
+    },
+    //addCart
+    [addCart.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [addCart.fulfilled]: (state, { payload }) => {
+      const existingIndex = state.cartItems.findIndex(
+        (item) => item.id === payload.id
+      );
+      console.log(existingIndex);
+      if (existingIndex >= 0) {
+        state.cartItems[existingIndex] = {
+          ...state.cartItems[existingIndex],
+          cartQuantity:
+            state.cartItems[existingIndex].cartQuantity + state.count,
+        };
+        toast.info(`Đã thêm ${state.count} quyển vào giỏ`, {
+          position: "bottom-right",
+        });
+      } else {
+        let tempProductItem = { ...payload, cartQuantity: state.count };
+        state.cartItems.push(tempProductItem);
+        toast.success("Sản phẩm đã được thêm vào giỏ", {
+          position: "bottom-right",
+        });
+      }
+    },
+    [addCart.rejected]: (state, { payload }) => {
       state.loading = true;
       state.message = payload.message;
     },

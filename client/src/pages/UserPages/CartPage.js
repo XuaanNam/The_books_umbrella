@@ -24,16 +24,17 @@ const CartPage = () => {
   const [carts, setCarts] = useState([]);
   const [disable, setDisable] = useState(true);
   const [total, setTotal] = useState(0);
+  console.log(token);
   useEffect(() => {
     if (token) {
       dispatch(cartFetch());
     }
-  }, [dispatch]);
+  }, [dispatch, token]);
 
   useEffect(() => {
     setCarts(cartItems);
   }, [cartItems]);
-
+  console.log(carts);
   useEffect(() => {
     let subTotal = 0;
     setDisable(true);
@@ -92,6 +93,7 @@ const CartPage = () => {
       }
       return orderArr;
     });
+    console.log(orderArr);
     localStorage.setItem("orderItems", JSON.stringify(orderArr));
     // const a = JSON.parse(localStorage.getItem("orderItems"));
     // console.log(a);
@@ -104,11 +106,6 @@ const CartPage = () => {
   return (
     <div className="bg-slate-100 min-h-screen text-xl">
       <HeaderUser></HeaderUser>
-
-      {/* <ModalLogin
-      // handleClose={handleClose}
-      // handleRegister={handleRegister}
-      ></ModalLogin> */}
       <div className="pt-24">
         <div className="p-5 text-xl font-semibold">GIỎ HÀNG</div>
         <div className="mx-5 bg-white font-medium text-xl rounded p-7 grid grid-cols-12 drop-shadow-lg">
@@ -143,13 +140,13 @@ const CartPage = () => {
                 />
                 <img
                   className="col-start-2 col-span-2 h-40 cursor-pointer"
-                  onClick={() => Navigate(`/detail/${cartItem.id}`)}
+                  onClick={() => Navigate(`/detail/${cartItem.id})`)}
                   src={cartItem.image}
                   alt={cartItem.productName}
                 ></img>
                 <div
                   className="col-start-4 col-span-3 text-2xl font-medium text-cyan-700 text-left cursor-pointer"
-                  onClick={() => Navigate(`/detail/${cartItem.id}`)}
+                  onClick={() => Navigate(`/detail/${cartItem.id})`)}
                 >
                   {cartItem.productName}
                 </div>

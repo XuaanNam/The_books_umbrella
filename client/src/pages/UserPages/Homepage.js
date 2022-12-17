@@ -5,12 +5,14 @@ import HeaderUser from "../.././layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
 import { useGetAllProductsQuery } from "../../redux-toolkit/productsApi";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, cartFetch } from "../../redux-toolkit/cartSlice";
+import { addToCart, addCart } from "../../redux-toolkit/cartSlice";
 import { productsFetch } from "../../redux-toolkit/productsSlice";
 const Homepage = () => {
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const { items, loading, error } = useSelector((state) => state.products);
+  const token = localStorage.getItem("token");
+
   console.log(items);
   useEffect(() => {
     dispatch(productsFetch());
@@ -18,8 +20,18 @@ const Homepage = () => {
   // const handleFetchCart = (product) => {
   //   dispatch(cartFetch(product));
   // };
+
   const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
+    const productCart = {
+      productId: product.id,
+      quantity: 1,
+    };
+    console.log(productCart);
+    if (token) {
+      dispatch(addCart(productCart));
+    } else {
+      dispatch(addToCart(product));
+    }
   };
   const handleChange = (value) => {};
   console.log();
