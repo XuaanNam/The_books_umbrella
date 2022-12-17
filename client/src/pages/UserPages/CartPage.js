@@ -3,7 +3,7 @@ import HeaderUser from "../../layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
-import { cartFetch } from "../../redux-toolkit/cartSlice";
+import { cartFetch, updateCart } from "../../redux-toolkit/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   listOrder,
@@ -78,10 +78,27 @@ const CartPage = () => {
   };
 
   const handleIncreaseCart = (product) => {
-    dispatch(increaseCart(product));
+    const productCart = {
+      productId: product.id,
+      quantity: product.cartQuantity,
+    };
+    if (token) {
+      dispatch(updateCart(productCart));
+    } else {
+      dispatch(increaseCart(product));
+    }
   };
   const handleDecreaseCart = (product) => {
-    dispatch(decreaseCart(product));
+    const productCart = {
+      productId: product.id,
+      quantity: product.cartQuantity,
+    };
+    if (token) {
+      dispatch(updateCart(productCart));
+      console.log(productCart);
+    } else {
+      dispatch(decreaseCart(product));
+    }
   };
   const handleRemoveFromCart = (product) => {
     dispatch(removeFromCart(product));

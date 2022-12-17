@@ -37,7 +37,17 @@ export const addCart = createAsyncThunk("addcart", async (body) => {
   });
   return await res.json();
 });
-
+export const updateCart = createAsyncThunk("updatecart", async (body) => {
+  const res = await fetch("http://localhost:5000/api/cart/update", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
 const cartSlice = createSlice({
   name: "cart",
   initialState,
@@ -173,10 +183,7 @@ const cartSlice = createSlice({
       state.loading = true;
     },
     [addCart.fulfilled]: (state, { payload }) => {
-      const existingIndex = state.cartItems.findIndex(
-        (item) => item.id === payload.productId
-      );
-      if (existingIndex >= 0) {
+      if (payload.duplicate) {
         toast.info(`Đã thêm ${state.count} quyển vào giỏ`, {
           position: "bottom-right",
         });
@@ -185,9 +192,17 @@ const cartSlice = createSlice({
           position: "bottom-right",
         });
       }
-      // localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
     [addCart.rejected]: (state, { payload }) => {
+      state.loading = true;
+      state.message = payload.message;
+    },
+    //update
+    [updateCart.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [updateCart.fulfilled]: (state, { payload }) => {},
+    [updateCart.rejected]: (state, { payload }) => {
       state.loading = true;
       state.message = payload.message;
     },
