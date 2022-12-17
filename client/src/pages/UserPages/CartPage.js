@@ -17,16 +17,23 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
-  const cart = useSelector((state) => state.cart);
-  console.log(cart.cartItems);
+  const { cartItems, loading, error } = useSelector((state) => state.cart);
+  const token = localStorage.getItem("token");
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const [carts, setCarts] = useState([]);
   const [disable, setDisable] = useState(true);
   const [total, setTotal] = useState(0);
   useEffect(() => {
-    setCarts(cart.cartItems);
-  }, [cart.cartItems]);
+    if (token) {
+      dispatch(cartFetch());
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    setCarts(cartItems);
+  }, [cartItems]);
+
   useEffect(() => {
     let subTotal = 0;
     setDisable(true);
