@@ -340,7 +340,7 @@ class API {
                 res.send({ message: errorMsg, checked: false });
               } else{
                 if (rs) {
-                  res.status(200).send({ message: successMsg, checked: true, productId });
+                  res.status(200).send({ message: successMsg, checked: true, duplicate : true });
                 } else {
                   res.status(200).send({ message: errorMsg, checked: false });
                 }
@@ -351,7 +351,7 @@ class API {
           }
         } else {
           if (results) {
-            res.status(200).send({ message: successMsg, checked: true, productId });
+            res.status(200).send({ message: successMsg, checked: true, duplicate : false });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
@@ -501,7 +501,7 @@ class API {
   paymentByPaypal(req, res, next){
     const customerId = req.user[0].id;
     const totalPrice =  +(Math.round(req.body.totalPrice + "e+4") + "e-4"); // làm tròn số tiền 4 số sau dấu thập phân
-    const listWebsite = req.body.ListProduct;
+    const ListProduct = req.body.ListProduct;
     const quantity = req.body.quantity;
     const create_payment_json = {
         "intent": "sale",
@@ -515,7 +515,7 @@ class API {
         "transactions": [{
             "item_list": {
                 "items": [{
-                    "name": listWebsite,
+                    "name": ListProduct,
                     "sku": 'Gồm ' + quantity + ' sản phẩm',
                     "price": totalPrice,
                     "currency": "USD",
