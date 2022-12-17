@@ -23,7 +23,11 @@ router.get('/products/search/form', api.getProductsByForm);
 router.get('/cart', PassportCheck, api.getCart);
 router.post('/cart/add', PassportCheck, api.addToCart);
 router.post('/cart/remove', PassportCheck, api.removeFromCart);
-router.post('/cart/update', PassportCheck, api.updateCart);
+router.patch('/cart/update', PassportCheck, api.updateCart);
+
+router.get('/profile', PassportCheck, api.getProfile);
+router.patch('/profile/update', PassportCheck, api.updateProfile);
+
 
 
 

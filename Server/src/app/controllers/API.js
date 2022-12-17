@@ -299,16 +299,15 @@ class API {
     const customerId = req.user[0].id;
     const selectSql = "select * from cart where customerId = ?";
     const errorMsg = "Lỗi hệ thống, không thể lấy thông tin giỏ hàng!";
-    const successMsg = "Chưa có sản phẩm trong giỏ hàng!";
+    const nullMgs = "Chưa có sản phẩm trong giỏ hàng!";
     pool.query(selectSql, customerId, function (error, results, fields) {
       if (error) {
         res.send({ message: errorMsg });
       } else {
         if (results.length > 0) {
-          console.log(results);
-          res.status(200).send({ results });
+          res.status(200).send({ results: results });
         } else {
-          res.status(200).send({ message: successMsg });
+          res.status(200).send({ message: nullMgs });
         }
       }
     });
@@ -373,7 +372,7 @@ class API {
     );
   }
 
-  //[POST] /api/cart/update
+  //[PATCH] /api/cart/update
   updateCart(req, res, next) {
     const customerId = req.user[0].id;
     const productId = req.body.productId;
@@ -390,7 +389,6 @@ class API {
         if (error) {
           res.send({ message: errorMsg, checked: false });
         } else {
-          console.log(results);
           if (results) {
             res.status(200).send({ checked: true });
           } else {
@@ -399,6 +397,57 @@ class API {
         }
       }
     );
+  }
+
+  //[GET] /api/profile
+  getProfile(req, res, next){
+    const customerId = req.user[0].id; 
+
+    const selectSql = "select * from customerdata where id = ?";
+    const errorMsg = "Lỗi hệ thống, không thể lấy thông tin khách hàng!";
+
+    pool.query(selectSql, customerId, function (error, results, fields) {
+      if (error) {
+        res.send({ message: errorMsg });
+      } else {
+        if (results.length > 0) {
+          res.status(200).send({ results: results })
+        } else {
+          res.status(200).send({ message: errorMsg });
+        }
+      }
+    });
+  }
+
+  //[PATCH] /api/profile/update
+  updateProfile(req, res, next){
+    const customerId = req.user[0].id; 
+    const fullname = req.body.fullname ? req.body.fullname : null;
+    const birthdate = req.body.birthdate ? req.body.birthdate : null;
+    const phone = req.body.phone ? req.body.phone : null;
+    const address = req.body.address ? req.body.address : null;
+    const avatar = req.body.avatar ? req.body.avatar : null;
+
+    const updateSql = "update customerdata set " + 
+                        "fullname = ?, "
+                        + "birthdate = ?, " 
+                        + "phone = ?, " 
+                        + "address = ?," 
+                        + " avatar = ? " 
+                        + "where id = ?";
+    const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin khách hàng!";
+
+    pool.query(updateSql ,[fullname, birthdate, phone, address, avatar, customerId], function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false});
+      } else {
+        if (results) {
+          res.status(200).send({ checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false});
+        }
+      }
+    });
   }
 }
 
