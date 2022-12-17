@@ -3,7 +3,7 @@ import HeaderUser from "../../layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
-import { cartFetch } from "../../redux-toolkit/cartSlice";
+import {cartFetch} from "../../redux-toolkit/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   listOrder,
@@ -47,7 +47,9 @@ const CartPage = () => {
     });
     setTotal(subTotal);
   }, [carts]);
-
+  useEffect(() => {
+    dispatch(cartFetch());
+  }, [dispatch]);
   // useEffect(() => {
   //   setDisable(true);
   //   carts.map((cart) => {
@@ -125,6 +127,8 @@ const CartPage = () => {
         </div>
 
         <div className="m-5 pb-5 bg-white rounded drop-shadow-lg">
+          {console.log(carts)}
+
           {carts &&
             carts.map((cartItem) => (
               <div

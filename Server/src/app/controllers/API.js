@@ -315,23 +315,37 @@ class API {
 
   //[POST] /api/cart/add
   addToCart(req, res, next) {
+    
     const customerId = req.user[0].id;
     const productId = req.body.productId;
     const quantity = req.body.quantity;
+    if(quantity <= 0){
+      quantity = 1;
+    }
 
-    const insertSql =
-      "insert into cart (productId, customerId, quantity) value (?, ? ,?)";
+    const insertSql = "insert into cart (productId, customerId, quantity) value (?, ? ,?)";
     const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào giỏ hàng!";
-    const existMsg = "Sản phẩm đã có sẵn trong giỏ hàng!";
     const successMsg = "Sản phẩm đã được thêm vào giỏ hàng!";
+
+    const updateSql = "update cart set quantity = quantity + 1 where productId = ? and customerId = ?;"
 
     pool.query(
       insertSql,
       [productId, customerId, quantity],
       function (error, results, fields) {
         if (error) {
-          if ((error.errno = 1062)) {
-            res.send({ message: existMsg, checked: false });
+          if ((error.errno = 1062)) { 
+            pool.query(updateSql, [productId, customerId], function (err, rs){
+              if(err) {
+                res.send({ message: errorMsg, checked: false });
+              } else{
+                if (rs) {
+                  res.status(200).send({ message: successMsg, checked: true });
+                } else {
+                  res.status(200).send({ message: errorMsg, checked: false });
+                }
+              }
+            })
           } else {
             res.send({ message: errorMsg, checked: false });
           }
@@ -398,6 +412,50 @@ class API {
       }
     );
   }
+  
+  // [POST] /api/cart/order  
+  createOrder(req, res, next){
+    const quantity = 1;
+    const customerId = req.user[0].id;
+    const productId = req.body.productId;
+    if(req.body.quantity > 0){ 
+      quantity = req.body.quantity;
+    };
+    const fullname = req.body.fullname;
+    const email = req.body.email;
+    const phone = req.body.phone;
+    const address = req.body.address;
+    const deliveryMethod = req.body.deliveryMethod;
+    const timeOfOrder = req.body.timeOfOrder;
+    const voucher = req.body.voucher ? req.body.voucher : null;
+    
+
+    const insertSql =
+      "insert into cart (productId, customerId, quantity) value (?, ? ,?)";
+    const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào giỏ hàng!";
+    const existMsg = "Sản phẩm đã có sẵn trong giỏ hàng!";
+    const successMsg = "Sản phẩm đã được thêm vào giỏ hàng!";
+
+    pool.query(
+      insertSql,
+      [productId, customerId, quantity],
+      function (error, results, fields) {
+        if (error) {
+          if ((error.errno = 1062)) {
+            res.send({ message: existMsg, checked: false });
+          } else {
+            res.send({ message: errorMsg, checked: false });
+          }
+        } else {
+          if (results) {
+            res.status(200).send({ message: successMsg, checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
+      }
+    );
+  }
 
   //[GET] /api/profile
   getProfile(req, res, next){
@@ -422,19 +480,13 @@ class API {
   //[PATCH] /api/profile/update
   updateProfile(req, res, next){
     const customerId = req.user[0].id; 
-    const fullname = req.body.fullname ? req.body.fullname : null;
-    const birthdate = req.body.birthdate ? req.body.birthdate : null;
-    const phone = req.body.phone ? req.body.phone : null;
-    const address = req.body.address ? req.body.address : null;
+    const fullname = req.body.fullname;
+    const birthdate = req.body.birthdate;
+    const phone = req.body.phone;
+    const address = req.body.address;
     const avatar = req.body.avatar ? req.body.avatar : null;
 
-    const updateSql = "update customerdata set " + 
-                        "fullname = ?, "
-                        + "birthdate = ?, " 
-                        + "phone = ?, " 
-                        + "address = ?," 
-                        + " avatar = ? " 
-                        + "where id = ?";
+    const updateSql = "update customerdata set fullname = ?, birthdate = ?, phone = ?, address = ?, avatar = ? where id = ?";
     const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin khách hàng!";
 
     pool.query(updateSql ,[fullname, birthdate, phone, address, avatar, customerId], function (error, results, fields) {
@@ -449,6 +501,80 @@ class API {
       }
     });
   }
+
+  // [POST] /api/payment/paypal
+  paymentByPaypal(req, res, next){
+    const customerId = req.user[0].id;
+    const totalPrice =  +(Math.round(req.body.totalPrice + "e+4") + "e-4"); // làm tròn số tiền 4 số sau dấu thập phân
+    const listWebsite = req.body.ListProduct;
+    const quantity = req.body.quantity;
+    const create_payment_json = {
+        "intent": "sale",
+        "payer": {
+            "payment_method": "paypal"
+        },
+        "redirect_urls": {
+            "return_url": process.env.return_url + `/paymentsuccess?id=${customerId}&totalprice=${totalPrice}`,
+            "cancel_url": process.env.cancel_url + `/cart`
+        },
+        "transactions": [{
+            "item_list": {
+                "items": [{
+                    "name": listWebsite,
+                    "sku": 'Gồm ' + quantity + ' sản phẩm',
+                    "price": totalPrice,
+                    "currency": "USD",
+                    "quantity": 1
+                }]
+            },
+            "amount": {
+                "currency": "USD",
+                "total": totalPrice
+            },
+            "description": "Giao dịch mua hàng từ GreyPanther"
+        }]
+    };
+  
+    paypal.payment.create(create_payment_json, function (error, payment) {
+        if (error) {
+            res.send({message: 'Có lỗi, vui lòng thử lại sau'});
+        } else { 
+            for(let i = 0; i < payment.links.length; i++){
+                if(payment.links[i].rel === 'approval_url'){ //console.log(payment)
+                    res.send({payment_link: payment.links[i].href});
+                }
+            }
+        }
+    });
+  }
+
+  // [GET] /api/paymentsuccess?id=${customerId}&totalprice=${totalPrice}`
+  paymentSuccess(req ,res ){
+    const customerId = req.query.id
+    const totalPrice = req.query.totalPrice
+    const updateSql = 'update giaodich set TrangThai = 2 where customerId = ?';
+    const payerId = req.query.PayerID
+    const paymentId = req.query.paymentId;
+    const excute_payment_json={
+        "payer_id" : payerId,
+        "transactions":[{
+            "amount":{
+                "currency": "USD",
+                "total": totalPrice
+            }
+        }]
+    };
+    paypal.payment.execute(paymentId, excute_payment_json, function (error, payment) {
+        if (error) {
+            res.redirect(process.env.cancel_url + `/cart`);
+        } else {                        
+            pool.query(updateSql, customerId); 
+
+            res.redirect(process.env.cancel_url);  
+        }
+    });
+        
+  };
 }
 
 module.exports = new API();
