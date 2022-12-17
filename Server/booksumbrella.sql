@@ -464,3 +464,8 @@ INSERT INTO `thebooksumbrella`.`product` (`image`, `productName`, `chapter`, `au
 ('60', '20'),
 ('1', '4');
 
+
+
+INSERT INTO `thebooksumbrella`.`cart` (`productId`, `customerId`, `quantity`) VALUES 
+('2', '659323833', '3'),
+('9', '659323833', '19');
