@@ -297,15 +297,15 @@ class API {
   //[GET] /api/cart
   getCart(req, res, next) {
     const customerId = req.user[0].id;
-    const selectSql = "select * from cart where customerId = ?";
+    const selectSql = "call getCart(?)";
     const errorMsg = "Lỗi hệ thống, không thể lấy thông tin giỏ hàng!";
     const nullMgs = "Chưa có sản phẩm trong giỏ hàng!";
     pool.query(selectSql, customerId, function (error, results, fields) {
       if (error) {
         res.send({ message: errorMsg });
       } else {
-        if (results.length > 0) {
-          res.status(200).send({ results: results });
+        if (results[0].length > 0) {
+          res.status(200).send({ results: results[0] });
         } else {
           res.status(200).send({ message: nullMgs });
         }

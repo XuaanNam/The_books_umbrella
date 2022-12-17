@@ -139,6 +139,22 @@ inner join classifyproducts cp on cp.id = g.classifyProductsId
 $$
 
 delimiter $$
+create procedure getCart (IN id int )
+begin
+	select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+		c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+	from bookgenredata b 
+	inner join product p on p.id = b.productId 
+	inner join productgenres g on g.id = b.productGenreId 
+	inner join classifypublishers c on c.id = p.publisher 
+	inner join productform f on f.id = p.form 
+	inner join classifyproducts cp on cp.id = g.classifyProductsId
+	inner join cart ct on ct.productId = p.id
+	where ct.customerId = id;
+end$$
+
+
+delimiter $$
 create procedure getProductById(IN id int )
 begin
     select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
@@ -240,6 +256,22 @@ begin
 	inner join classifyproducts cp on cp.id = g.classifyProductsId
     WHERE p.age = age;
 end$$ 
+
+-- delimiter $$
+-- create procedure getTransaction(IN id int )
+-- begin
+--     select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+-- 			c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+--     from bookgenredata b 
+-- 	inner join product p on p.id = b.productId 
+-- 	inner join productgenres g on g.id = b.productGenreId 
+-- 	inner join classifypublishers c on c.id = p.publisher 
+-- 	inner join productform f on f.id = p.form 
+-- 	inner join classifyproducts cp on cp.id = g.classifyProductsId
+--     WHERE p.age = age;
+-- end$$ 
+
+
 
 -- ========================================================= SAMPLE DATA ============================================================
 
@@ -431,6 +463,4 @@ INSERT INTO `thebooksumbrella`.`product` (`image`, `productName`, `chapter`, `au
 ('59', '20'),
 ('60', '20'),
 ('1', '4');
-
-
 
