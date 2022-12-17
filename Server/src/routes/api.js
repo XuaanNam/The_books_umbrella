@@ -27,7 +27,7 @@ router.get('/cart', PassportCheck, api.getCart);
 router.post('/cart/add', PassportCheck, api.addToCart);
 router.post('/cart/remove', PassportCheck, api.removeFromCart);
 router.patch('/cart/update', PassportCheck, api.updateCart);
-router.patch('/cart/order', PassportCheck, api.createOrder);
+router.post('/cart/order', PassportCheck, api.createOrder);
 
 // profile
 router.get('/profile', PassportCheck, api.getProfile);
