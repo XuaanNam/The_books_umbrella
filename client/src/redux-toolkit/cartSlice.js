@@ -10,20 +10,16 @@ const initialState = {
     : [],
   cartTotalQuantity: 0,
   cartTotalAmount: 0,
-  // totalPrice: cartItems.maping((item) => {
-  //   temp += item.price;
-  // })
   count: 1,
 };
 export const cartFetch = createAsyncThunk("cartfetch", async () => {
-  const res = await fetch("http://localhost:5000//api/cart", {
+  const res = await fetch("http://localhost:5000/api/cart", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      // Authorization: localStorage.getItem("token"),
+      Authorization: localStorage.getItem("token"),
     },
   });
-  console.log(res);
   return await res.json();
 });
 
@@ -150,6 +146,7 @@ const cartSlice = createSlice({
     },
     [cartFetch.fulfilled]: (state, { payload: { results, checked } }) => {
       state.cartItems = results;
+      state.loading = false;
     },
     [cartFetch.rejected]: (state, { payload }) => {
       state.loading = true;

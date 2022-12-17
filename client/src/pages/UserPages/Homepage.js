@@ -15,9 +15,9 @@ const Homepage = () => {
   useEffect(() => {
     dispatch(productsFetch());
   }, [dispatch]);
-  const handleFetchCart = (product) => {
-    dispatch(cartFetch(product));
-  };
+  // const handleFetchCart = (product) => {
+  //   dispatch(cartFetch(product));
+  // };
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
   };

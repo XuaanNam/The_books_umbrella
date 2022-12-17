@@ -17,7 +17,6 @@ export const productsFetch = createAsyncThunk("productsFetch", async () => {
       "Content-Type": "application/json",
     },
   });
-  console.log(res);
   return await res.json();
 });
 
@@ -32,11 +31,12 @@ const productsSlice = createSlice({
     [productsFetch.fulfilled]: (state, { payload: { results, checked } }) => {
       state.items = results;
       state.checked = checked;
+      state.loading = false;
     },
-    [productsFetch.rejected]: (state, { payload }) => {
-      state.loading = payload.loading;
-      state.message = payload.message;
-      state.checked = payload.checked;
+    [productsFetch.rejected]: (state, { payload: { message, checked } }) => {
+      state.loading = true;
+      // state.message = message;
+      state.checked = checked;
     },
   },
 });

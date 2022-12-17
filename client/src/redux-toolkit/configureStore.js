@@ -6,7 +6,7 @@ import { addressApi } from "./addressApi";
 
 import cartReducer, { getTotals } from "./cartSlice";
 import authReducer from "./authSlice";
-import productsReducer, { productsFetch } from "./productsSlice";
+import productsReducer from "./productsSlice";
 // import globalSlice from "./globalSlice";
 // import createSagaMiddleware from "@redux-saga/core";
 
@@ -16,10 +16,9 @@ const reducer = combineReducers({
   user: authReducer,
   counter: counterSlice,
   products: productsReducer,
+  cart: cartReducer,
   [productsApi.reducerPath]: productsApi.reducer,
   [addressApi.reducerPath]: addressApi.reducer,
-
-  cart: cartReducer,
 
   // global: globalSlice,
 });
