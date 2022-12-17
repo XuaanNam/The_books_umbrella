@@ -340,7 +340,7 @@ class API {
                 res.send({ message: errorMsg, checked: false });
               } else{
                 if (rs) {
-                  res.status(200).send({ message: successMsg, checked: true });
+                  res.status(200).send({ message: successMsg, checked: true, productId });
                 } else {
                   res.status(200).send({ message: errorMsg, checked: false });
                 }
@@ -351,7 +351,7 @@ class API {
           }
         } else {
           if (results) {
-            res.status(200).send({ message: successMsg, checked: true });
+            res.status(200).send({ message: successMsg, checked: true, productId });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
@@ -415,37 +415,32 @@ class API {
   
   // [POST] /api/cart/order  
   createOrder(req, res, next){
-    const quantity = 1;
+    const quantity = req.body.quantity;
     const customerId = req.user[0].id;
     const productId = req.body.productId;
-    if(req.body.quantity > 0){ 
-      quantity = req.body.quantity;
+    if(quantity <= 0){ 
+      quantity = 1;
     };
     const fullname = req.body.fullname;
     const email = req.body.email;
     const phone = req.body.phone;
     const address = req.body.address;
     const deliveryMethod = req.body.deliveryMethod;
-    const timeOfOrder = req.body.timeOfOrder;
-    const voucher = req.body.voucher ? req.body.voucher : null;
+    const timeOfOrder = new Date(Date.now());
+    const discount = req.body.voucher ? req.body.voucher : null;
     
 
     const insertSql =
-      "insert into cart (productId, customerId, quantity) value (?, ? ,?)";
-    const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào giỏ hàng!";
-    const existMsg = "Sản phẩm đã có sẵn trong giỏ hàng!";
-    const successMsg = "Sản phẩm đã được thêm vào giỏ hàng!";
+      "insert into orders (productId, customerId, quantity, fullname, email, phone, address, deliveryMethod, timeOfOrder, discount) value (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
+    const successMsg = "Đặt hàng thành công!";
 
     pool.query(
       insertSql,
-      [productId, customerId, quantity],
+      [productId, customerId, quantity, fullname, email, phone, address, deliveryMethod, timeOfOrder, discount],
       function (error, results, fields) {
         if (error) {
-          if ((error.errno = 1062)) {
-            res.send({ message: existMsg, checked: false });
-          } else {
             res.send({ message: errorMsg, checked: false });
-          }
         } else {
           if (results) {
             res.status(200).send({ message: successMsg, checked: true });
