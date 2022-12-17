@@ -162,6 +162,7 @@ const cartSlice = createSlice({
     [cartFetch.fulfilled]: (state, { payload: { results, checked } }) => {
       state.cartItems = results;
       state.loading = false;
+      localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
     [cartFetch.rejected]: (state, { payload }) => {
       state.loading = true;
@@ -173,9 +174,10 @@ const cartSlice = createSlice({
     },
     [addCart.fulfilled]: (state, { payload }) => {
       const existingIndex = state.cartItems.findIndex(
-        (item) => item.id === payload.id
+        (cart) => cart.id === payload.id
       );
-      console.log(existingIndex);
+      console.log(payload);
+      // console.log(existingIndex);
       if (existingIndex >= 0) {
         state.cartItems[existingIndex] = {
           ...state.cartItems[existingIndex],
@@ -192,6 +194,7 @@ const cartSlice = createSlice({
           position: "bottom-right",
         });
       }
+      localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
     [addCart.rejected]: (state, { payload }) => {
       state.loading = true;

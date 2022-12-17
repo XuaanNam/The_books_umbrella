@@ -5,28 +5,33 @@ import HeaderUser from "../.././layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
 import { useGetAllProductsQuery } from "../../redux-toolkit/productsApi";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, addCart } from "../../redux-toolkit/cartSlice";
 import { productsFetch } from "../../redux-toolkit/productsSlice";
+import { addToCart, addCart, cartFetch } from "../../redux-toolkit/cartSlice";
+
 const Homepage = () => {
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const { items, loading, error } = useSelector((state) => state.products);
   const token = localStorage.getItem("token");
+  const { cartItems } = useSelector((state) => state.cart);
+  console.log(cartItems);
 
-  console.log(items);
+  // console.log(items);
   useEffect(() => {
     dispatch(productsFetch());
-  }, [dispatch]);
+    if (token) {
+      dispatch(cartFetch());
+    }
+  }, [dispatch, token]);
   // const handleFetchCart = (product) => {
   //   dispatch(cartFetch(product));
   // };
-
   const handleAddToCart = (product) => {
     const productCart = {
       productId: product.id,
       quantity: 1,
     };
-    console.log(productCart);
+    // console.log(productCart);
     if (token) {
       dispatch(addCart(productCart));
     } else {

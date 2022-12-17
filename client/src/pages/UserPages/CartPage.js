@@ -3,7 +3,7 @@ import HeaderUser from "../../layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
-import {cartFetch} from "../../redux-toolkit/cartSlice";
+import { cartFetch } from "../../redux-toolkit/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   listOrder,
@@ -18,27 +18,28 @@ import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const { cartItems, loading, error } = useSelector((state) => state.cart);
+  console.log("cartItems", cartItems);
   const token = localStorage.getItem("token");
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const [carts, setCarts] = useState([]);
   const [disable, setDisable] = useState(true);
   const [total, setTotal] = useState(0);
-  console.log(token);
-  useEffect(() => {
-    if (token) {
-      dispatch(cartFetch());
-    }
-  }, [dispatch, token]);
+
+  // useEffect(() => {
+  //   if (token) {
+  //     dispatch(cartFetch());
+  //   }
+  // }, [dispatch, token]);
 
   useEffect(() => {
     setCarts(cartItems);
   }, [cartItems]);
-  console.log(carts);
+
   useEffect(() => {
     let subTotal = 0;
     setDisable(true);
-    carts.map((cart) => {
+    carts?.map((cart) => {
       if (cart.isChecked) {
         subTotal += cart.price * cart.cartQuantity;
         setDisable(false);
@@ -47,9 +48,7 @@ const CartPage = () => {
     });
     setTotal(subTotal);
   }, [carts]);
-  useEffect(() => {
-    dispatch(cartFetch());
-  }, [dispatch]);
+
   // useEffect(() => {
   //   setDisable(true);
   //   carts.map((cart) => {
@@ -116,10 +115,10 @@ const CartPage = () => {
               type="checkbox"
               name="allSelect"
               className="w-6 h-6 cursor-pointer rounded-lg"
-              checked={!carts.some((cart) => cart?.isChecked !== true)}
+              checked={!carts?.some((cart) => cart?.isChecked !== true)}
               onChange={handleChange}
             />
-            <span className="pl-2">Chọn tất cả ({carts.length} sản phẩm)</span>
+            <span className="pl-2">Chọn tất cả ({carts?.length} sản phẩm)</span>
           </div>
           <div className="col-start-7 col-span-1 text-center">Đơn giá</div>
           <div className="col-start-8 col-span-2 text-center">Số lượng</div>
@@ -127,10 +126,8 @@ const CartPage = () => {
         </div>
 
         <div className="m-5 pb-5 bg-white rounded drop-shadow-lg">
-          {console.log(carts)}
-
           {carts &&
-            carts.map((cartItem) => (
+            carts?.map((cartItem) => (
               <div
                 key={cartItem.id}
                 className="p-4 grid grid-cols-12 place-items-center text-xl  border-b"
