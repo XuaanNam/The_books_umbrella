@@ -26,11 +26,11 @@ const CartPage = () => {
   const [disable, setDisable] = useState(true);
   const [total, setTotal] = useState(0);
 
-  // useEffect(() => {
-  //   if (token) {
-  //     dispatch(cartFetch());
-  //   }
-  // }, [dispatch, token]);
+  useEffect(() => {
+    if (token) {
+      dispatch(cartFetch());
+    }
+  }, [dispatch, token]);
 
   useEffect(() => {
     setCarts(cartItems);
@@ -129,7 +129,7 @@ const CartPage = () => {
           {carts &&
             carts?.map((cartItem) => (
               <div
-                key={cartItem.id}
+                key={cartItem.cartId}
                 className="p-4 grid grid-cols-12 place-items-center text-xl  border-b"
               >
                 <input

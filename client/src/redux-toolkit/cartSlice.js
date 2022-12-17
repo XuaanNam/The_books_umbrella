@@ -174,27 +174,18 @@ const cartSlice = createSlice({
     },
     [addCart.fulfilled]: (state, { payload }) => {
       const existingIndex = state.cartItems.findIndex(
-        (cart) => cart.id === payload.id
+        (item) => item.id === payload.productId
       );
-      console.log(payload);
-      // console.log(existingIndex);
       if (existingIndex >= 0) {
-        state.cartItems[existingIndex] = {
-          ...state.cartItems[existingIndex],
-          cartQuantity:
-            state.cartItems[existingIndex].cartQuantity + state.count,
-        };
         toast.info(`Đã thêm ${state.count} quyển vào giỏ`, {
           position: "bottom-right",
         });
       } else {
-        let tempProductItem = { ...payload, cartQuantity: state.count };
-        state.cartItems.push(tempProductItem);
         toast.success("Sản phẩm đã được thêm vào giỏ", {
           position: "bottom-right",
         });
       }
-      localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+      // localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
     [addCart.rejected]: (state, { payload }) => {
       state.loading = true;
