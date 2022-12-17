@@ -506,6 +506,59 @@ class API {
     );
   }
 
+  // [POST] /api/payment/paypal
+  paymentByPaypal(req, res, next) {
+    const customerId = req.user[0].id;
+    const totalPrice = +(Math.round(req.body.totalPrice + "e+4") + "e-4"); // làm tròn số tiền 4 số sau dấu thập phân
+    const ListProduct = req.body.ListProduct;
+    const quantity = req.body.quantity;
+    const create_payment_json = {
+      intent: "sale",
+      payer: {
+        payment_method: "paypal",
+      },
+      redirect_urls: {
+        return_url:
+          process.env.return_url +
+          `/paymentsuccess?id=${customerId}&totalprice=${totalPrice}`,
+        cancel_url: process.env.cancel_url + `/cart`,
+      },
+      transactions: [
+        {
+          item_list: {
+            items: [
+              {
+                name: ListProduct,
+                sku: "Gồm " + quantity + " sản phẩm",
+                price: totalPrice,
+                currency: "USD",
+                quantity: 1,
+              },
+            ],
+          },
+          amount: {
+            currency: "USD",
+            total: totalPrice,
+          },
+          description: "Giao dịch mua hàng từ GreyPanther",
+        },
+      ],
+    };
+
+    paypal.payment.create(create_payment_json, function (error, payment) {
+      if (error) {
+        res.send({ message: "Có lỗi, vui lòng thử lại sau" });
+      } else {
+        for (let i = 0; i < payment.links.length; i++) {
+          if (payment.links[i].rel === "approval_url") {
+            //console.log(payment)
+            res.send({ payment_link: payment.links[i].href });
+          }
+        }
+      }
+    });
+  }
+
   // [GET] /api/paymentsuccess?id=${customerId}&totalprice=${totalPrice}`
   paymentSuccess(req, res) {
     const customerId = req.query.id;
