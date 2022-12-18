@@ -214,12 +214,13 @@ class API {
 
   //[GET] /api/products/search/price
   getProductsByPrice(req, res, next) {
-    const price = req.query.price;
+    const minPrice = req.query.minPrice;
+    const maxPrice = req.query.maxPrice;
 
     const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
-    const selectSql = "call getProductsByPrice(?)";
+    const selectSql = "call getProductsByPrice(?,?)";
 
-    pool.query(selectSql, price, function (error, results, fields) {
+    pool.query(selectSql, [minPrice, maxPrice], function (error, results, fields) {
       if (error) {
         res.status(200).send({ message: errorMgs, checked: false });
       } else {
@@ -346,7 +347,7 @@ class API {
     );
   }
 
-  //[POST] /api/cart/remove
+  //[DELETE] /api/cart/remove
   removeFromCart(req, res, next) {
     const customerId = req.user[0].id;
     const productId = req.body.productId;
@@ -409,16 +410,19 @@ class API {
     if (quantity <= 0) {
       quantity = 1;
     }
+    const price = req.body.price;
     const fullname = req.body.fullname;
     const email = req.body.email;
     const phone = req.body.phone;
     const address = req.body.address;
     const deliveryMethod = req.body.deliveryMethod;
+    const paymentMethod = req.body.paymentMethod;
     const timeOfOrder = new Date(Date.now());
     const discount = req.body.voucher ? req.body.voucher : null;
    
-    const insertSql =
-      "insert into orders (productId, customerId, quantity, fullname, email, phone, address, deliveryMethod, timeOfOrder, discount) value (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const insertSql = "insert into orders " + 
+      "(productId, customerId, quantity, price, fullname, email, phone, address, deliveryMethod, paymentMethod, timeOfOrder, discount) "
+      + "value (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
     const successMsg = "Đặt hàng thành công!";
 
@@ -428,17 +432,19 @@ class API {
         productId,
         customerId,
         quantity,
+        price,
         fullname,
         email,
         phone,
         address,
         deliveryMethod,
+        paymentMethod,
         timeOfOrder,
         discount,
       ],
       function (error, results, fields) {
         if (error) {
-          res.send({ message: errorMsg, checked: false });
+          res.send({ message: error, checked: false });
         } else {
           if (results) {
             res.status(200).send({ message: successMsg, checked: true });
@@ -591,6 +597,32 @@ class API {
       }
     );
   }
+  
+  // [GET] /api/admin/warehouse
+  getWarehouse(req, res, next) {
+    
+  }
+
+  // [POST] /api/admin/product/create
+  createProduct(req, res, next) {
+    
+  }
+
+  // [PATCH] /api/admin/product/update
+  updateProduct(req, res, next) {
+    
+  }
+
+  // [PATCH] /api/admin/product/disable
+  disableProduct(req, res, next) {
+  
+  }
+
+  // [PATCH] /api/admin/product/enable
+  enableProduct(req, res, next) {
+  
+  }
+
 }
 
 module.exports = new API();
