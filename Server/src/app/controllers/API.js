@@ -184,7 +184,7 @@ class API {
       if (error) {
         res.status(200).send({ message: errorMgs, checked: false });
       } else {
-        if (results[0].length > 0) {
+        if (results[0].length > 0) { 
           res.send({ results: results[0], checked: true });
         } else {
           res.send({ message: nullMgs, checked: false });
@@ -378,7 +378,9 @@ class API {
     const customerId = req.user[0].id;
     const productId = req.body.productId;
     const quantity = req.body.quantity;
-
+    if (quantity <= 0) {
+      quantity = 1;
+    }
     const updateSql =
       "update cart set quantity = ? where customerId = ? and productId = ?";
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
@@ -415,40 +417,38 @@ class API {
     const deliveryMethod = req.body.deliveryMethod;
     const timeOfOrder = new Date(Date.now());
     const discount = req.body.voucher ? req.body.voucher : null;
-
+   
     const insertSql =
       "insert into orders (productId, customerId, quantity, fullname, email, phone, address, deliveryMethod, timeOfOrder, discount) value (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
     const successMsg = "Đặt hàng thành công!";
-    let i = 0;
-    for (i; i < productId.length; i++) {
-      pool.query(
-        insertSql,
-        [
-          productId[i],
-          customerId,
-          quantity[i],
-          fullname,
-          email,
-          phone,
-          address,
-          deliveryMethod,
-          timeOfOrder,
-          discount,
-        ],
-        function (error, results, fields) {
-          if (error) {
-            res.send({ message: errorMsg, checked: false });
+
+    pool.query(
+      insertSql,
+      [
+        productId,
+        customerId,
+        quantity,
+        fullname,
+        email,
+        phone,
+        address,
+        deliveryMethod,
+        timeOfOrder,
+        discount,
+      ],
+      function (error, results, fields) {
+        if (error) {
+          res.send({ message: errorMsg, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ message: successMsg, checked: true });
           } else {
-            if (results) {
-              res.status(200).send({ message: successMsg, checked: true });
-            } else {
-              res.status(200).send({ message: errorMsg, checked: false });
-            }
+            res.status(200).send({ message: errorMsg, checked: false });
           }
         }
-      );
-    }
+      }
+    );
   }
 
   //[GET] /api/profile
@@ -509,10 +509,11 @@ class API {
 
   // [POST] /api/payment/paypal
   paymentByPaypal(req, res, next) {
-    const customerId = req.user[0].id;
+    const customerId = req.user[0].id;  
     const totalPrice = +(Math.round(req.body.totalPrice + "e+4") + "e-4"); // làm tròn số tiền 4 số sau dấu thập phân
-    const ListProduct = req.body.ListProduct;
+    const listProduct = req.body.listProduct; 
     const quantity = req.body.quantity;
+    
     const create_payment_json = {
       intent: "sale",
       payer: {
@@ -521,7 +522,7 @@ class API {
       redirect_urls: {
         return_url:
           process.env.return_url +
-          `/paymentsuccess?id=${customerId}&totalprice=${totalPrice}`,
+          `/api/paymentsuccess?id=${customerId}&totalprice=${totalPrice}`,
         cancel_url: process.env.cancel_url + `/cart`,
       },
       transactions: [
@@ -529,7 +530,7 @@ class API {
           item_list: {
             items: [
               {
-                name: ListProduct,
+                name: listProduct,
                 sku: "Gồm " + quantity + " sản phẩm",
                 price: totalPrice,
                 currency: "USD",
@@ -541,7 +542,7 @@ class API {
             currency: "USD",
             total: totalPrice,
           },
-          description: "Giao dịch mua hàng từ GreyPanther",
+          description: "Giao dịch mua hàng từ TheBooksUmbrella",
         },
       ],
     };
@@ -552,8 +553,8 @@ class API {
       } else {
         for (let i = 0; i < payment.links.length; i++) {
           if (payment.links[i].rel === "approval_url") {
-            //console.log(payment)
-            res.send({ payment_link: payment.links[i].href });
+            res.redirect(payment.links[i].href);
+            //res.send({ payment_link: payment.links[i].href });
           }
         }
       }
@@ -563,8 +564,8 @@ class API {
   // [GET] /api/paymentsuccess?id=${customerId}&totalprice=${totalPrice}`
   paymentSuccess(req, res) {
     const customerId = req.query.id;
-    const totalPrice = req.query.totalPrice;
-    const updateSql = "update orders set pay = 2 where customerId = ?";
+    const totalPrice = req.query.totalprice;
+    const updateSql = "update orders set pay = 2 where customerId = ? and deliveryMethod = 2";
     const payerId = req.query.PayerID;
     const paymentId = req.query.paymentId;
     const excute_payment_json = {
@@ -582,12 +583,11 @@ class API {
       paymentId,
       excute_payment_json,
       function (error, payment) {
-        if (error) {
+        if (error) { 
           res.redirect(process.env.cancel_url + `/cart`);
-        } else {
-          pool.query(updateSql, customerId);
-
-          res.redirect(process.env.cancel_url);
+        } else { 
+          pool.query(updateSql, customerId)
+          res.redirect(process.env.cancel_url + `/cart`);
         }
       }
     );
