@@ -23,7 +23,6 @@ import { toast } from "react-toastify";
 
 const CartPage = () => {
   const { cartItems, loading, error } = useSelector((state) => state.cart);
-  console.log("cartItems", cartItems);
   const token = localStorage.getItem("token");
   const Navigate = useNavigate();
   const dispatch = useDispatch();
@@ -81,7 +80,6 @@ const CartPage = () => {
       setCarts(tempCart);
     }
   };
-
   const handleIncreaseCart = (product) => {
     if (product.cartQuantity < product.quantity) {
       const productCart = {
@@ -95,7 +93,6 @@ const CartPage = () => {
         cartQuantity: productCart.quantity,
       };
       setCarts(cart);
-
       if (token) {
         dispatch(updateCart(productCart));
       } else {
@@ -113,7 +110,6 @@ const CartPage = () => {
         productId: product.id,
         quantity: product.cartQuantity - 1,
       };
-
       const itemIndex = carts.findIndex((item) => item.id === product.id);
       const cart = [...carts];
       cart[itemIndex] = {
@@ -121,10 +117,8 @@ const CartPage = () => {
         cartQuantity: productCart.quantity,
       };
       setCarts(cart);
-
       if (token) {
         dispatch(updateCart(productCart));
-        console.log(productCart);
       } else {
         dispatch(decreaseCart(product));
       }
@@ -134,15 +128,8 @@ const CartPage = () => {
     const productCart = {
       productId: product.id,
     };
-    const itemIndex = carts.findIndex((item) => item.id === product.id);
     const cart = [...carts];
     setCarts(cart.filter((item) => item.id !== product.id));
-
-    //   handleDelete = (couterId) => {
-    //     const couters = this.state.couters.filter(couter => couter.id !== couterId);
-    //     this.setState({couters});
-    // }
-
     if (token) {
       dispatch(removeCart(productCart));
     } else {
@@ -150,16 +137,8 @@ const CartPage = () => {
     }
   };
   const handleOrder = (product) => {
-    let orderArr = [];
-    carts.map((cart) => {
-      if (cart.isChecked) {
-        orderArr.push(cart);
-      }
-      return orderArr;
-    });
-    console.log(orderArr);
-    localStorage.setItem("orderItems", JSON.stringify(orderArr));
-    Navigate("/checkout");
+    dispatch(listOrder(product));
+    Navigate("/checkout/step1");
   };
 
   const handleClearCart = () => {
@@ -250,7 +229,7 @@ const CartPage = () => {
             <div className="font-normal my-auto">
               <div className="p-3">
                 Tổng tiền
-                <span className="text-2xl font-medium pl-3">{total}</span>
+                <span className="text-2xl font-medium pl-3">{total} đ</span>
               </div>
               <button
                 className={`${

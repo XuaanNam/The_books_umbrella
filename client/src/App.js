@@ -11,7 +11,7 @@ import Order from "./pages/AdminPages/Order";
 // import Homepage from "./pages/UserPages/Homepage";
 import BookDetail from "./pages/UserPages/BookDetail";
 import CartPage from "./pages/UserPages/CartPage";
-import CheckOrder from "./pages/UserPages/CheckOrder";
+import CheckOrder from "./pages/UserPages/OrderInfo";
 import Homepage from "./pages/UserPages/Homepage";
 import OrderMethod from "./pages/UserPages/OrderMethod";
 import CompleteOrder from "./pages/UserPages/CompleteOrder";
@@ -30,8 +30,8 @@ function App() {
           <Route path="/order" element={<Order />} />
           <Route path="/detail" element={<BookDetail />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckOrder />} />
-          <Route path="/method" element={<OrderMethod />} />
+          <Route path="/checkout/step1" element={<CheckOrder />} />
+          <Route path="/checkout/step2" element={<OrderMethod />} />
           <Route path="/complete" element={<CompleteOrder />} />
 
           <Route

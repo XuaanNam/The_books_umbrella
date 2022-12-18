@@ -20,14 +20,14 @@ const HeaderUser = () => {
   const username = localStorage.getItem("user");
   const isAuth = localStorage.getItem("auth");
   const [keywords, setKeywords] = useState("");
-  const handleChange = (e) => {
-    // let kw = e.targert.value;
-    console.log(e?.targert?.value);
-    // setKeywords(kw);
-  };
+  // const handleChange = (e) => {
+  //   let kw = "";
+  //   kw = e.targert.value;
+  //   console.log(e?.targert?.value);
+  //   // setKeywords(kw);
+  // };
   const hangdleSearch = (e) => {
     dispatch(searchProduct(keywords));
-    console.log(e.target.value);
   };
 
   const handleLogout = () => {
@@ -38,7 +38,6 @@ const HeaderUser = () => {
   };
 
   const user = localStorage.getItem("user");
-  // console.log(user);
   return (
     <div className="h-24 fixed w-screen z-50 text-lg">
       <div className="font-medium h-full text-gray-700 bg-teal-500 grid grid-cols-10 place-items-center drop-shadow-[0_4px_5px_rgba(0,0,0,0.3)]">
@@ -78,7 +77,9 @@ const HeaderUser = () => {
                 type="text"
                 placeholder="Tìm kiếm sản phẩm"
                 name="keyword"
-                onChange={handleChange}
+                onChange={(e) => {
+                  setKeywords(e.target.value);
+                }}
               />
               <div className="grid place-items-center mx-auto">
                 <IconContext.Provider

@@ -6,7 +6,6 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { totalPrice } from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
-import { useGetAllAddressQuery } from "../../redux-toolkit/addressApi";
 import useSWR from "swr";
 import InputRadio from "../../components/InputRadio";
 import { useNavigate } from "react-router-dom";

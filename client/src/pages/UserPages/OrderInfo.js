@@ -7,20 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { totalPrice } from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
 import { useGetAllAddressQuery } from "../../redux-toolkit/addressApi";
-import useSWR from "swr";
 import { Navigate, useNavigate } from "react-router-dom";
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
-const CheckOrder = () => {
-  // const { data, error, isLoading } = useGetAllAddressQuery();
-  const { data, error, isLoading } = useSWR(
-    "thongtindoanhnghiep.co/api/city",
-    fetcher
-  );
-  console.log(data);
-
+const OrderInfo = () => {
   const order = useSelector((state) => state.cart);
-  console.log(order.orderItems);
   const [total, setTotal] = useState(0);
   useEffect(() => {
     let totalPrice = 0;
@@ -29,7 +19,12 @@ const CheckOrder = () => {
       return totalPrice;
     });
     setTotal(totalPrice);
-  });
+  }, [order.orderItems]);
+  const [disable, setDisable] = useState(false);
+  const handleClick = (values) => {
+    console.log(values);
+    // Navigate("/checkout/step2");
+  };
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   return (
@@ -70,12 +65,15 @@ const CheckOrder = () => {
                       "Vui lòng điền vào trường trống"
                     ),
                   })}
-                  onSubmit={(values) => {
-                    // HandleLogin(values);
-                  }}
+                  // onSubmit={(values, isValid) => {
+                  //   console.log(values);
+                  //   console.log(isValid);
+                  // }}
+                  // onChange={(values, isValid) => {
+                  //   // Navigate("/checkout/step2");
+                  // }}
                 >
                   {(formik) => {
-                    console.log(formik.values);
                     return (
                       <Form className="">
                         <Input
@@ -110,11 +108,8 @@ const CheckOrder = () => {
                         ></Input>
                         <div className="grid place-items-end ">
                           <button
-                            className="w-[400px] h-20 mt-10 p-4 text-2xl text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl 
-                          "
-                            onClick={() => {
-                              Navigate("/method");
-                            }}
+                            className="bg-cyan-700 hover:bg-cyan-600 w-[400px] h-20 mt-10 p-4 text-2xl text-white rounded-xl font-medium"
+                            onClick={handleClick(formik.values)}
                           >
                             Phương thức thanh toán
                           </button>
@@ -125,7 +120,6 @@ const CheckOrder = () => {
                   }}
                 </Formik>
               </div>
-              {/* <hr className="mx-5"></hr> */}
             </div>
 
             <div className="pl-20">
@@ -177,4 +171,4 @@ const CheckOrder = () => {
   );
 };
 
-export default CheckOrder;
+export default OrderInfo;

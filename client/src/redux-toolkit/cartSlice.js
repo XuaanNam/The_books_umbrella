@@ -63,8 +63,11 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    listOrder(state, action) {
-      action.payload.map((item) => {
+    listOrder(state, { payload }) {
+      if (state.orderItems) {
+        state.orderItems = [];
+      }
+      payload.map((item) => {
         if (item.isChecked) state.orderItems.push(item);
         return state;
       });
