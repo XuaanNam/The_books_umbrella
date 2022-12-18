@@ -25,7 +25,6 @@ export const cartFetch = createAsyncThunk("cartfetch", async () => {
   });
   return await res.json();
 });
-
 export const addCart = createAsyncThunk("addcart", async (body) => {
   const res = await fetch("http://localhost:5000/api/cart/add", {
     method: "POST",
@@ -50,6 +49,17 @@ export const updateCart = createAsyncThunk("updatecart", async (body) => {
 });
 export const removeCart = createAsyncThunk("removecart", async (body) => {
   const res = await fetch("http://localhost:5000/api/cart/remove", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
+export const payOrder = createAsyncThunk("payorder", async (body) => {
+  const res = await fetch("http://localhost:5000/api/cart/order", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -59,10 +69,35 @@ export const removeCart = createAsyncThunk("removecart", async (body) => {
   });
   return await res.json();
 });
+
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    mergeOrder(state, { payload }) {
+      let order = [];
+      if (payload.fullname) {
+        order = state.orderItems.map((item) => {
+          return {
+            ...item,
+            fullname: payload.fullname,
+            emailOrder: payload.emailOrder,
+            phone: payload.phone,
+            address: payload.address,
+          };
+        });
+      } else {
+        order = state.orderItems.map((item) => {
+          return {
+            ...item,
+            deliveryMethod: payload.ship,
+            paymentMethod: payload.pay,
+          };
+        });
+      }
+      state.orderItems = [...order];
+      localStorage.setItem("orderItems", JSON.stringify(order));
+    },
     listOrder(state, { payload }) {
       if (state.orderItems) {
         state.orderItems = [];
@@ -186,7 +221,9 @@ const cartSlice = createSlice({
     [cartFetch.fulfilled]: (state, { payload: { results, checked } }) => {
       state.cartItems = results;
       state.loading = false;
-      localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+      if (results) {
+        localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+      }
     },
     [cartFetch.rejected]: (state, { payload }) => {
       state.loading = true;
@@ -229,10 +266,20 @@ const cartSlice = createSlice({
       state.loading = true;
       state.message = payload.message;
     },
+    //creatOrder
+    [payOrder.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [payOrder.fulfilled]: (state, { payload }) => {},
+    [payOrder.rejected]: (state, { payload }) => {
+      state.loading = true;
+      state.checked = payload.checked;
+    },
   },
 });
 
 export const {
+  mergeOrder,
   listOrder,
   increment,
   decrement,

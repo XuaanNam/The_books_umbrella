@@ -184,7 +184,7 @@ class API {
       if (error) {
         res.status(200).send({ message: errorMgs, checked: false });
       } else {
-        if (results[0].length > 0) { 
+        if (results[0].length > 0) {
           res.send({ results: results[0], checked: true });
         } else {
           res.send({ message: nullMgs, checked: false });
@@ -221,17 +221,21 @@ class API {
     const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
     const selectSql = "call getProductsByPrice(?,?)";
 
-    pool.query(selectSql, [minPrice, maxPrice], function (error, results, fields) {
-      if (error) {
-        res.status(200).send({ message: errorMgs, checked: false });
-      } else {
-        if (results[0].length > 0) {
-          res.send({ results: results[0], checked: true });
+    pool.query(
+      selectSql,
+      [minPrice, maxPrice],
+      function (error, results, fields) {
+        if (error) {
+          res.status(200).send({ message: errorMgs, checked: false });
         } else {
-          res.send({ message: errorMgs, checked: false });
+          if (results[0].length > 0) {
+            res.send({ results: results[0], checked: true });
+          } else {
+            res.send({ message: errorMgs, checked: false });
+          }
         }
       }
-    });
+    );
   }
 
   //[GET] /api/products/search/publisher
@@ -420,10 +424,11 @@ class API {
     const paymentMethod = req.body.paymentMethod;
     const timeOfOrder = new Date(Date.now());
     const discount = req.body.voucher ? req.body.voucher : null;
-   
-    const insertSql = "insert into orders " + 
-      "(productId, customerId, quantity, price, fullname, email, phone, address, deliveryMethod, paymentMethod, timeOfOrder, discount) "
-      + "value (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    const insertSql =
+      "insert into orders " +
+      "(productId, customerId, quantity, price, fullname, email, phone, address, deliveryMethod, paymentMethod, timeOfOrder, discount) " +
+      "value (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại sau!";
     const successMsg = "Đặt hàng thành công!";
 
@@ -515,11 +520,11 @@ class API {
 
   // [POST] /api/payment/paypal
   paymentByPaypal(req, res, next) {
-    const customerId = req.user[0].id;  
+    const customerId = req.user[0].id;
     const totalPrice = +(Math.round(req.body.totalPrice + "e+4") + "e-4"); // làm tròn số tiền 4 số sau dấu thập phân
-    const listProduct = req.body.listProduct; 
+    const listProduct = req.body.listProduct;
     const quantity = req.body.quantity;
-    
+
     const create_payment_json = {
       intent: "sale",
       payer: {
@@ -571,7 +576,8 @@ class API {
   paymentSuccess(req, res) {
     const customerId = req.query.id;
     const totalPrice = req.query.totalprice;
-    const updateSql = "update orders set pay = 2 where customerId = ? and deliveryMethod = 2";
+    const updateSql =
+      "update orders set pay = 2 where customerId = ? and deliveryMethod = 2";
     const payerId = req.query.PayerID;
     const paymentId = req.query.paymentId;
     const excute_payment_json = {
@@ -589,41 +595,30 @@ class API {
       paymentId,
       excute_payment_json,
       function (error, payment) {
-        if (error) { 
+        if (error) {
           res.redirect(process.env.cancel_url + `/cart`);
-        } else { 
-          pool.query(updateSql, customerId)
+        } else {
+          pool.query(updateSql, customerId);
           res.redirect(process.env.cancel_url + `/cart`);
         }
       }
     );
   }
-  
+
   // [GET] /api/admin/warehouse
-  getWarehouse(req, res, next) {
-    
-  }
+  getWarehouse(req, res, next) {}
 
   // [POST] /api/admin/product/create
-  createProduct(req, res, next) {
-    
-  }
+  createProduct(req, res, next) {}
 
   // [PATCH] /api/admin/product/update
-  updateProduct(req, res, next) {
-    
-  }
+  updateProduct(req, res, next) {}
 
   // [PATCH] /api/admin/product/disable
-  disableProduct(req, res, next) {
-  
-  }
+  disableProduct(req, res, next) {}
 
   // [PATCH] /api/admin/product/enable
-  enableProduct(req, res, next) {
-  
-  }
-
+  enableProduct(req, res, next) {}
 }
 
 module.exports = new API();

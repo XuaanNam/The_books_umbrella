@@ -4,7 +4,7 @@ import Footer from "../../layouts/Footer";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { totalPrice } from "../../redux-toolkit/cartSlice";
+import { totalPrice, mergeOrder } from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
 import useSWR from "swr";
 import InputRadio from "../../components/InputRadio";
@@ -17,10 +17,7 @@ const OrderMethod = () => {
     "thongtindoanhnghiep.co/api/city",
     fetcher
   );
-  console.log(data);
-
   const order = useSelector((state) => state.cart);
-  console.log(order.orderItems);
   const [total, setTotal] = useState(0);
   useEffect(() => {
     let totalPrice = 0;
@@ -30,6 +27,15 @@ const OrderMethod = () => {
     });
     setTotal(totalPrice);
   });
+
+  const handleClick = (values) => {
+    dispatch(mergeOrder(values));
+    if (order.orderItems[0].paymentMethod) {
+      alert("Order");
+    }
+    // Navigate("/checkout/step2");
+  };
+
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   return (
@@ -62,7 +68,7 @@ const OrderMethod = () => {
                     pay: Yup.string()
                       .required("Please select your method payment")
                       .oneOf(
-                        ["code", "bank"],
+                        ["cod", "bank"],
                         "You can only select code or bank"
                       ),
                   })}
@@ -71,11 +77,8 @@ const OrderMethod = () => {
                   }}
                 >
                   {(formik) => {
-                    console.log(formik.values);
                     const watchShip = formik.values.ship;
                     const watchPay = formik.values.pay;
-                    console.log("Rendering formik", watchShip, watchPay);
-
                     return (
                       <Form className="">
                         <div className="pb-7 text-3xl text-slate-900">
@@ -129,8 +132,9 @@ const OrderMethod = () => {
                         <div className="grid place-items-end ">
                           <button
                             className="w-[200px] h-20 mt-10 p-4 text-2xl text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl "
-                            onClick={() => {
-                              Navigate("/complete");
+                            type="submit"
+                            onClick={(values) => {
+                              handleClick(formik.values);
                             }}
                           >
                             Đặt hàng
