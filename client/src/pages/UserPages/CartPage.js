@@ -3,7 +3,11 @@ import HeaderUser from "../../layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
-import { cartFetch, updateCart } from "../../redux-toolkit/cartSlice";
+import {
+  cartFetch,
+  updateCart,
+  removeCart,
+} from "../../redux-toolkit/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   listOrder,
@@ -15,6 +19,7 @@ import {
   removeFromCart,
 } from "../../redux-toolkit/cartSlice";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const CartPage = () => {
   const { cartItems, loading, error } = useSelector((state) => state.cart);
@@ -78,30 +83,71 @@ const CartPage = () => {
   };
 
   const handleIncreaseCart = (product) => {
-    const productCart = {
-      productId: product.id,
-      quantity: product.cartQuantity,
-    };
-    if (token) {
-      dispatch(updateCart(productCart));
+    if (product.cartQuantity < product.quantity) {
+      const productCart = {
+        productId: product.id,
+        quantity: product.cartQuantity + 1,
+      };
+      const itemIndex = carts.findIndex((item) => item.id === product.id);
+      const cart = [...carts];
+      cart[itemIndex] = {
+        ...carts[itemIndex],
+        cartQuantity: productCart.quantity,
+      };
+      setCarts(cart);
+
+      if (token) {
+        dispatch(updateCart(productCart));
+      } else {
+        dispatch(increaseCart(product));
+      }
     } else {
-      dispatch(increaseCart(product));
+      toast.error("Số lượng vượt quá kho hàng", {
+        position: "bottom-right",
+      });
     }
   };
   const handleDecreaseCart = (product) => {
-    const productCart = {
-      productId: product.id,
-      quantity: product.cartQuantity,
-    };
-    if (token) {
-      dispatch(updateCart(productCart));
-      console.log(productCart);
-    } else {
-      dispatch(decreaseCart(product));
+    if (product.cartQuantity > 1) {
+      const productCart = {
+        productId: product.id,
+        quantity: product.cartQuantity - 1,
+      };
+
+      const itemIndex = carts.findIndex((item) => item.id === product.id);
+      const cart = [...carts];
+      cart[itemIndex] = {
+        ...carts[itemIndex],
+        cartQuantity: productCart.quantity,
+      };
+      setCarts(cart);
+
+      if (token) {
+        dispatch(updateCart(productCart));
+        console.log(productCart);
+      } else {
+        dispatch(decreaseCart(product));
+      }
     }
   };
   const handleRemoveFromCart = (product) => {
-    dispatch(removeFromCart(product));
+    const productCart = {
+      productId: product.id,
+    };
+    const itemIndex = carts.findIndex((item) => item.id === product.id);
+    const cart = [...carts];
+    setCarts(cart.filter((item) => item.id !== product.id));
+
+    //   handleDelete = (couterId) => {
+    //     const couters = this.state.couters.filter(couter => couter.id !== couterId);
+    //     this.setState({couters});
+    // }
+
+    if (token) {
+      dispatch(removeCart(productCart));
+    } else {
+      dispatch(removeFromCart(product));
+    }
   };
   const handleOrder = (product) => {
     let orderArr = [];
@@ -113,8 +159,6 @@ const CartPage = () => {
     });
     console.log(orderArr);
     localStorage.setItem("orderItems", JSON.stringify(orderArr));
-    // const a = JSON.parse(localStorage.getItem("orderItems"));
-    // console.log(a);
     Navigate("/checkout");
   };
 
