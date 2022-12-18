@@ -35,6 +35,7 @@ router.patch('/profile/update', PassportCheck, api.updateProfile);
 
 // payment
 router.post('/payment/paypal', PassportCheck, api.paymentByPaypal);
+router.get('/paymentsuccess', api.paymentSuccess);
 
 
 
