@@ -473,7 +473,7 @@ class API {
     const customerId = req.user[0].id;
     const productId = req.body.productId;
 
-    const deleteSql = "delete from order where ";
+    const deleteSql = "delete from order where id = ? ";
 
     pool.query(
       deleteSql,
@@ -594,8 +594,7 @@ class API {
       } else {
         for (let i = 0; i < payment.links.length; i++) {
           if (payment.links[i].rel === "approval_url") {
-            res.redirect(payment.links[i].href);
-            //res.send({ payment_link: payment.links[i].href });
+            res.send({ payment_link: payment.links[i].href });
           }
         }
       }
@@ -741,9 +740,9 @@ class API {
     
     const updateSql =
       "update product set image = ?, productName = ?, chapter = ?, author = ?, translator = ?, price = ?, publisher = ?, " + 
-      "publicationDate = ?, age = ?, packagingSize = ?, form = ?, quantity = ?, description = ?, status = ? ";
+      "publicationDate = ?, age = ?, packagingSize = ?, form = ?, quantity = ?, description = ?, status = ? where id = ?";
   
-    const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào giỏ hàng!";
+    const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào kho hàng!";
     const existMsg = "Sản phẩm đã có sẵn trong kho hàng!";
     const successMsg = "Sản phẩm đã được thêm vào kho hàng!";
 
