@@ -88,9 +88,7 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
               .min(8, "Mật khẩu chứa ít nhất 8 ký tự"),
             email: Yup.string().required("Vui lòng điền vào trường trống"),
           })}
-          onSubmit={(values) => {
-            //console.log(values);
-          }}
+          onSubmit={(values) => {}}
         >
           {(formik) => {
             console.log(formik);

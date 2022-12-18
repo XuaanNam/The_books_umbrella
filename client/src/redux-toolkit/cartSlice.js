@@ -48,6 +48,17 @@ export const updateCart = createAsyncThunk("updatecart", async (body) => {
   });
   return await res.json();
 });
+export const removeCart = createAsyncThunk("removecart", async (body) => {
+  const res = await fetch("http://localhost:5000/api/cart/remove", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
 const cartSlice = createSlice({
   name: "cart",
   initialState,
@@ -203,6 +214,15 @@ const cartSlice = createSlice({
     },
     [updateCart.fulfilled]: (state, { payload }) => {},
     [updateCart.rejected]: (state, { payload }) => {
+      state.loading = true;
+      state.message = payload.message;
+    },
+    //Remove
+    [removeCart.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [removeCart.fulfilled]: (state, { payload }) => {},
+    [removeCart.rejected]: (state, { payload }) => {
       state.loading = true;
       state.message = payload.message;
     },
