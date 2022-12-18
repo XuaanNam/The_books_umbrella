@@ -45,7 +45,8 @@ age int not null,
 packagingSize char(30) not null CHECK (packagingSize !=""),
 form int not null,
 quantity int default 0, -- số lượng sách trong kho 
-description text(1000)
+description text(1000),
+status int default 1
 )
 ; -- drop table product;
 
@@ -57,13 +58,11 @@ UNIQUE unique_index(productId, productGenreId)
 )
 ; -- drop table bookgenredata;
 
-
 create table classifyproducts(
 id int not null primary key AUTO_INCREMENT,
 typeOfBooks char (100) not null
 )
 ; -- drop table classifyproducts;
-
 
 create table productgenres(
 id int not null primary key AUTO_INCREMENT,
@@ -79,21 +78,28 @@ publisher char (100) not null
 )
 ;-- drop table classifypublishers;
 
-
 create table productform(
 id int not null primary key AUTO_INCREMENT,
 form char (100) not null
 )
 ;-- drop table productform;
 
+create table productstatus(
+id int not null primary key AUTO_INCREMENT,
+status char (100) not null
+)
+;-- drop table productform;
+
+
 create table transaction(
 id int not null primary key AUTO_INCREMENT,
 productId int  not null,
 customerId int  not null,
-timeOfPurchase date,
+timeOfPurchase datetime,
 price double not null,
 amount int not null, 
-transactionInfor text(1000)
+transactionInfor text(1000),
+UNIQUE unique_index(productId, customerId, timeOfPurchase)
 )
 ;  -- drop table transaction;
 
@@ -106,6 +112,57 @@ UNIQUE unique_index(productId, customerId)
 )
 ;  -- drop table cart;
 
+create table orders(
+id int not null primary key AUTO_INCREMENT,
+productId int  not null,
+customerId int  not null,
+quantity int not null default 1,
+price double not null,
+fullname char(60) not null,
+email char(50) not null CHECK(email !=""),
+phone char(15) not null,
+address char(200) not null,
+deliveryMethod int not null default 1,
+timeOfOrder datetime,
+discount int,
+status int default 1,
+pay int default 1
+)
+;  -- drop table orders;
+ALTER TABLE orders AUTO_INCREMENT = 791928;
+
+create table deliverymethod(
+id int not null primary key AUTO_INCREMENT,
+delivery char(70) not null
+)
+; 
+
+create table discounttype(
+id int not null primary key AUTO_INCREMENT,
+type char(30) not null
+)
+;  -- drop table discounttype;
+
+create table discountcode(
+id int not null primary key AUTO_INCREMENT,
+code char(30) not null,
+discountTypeId int not null,
+discountValue double not null
+)
+;  -- drop table discountcode;
+
+create table orderstatus(
+id int not null primary key AUTO_INCREMENT,
+status char(30) not null
+)
+; 
+
+create table payorder(
+id int not null primary key AUTO_INCREMENT,
+pay char(30) not null
+)
+; 
+
 -- ========================================================= RÀNG BUỘC ============================================================
 
 alter table customerdata add foreign key (customerGenre) references customergenres(id);
@@ -115,7 +172,8 @@ alter table bookgenredata add foreign key (productId) references product(id),
 add foreign key (productGenreId) references productgenres(id);
 
 alter table product add foreign key (publisher) references classifypublishers(id), 
-add foreign key (form) references productform(id);
+add foreign key (form) references productform(id),
+add foreign key (status) references productstatus(id);
 
 alter table transaction add foreign key (customerId) references customerdata(id), 
 add foreign key (productId) references product(id);
@@ -123,9 +181,19 @@ add foreign key (productId) references product(id);
 alter table cart add foreign key (customerId) references customerdata(id), 
 add foreign key (productId) references product(id);
 
+alter table orders add foreign key (customerId) references customerdata(id), 
+add foreign key (productId) references product(id),
+add foreign key (deliveryMethod) references deliverymethod(id),
+add foreign key (discount) references discountcode(id),
+add foreign key (status) references orderstatus(id),
+add foreign key (pay) references payorder(id);
+
+alter table discountcode add foreign key (discountTypeId) references discounttype(id);
+
 -- ========================================================= Trigger View Proccedure ============================================================
 
 -- call getProductByKeywords('%ănn%')
+-- select * from ListProducts
 delimiter $$
 create view ListProducts as
 select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
@@ -139,19 +207,12 @@ inner join classifyproducts cp on cp.id = g.classifyProductsId
 $$
 
 delimiter $$
-create procedure getCart (IN id int )
+create trigger TG_INSERT_ORDERS after insert on orders for each row  
 begin
-	select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
-		c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
-	from bookgenredata b 
-	inner join product p on p.id = b.productId 
-	inner join productgenres g on g.id = b.productGenreId 
-	inner join classifypublishers c on c.id = p.publisher 
-	inner join productform f on f.id = p.form 
-	inner join classifyproducts cp on cp.id = g.classifyProductsId
-	inner join cart ct on ct.productId = p.id
-	where ct.customerId = id;
+    update product set quantity = quantity - new.quantity  where id = new.productId;
+    delete from cart where customerId = new.customerId and productId = new.productId;
 end$$
+-- drop trigger TG_INSERT_ORDERS   
 
 
 delimiter $$
@@ -180,11 +241,7 @@ begin
 	inner join productform f on f.id = p.form 
 	inner join classifyproducts cp on cp.id = g.classifyProductsId
     WHERE p.productName like  keywords  
-			or g.genre like keywords 
-            or cp.typeOfBooks like keywords 
-            or p.author like keywords 
-            or p.translator like keywords
-            or p.description like keywords;
+            or p.author like keywords;
 end$$ -- drop procedure getProductByKeywords
 
 delimiter $$
@@ -271,6 +328,22 @@ end$$
 --     WHERE p.age = age;
 -- end$$ 
 
+delimiter $$
+create procedure getCart (IN id int )
+begin
+	select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+		c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description , ct.quantity as cartQuantity, ct.id as cartId
+	from bookgenredata b 
+	inner join product p on p.id = b.productId 
+	inner join productgenres g on g.id = b.productGenreId 
+	inner join classifypublishers c on c.id = p.publisher 
+	inner join productform f on f.id = p.form 
+	inner join classifyproducts cp on cp.id = g.classifyProductsId
+	inner join cart ct on ct.productId = p.id
+	where ct.customerId = id;
+end$$
+-- drop procedure getCart   
+
 
 
 -- ========================================================= SAMPLE DATA ============================================================
@@ -338,6 +411,9 @@ INSERT INTO `thebooksumbrella`.`productform` (`id`, `form`) VALUES
 ('1', 'Bìa cứng'),
 ('2', 'Bìa mềm'),
 ('3', 'Bộ hộp');
+
+INSERT INTO `thebooksumbrella`.`productstatus` (`id`, `status`) VALUES ('1', 'Trong kho'),('2', 'Cửa hàng');
+
 
 INSERT INTO `thebooksumbrella`.`product` (`image`, `productName`, `chapter`, `author`, `translator`, `price`, `publisher`, `publicationDate`, `age`, `packagingSize`, `form`, `quantity`, `description`) VALUES 
 ('https://cdn0.fahasa.com/media/catalog/product/i/m/image_195509_1_36793.jpg', 'Nhà Giả Kim (Tái Bản 2020)', NULL, 'Paulo Coelho', 'Lê Chu Cầu', '79000', '4', '2020', '13', '20.5 x 13', '2', '350', 'Tất cả những trải nghiệm trong chuyến phiêu du theo đuổi vận mệnh của mình đã giúp Santiago thấu hiểu được ý nghĩa sâu xa nhất của hạnh phúc, hòa hợp với vũ trụ và con người. Tiểu thuyết Nhà giả kim của Paulo Coelho như một câu chuyện cổ tích giản dị, nhân ái, giàu chất thơ, thấm đẫm những minh triết huyền bí của phương Đông. Trong lần xuất bản đầu tiên tại Brazil vào năm 1988, sách chỉ bán được 900 bản. Nhưng, với số phận đặc biệt của cuốn sách dành cho toàn nhân loại, vượt ra ngoài biên giới quốc gia, Nhà giả kim đã làm rung động hàng triệu tâm hồn, trở thành một trong những cuốn sách bán chạy nhất mọi thời đại, và có thể làm thay đổi cuộc đời người đọc. “Nhưng nhà luyện kim đan không quan tâm mấy đến những điều ấy. Ông đã từng thấy nhiều người đến rồi đi, trong khi ốc đảo và sa mạc vẫn là ốc đảo và sa mạc. Ông đã thấy vua chúa và kẻ ăn xin đi qua biển cát này, cái biển cát thường xuyên thay hình đổi dạng vì gió thổi nhưng vẫn mãi mãi là biển cát mà ông đã biết từ thuở nhỏ. Tuy vậy, tự đáy lòng mình, ông không thể không cảm thấy vui trước hạnh phúc của mỗi người lữ khách, sau bao ngày chỉ có cát vàng với trời xanh nay được thấy chà là xanh tươi hiện ra trước mắt. ‘Có thể Thượng đế tạo ra sa mạc chỉ để cho con người biết quý trọng cây chà là,’ ông nghĩ.”'),
@@ -465,7 +541,22 @@ INSERT INTO `thebooksumbrella`.`product` (`image`, `productName`, `chapter`, `au
 ('1', '4');
 
 
-
 INSERT INTO `thebooksumbrella`.`cart` (`productId`, `customerId`, `quantity`) VALUES 
 ('2', '659323833', '3'),
 ('9', '659323833', '19');
+
+INSERT INTO `thebooksumbrella`.`deliverymethod` (`delivery`) VALUES 
+('Thanh toán khi giao hàng (COD)'),
+('Chuyển khoản qua ngân hàng');
+
+INSERT INTO `thebooksumbrella`.`discounttype` (`type`) VALUES ('Voucher '), ('Coupon ');
+
+INSERT INTO `thebooksumbrella`.`payorder` (`id`, `pay`) VALUES ('1', 'Chưa thanh toán'), ('2', 'Đã thanh toán');
+
+INSERT INTO `thebooksumbrella`.`orderstatus` (`id`, `status`) VALUES ('1', 'Chờ Xác Nhận'), ('2', 'Đang vận chuyển'), ('3', 'Hoàn thành'), ('4', 'Đã Hủy');
+
+INSERT INTO `thebooksumbrella`.`discountcode` (`code`, `discountTypeId`, `discountValue`) VALUES ('BANMOI2022', 1, 30000);
+
+
+
+
