@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Select } from "antd";
 import HeaderUser from "../.././layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
-import { useGetAllProductsQuery } from "../../redux-toolkit/productsApi";
 import { useDispatch, useSelector } from "react-redux";
 import { productsFetch } from "../../redux-toolkit/productsSlice";
 import { addToCart, addCart } from "../../redux-toolkit/cartSlice";

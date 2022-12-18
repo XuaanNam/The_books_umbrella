@@ -1,7 +1,6 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 // import logger from "redux-logger";
 import counterSlice from "./counterSlice";
-import { productsApi } from "./productsApi";
 import { addressApi } from "./addressApi";
 
 import cartReducer, { getTotals } from "./cartSlice";
@@ -17,7 +16,6 @@ const reducer = combineReducers({
   counter: counterSlice,
   products: productsReducer,
   cart: cartReducer,
-  [productsApi.reducerPath]: productsApi.reducer,
   [addressApi.reducerPath]: addressApi.reducer,
 
   // global: globalSlice,
@@ -40,10 +38,7 @@ const reducer = combineReducers({
 const store = configureStore({
   reducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(
-      productsApi.middleware,
-      addressApi.middleware
-    ),
+    getDefaultMiddleware().concat(addressApi.middleware),
 
   // middleware: (gDM) => gDM().concat(logger, sagaMiddleware),
 });

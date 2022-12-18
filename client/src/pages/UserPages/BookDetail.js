@@ -4,7 +4,6 @@ import Footer from "../../layouts/Footer";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { BsCart } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetAllProductsQuery } from "../../redux-toolkit/productsApi";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, increment, decrement } from "../../redux-toolkit/cartSlice";
 
@@ -14,8 +13,8 @@ const BookDetail = () => {
   const Navigate = useNavigate();
   const { bookId } = useParams();
   console.log(bookId);
-  const { data, error, isLoading } = useGetAllProductsQuery();
-  console.log(data);
+  // const { data, error, isLoading } = useGetAllProductsQuery();
+  // console.log(data);
   const dispatch = useDispatch();
   const handleIncrement = () => {
     dispatch(increment());
@@ -36,7 +35,7 @@ const BookDetail = () => {
         <div className="px-5 py-4 cursor-pointer">
           Trang chủ {">"} Sách Tiếng Việt
         </div>
-        {data ? (
+        {/* {data ? (
           data.map(
             (item) =>
               parseInt(item.id) === parseInt(bookId) && (
@@ -186,7 +185,7 @@ const BookDetail = () => {
           )
         ) : (
           <div></div>
-        )}
+        )} */}
         <div className="bg-white w-[90%] border mx-auto rounded-lg p-5 mb-5 text-lg">
           <div className="text-xl font-semibold pb-5">Sản phẩm liên quan</div>
           <div className=" grid grid-cols-4 gap-5">

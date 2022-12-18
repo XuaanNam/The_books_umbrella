@@ -10,6 +10,8 @@ import { FaUserAlt } from "react-icons/fa";
 import { logout } from "../redux-toolkit/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { productsFetch, searchProduct } from "../redux-toolkit/productsSlice";
+
 const HeaderUser = () => {
   const [showModal, setShowModal] = useState(false);
   const [active, setActive] = useState(false);
@@ -17,13 +19,24 @@ const HeaderUser = () => {
   const Navigate = useNavigate();
   const username = localStorage.getItem("user");
   const isAuth = localStorage.getItem("auth");
-  
+  const [keywords, setKeywords] = useState("");
+  const handleChange = (e) => {
+    // let kw = e.targert.value;
+    console.log(e?.targert?.value);
+    // setKeywords(kw);
+  };
+  const hangdleSearch = (e) => {
+    dispatch(searchProduct(keywords));
+    console.log(e.target.value);
+  };
+
   const handleLogout = () => {
     dispatch(logout());
     setTimeout(() => {
       Navigate("/");
-    }, 1500);
+    }, 1000);
   };
+
   const user = localStorage.getItem("user");
   // console.log(user);
   return (
@@ -65,6 +78,7 @@ const HeaderUser = () => {
                 type="text"
                 placeholder="Tìm kiếm sản phẩm"
                 name="keyword"
+                onChange={handleChange}
               />
               <div className="grid place-items-center mx-auto">
                 <IconContext.Provider
@@ -73,7 +87,10 @@ const HeaderUser = () => {
                     color: "white",
                   }}
                 >
-                  <button className="h-14 w-32 rounded-xl bg-violet-500 hover:bg-violet-400">
+                  <button
+                    className="h-14 w-32 rounded-xl bg-violet-500 hover:bg-violet-400"
+                    onClick={hangdleSearch}
+                  >
                     <div className="grid place-items-center">
                       <BiSearchAlt className="" />
                     </div>

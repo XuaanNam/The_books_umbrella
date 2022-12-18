@@ -179,6 +179,7 @@ class API {
     const nullMgs = "Không tìm thấy sản phẩm nào!";
     const selectSql = "call getProductByKeywords(?)";
 
+    console.log(keywords);
     pool.query(selectSql, keywords, function (error, results, fields) {
       if (error) {
         res.status(200).send({ message: errorMgs, checked: false });
