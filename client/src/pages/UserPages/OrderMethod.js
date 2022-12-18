@@ -4,7 +4,11 @@ import Footer from "../../layouts/Footer";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { totalPrice, mergeOrder } from "../../redux-toolkit/cartSlice";
+import {
+  totalPrice,
+  mergeOrder,
+  payOrder,
+} from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
 import useSWR from "swr";
 import InputRadio from "../../components/InputRadio";
@@ -27,15 +31,38 @@ const OrderMethod = () => {
     });
     setTotal(totalPrice);
   });
-
   const handleClick = (values) => {
     dispatch(mergeOrder(values));
     if (order.orderItems[0].paymentMethod) {
-      alert("Order");
+      // do{
+      //   let i = 0;
+      //   dispatch(payOrder(data[0]))
+      //   if(checked === true){
+      //     dispatch(payOrder(data[i]))
+      //     i ++;
+      //   } else {
+      //     dispatch(removeOrder(data[i - 1]))
+      //     i --;
+      //   }
+      // } while (i < 0)
+      // order.orderItems.map((item) => {
+      const data = {
+        quantity: order.orderItems[0].cartQuantity,
+        productId: order.orderItems[0].productId,
+        price: order.orderItems[0].price,
+        fullname: order.orderItems[0].fullname,
+        email: order.orderItems[0].email,
+        phone: order.orderItems[0].phone,
+        address: order.orderItems[0].address,
+        deliveryMethod: order.orderItems[0].deliveryMethod,
+        paymentMethod: order.orderItems[0].paymentMethod,
+      };
+      console.log(data);
+      dispatch(payOrder(data));
+      // });
     }
     // Navigate("/checkout/step2");
   };
-
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   return (
