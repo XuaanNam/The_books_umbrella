@@ -4,7 +4,7 @@ import Footer from "../../layouts/Footer";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { totalPrice, mergeOrder } from "../../redux-toolkit/cartSlice";
+import { totalPrice, mergeInfo } from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
 import { useGetAllAddressQuery } from "../../redux-toolkit/addressApi";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -25,7 +25,7 @@ const OrderInfo = () => {
 
   console.log(orderItem);
   const handleClick = (values) => {
-    dispatch(mergeOrder(values));
+    dispatch(mergeInfo(values));
     Navigate("/checkout/step2");
   };
 

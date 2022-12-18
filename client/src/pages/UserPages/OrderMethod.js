@@ -1,28 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import HeaderUser from "../../layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import {
   totalPrice,
-  mergeOrder,
+  mergeMethod,
   payOrder,
+  paypal,
 } from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
 import useSWR from "swr";
 import InputRadio from "../../components/InputRadio";
 import { useNavigate } from "react-router-dom";
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
+// const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 const OrderMethod = () => {
   // const { data, error, isLoading } = useGetAllAddressQuery();
-  const { data, error, isLoading } = useSWR(
-    "thongtindoanhnghiep.co/api/city",
-    fetcher
-  );
+  // const { data, error, isLoading } = useSWR(
+  //   "thongtindoanhnghiep.co/api/city",
+  //   fetcher
+  // );
   const order = useSelector((state) => state.cart);
   const [total, setTotal] = useState(0);
+  const [value, setValue] = useState([]);
+  const dispatch = useDispatch();
+  const Navigate = useNavigate();
   useEffect(() => {
     let totalPrice = 0;
     order.orderItems.map((item) => {
@@ -30,41 +34,44 @@ const OrderMethod = () => {
       return totalPrice;
     });
     setTotal(totalPrice);
-  });
-  const handleClick = (values) => {
-    dispatch(mergeOrder(values));
-    if (order.orderItems[0].paymentMethod) {
-      // do{
-      //   let i = 0;
-      //   dispatch(payOrder(data[0]))
-      //   if(checked === true){
-      //     dispatch(payOrder(data[i]))
-      //     i ++;
-      //   } else {
-      //     dispatch(removeOrder(data[i - 1]))
-      //     i --;
-      //   }
-      // } while (i < 0)
-      // order.orderItems.map((item) => {
-      const data = {
-        quantity: order.orderItems[0].cartQuantity,
-        productId: order.orderItems[0].productId,
-        price: order.orderItems[0].price,
-        fullname: order.orderItems[0].fullname,
-        email: order.orderItems[0].email,
-        phone: order.orderItems[0].phone,
-        address: order.orderItems[0].address,
-        deliveryMethod: order.orderItems[0].deliveryMethod,
-        paymentMethod: order.orderItems[0].paymentMethod,
-      };
-      console.log(data);
-      dispatch(payOrder(data));
-      // });
+  }, []);
+  // let value = formikRef.current?.values;
+  console.log(value);
+  useEffect(() => {
+    if (value) {
+      dispatch(mergeMethod(value));
     }
-    // Navigate("/checkout/step2");
+  }, [value, dispatch]);
+  const handleClick = (values) => {
+    if (order.orderItems[0].paymentMethod) {
+      order.orderItems.map((item) => {
+        const data = {
+          quantity: item.cartQuantity,
+          productId: item.id,
+          price: item.price,
+          fullname: item.fullname,
+          email: item.emailOrder,
+          phone: item.phone,
+          address: item.address,
+          deliveryMethod: item.deliveryMethod,
+          paymentMethod: item.paymentMethod,
+        };
+        dispatch(payOrder(data));
+        // Navigate("/CompleteOrder");
+        return 0;
+      });
+    }
+    console.log(order.orderItems[0].paymentMethod === "bank");
+    if (order.orderItems[0].paymentMethod === "bank") {
+      const dataPaypal = {
+        quantity: order.orderItems.length,
+        totalPrice: total,
+        listProduct: "zzzz",
+      };
+      console.log(dataPaypal);
+      dispatch(paypal(dataPaypal));
+    }
   };
-  const Navigate = useNavigate();
-  const dispatch = useDispatch();
   return (
     <div className="bg-slate-200 h-screen text-lg">
       <HeaderUser></HeaderUser>
@@ -100,10 +107,12 @@ const OrderMethod = () => {
                       ),
                   })}
                   onSubmit={(values) => {
-                    // HandleLogin(values);
+                    handleClick(values);
                   }}
+                  onChange={(values) => {}}
                 >
                   {(formik) => {
+                    setValue(formik.values);
                     const watchShip = formik.values.ship;
                     const watchPay = formik.values.pay;
                     return (
@@ -160,9 +169,6 @@ const OrderMethod = () => {
                           <button
                             className="w-[200px] h-20 mt-10 p-4 text-2xl text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl "
                             type="submit"
-                            onClick={(values) => {
-                              handleClick(formik.values);
-                            }}
                           >
                             Đặt hàng
                           </button>
