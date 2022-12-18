@@ -418,14 +418,14 @@ class API {
     const phone = req.body.phone;
     const address = req.body.address;
 
-    const deliveryMethod = req.body.deliveryMethod; 
+    let deliveryMethod = req.body.deliveryMethod; 
     if(deliveryMethod === "fast") { 
       deliveryMethod = 1;
     } else { 
       deliveryMethod = 2;
     }
 
-    const paymentMethod = req.body.paymentMethod;
+    let paymentMethod = req.body.paymentMethod;
     if(paymentMethod === "bank") { 
       paymentMethod = 2;
     } else { 
@@ -462,6 +462,30 @@ class API {
             res.status(200).send({ checked: true });
           } else {
             res.status(200).send({ checked: false });
+          }
+        }
+      }
+    );
+  }
+
+  //[DELETE] /api/cart/order/delete\
+  deleteOrder(req, res) {
+    const customerId = req.user[0].id;
+    const productId = req.body.productId;
+
+    const deleteSql = "delete from order where ";
+
+    pool.query(
+      deleteSql,
+      [customerId, productId],
+      function (error, results, fields) {
+        if (error) {
+          res.send({ message: errorMsg, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ message: successMsg, checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
           }
         }
       }
@@ -657,7 +681,7 @@ class API {
       "publicationDate,age, packagingSize, form, quantity, description, status) " + 
       "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     const insertSql2 = "insert into bookgenredata (productId, productGenreId) value (?, ?);"
-    const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào giỏ hàng!";
+    const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào kho hàng!";
     const existMsg = "Sản phẩm đã có sẵn trong kho hàng!";
     const successMsg = "Sản phẩm đã được thêm vào kho hàng!";
 
@@ -715,10 +739,10 @@ class API {
     const status = req.body.status;
     const genre = req.body.genre;
     
-    const insertSql =
+    const updateSql =
       "update product set image = ?, productName = ?, chapter = ?, author = ?, translator = ?, price = ?, publisher = ?, " + 
       "publicationDate = ?, age = ?, packagingSize = ?, form = ?, quantity = ?, description = ?, status = ? ";
-    const insertSql2 = "insert into bookgenredata (productId, productGenreId) value (?, ?);"
+  
     const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào giỏ hàng!";
     const existMsg = "Sản phẩm đã có sẵn trong kho hàng!";
     const successMsg = "Sản phẩm đã được thêm vào kho hàng!";
@@ -727,7 +751,7 @@ class API {
       res.send({ authentication: false });
     } else {
       pool.query(
-        insertSql,
+        updateSql,
         [
           image, productName, chapter, author, translator, price, publisher, 
           publicationDate, age, packagingSize, form, quantity, description, status

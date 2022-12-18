@@ -28,6 +28,8 @@ router.post('/cart/add', PassportCheck, api.addToCart);
 router.delete('/cart/remove', PassportCheck, api.removeFromCart);
 router.patch('/cart/update', PassportCheck, api.updateCart);
 router.post('/cart/order', PassportCheck, api.createOrder);
+router.delete('/cart/order/delete', PassportCheck, api.deleteOrder);
+
 
 // profile
 router.get('/profile', PassportCheck, api.getProfile);
