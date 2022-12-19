@@ -51,7 +51,7 @@ class API {
   }
   // [GET] /api/isauth
   isAuth(req, res, next) {
-    const authentication = req.user[0];
+    const authentication = req.user[0]; 
     res.status(200).send({ isAuth: true, authentication });
   }
 
@@ -328,31 +328,49 @@ class API {
     const productId = req.body.productId;
     const quantity = req.body.quantity;
 
+    const checkSql = "call checkQuantity(?)";
     const insertSql =
       "insert into cart (productId, customerId, quantity) value (?, ? ,?)";
     const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào giỏ hàng!";
     const existMsg = "Sản phẩm đã có sẵn trong giỏ hàng!";
     const successMsg = "Sản phẩm đã được thêm vào giỏ hàng!";
+    const checkMsg = "Số lượng sản phẩm phải bé hơn ";
 
-    pool.query(
-      insertSql,
-      [productId, customerId, quantity],
+    pool.query(checkSql, productId,
       function (error, results, fields) {
         if (error) {
-          if ((error.errno = 1062)) {
-            res.send({ message: existMsg, checked: false });
-          } else {
             res.send({ message: errorMsg, checked: false });
-          }
         } else {
-          if (results) {
-            res.status(200).send({ message: successMsg, checked: true });
+          if (results[0].length > 0) { 
+            if(results[0][0].quantity < quantity){
+              res.status(200).send({ message: (checkMsg + results[0][0].quantity), checked: false });
+            } else {
+              pool.query(
+                insertSql,
+                [productId, customerId, quantity],
+                function (error, results, fields) {
+                  if (error) {
+                    if ((error.errno = 1062)) {
+                      res.send({ message: existMsg, checked: false });
+                    } else {
+                      res.send({ message: errorMsg, checked: false });
+                    }
+                  } else {
+                    if (results) {
+                      res.status(200).send({ message: successMsg, checked: true });
+                    } else {
+                      res.status(200).send({ message: errorMsg, checked: false });
+                    }
+                  }
+                }
+              );
+            }
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
         }
       }
-    );
+    );   
   }
 
   //[DELETE] /api/cart/remove
@@ -389,25 +407,43 @@ class API {
     if (quantity <= 0) {
       quantity = 1;
     }
+    const checkSql = "call checkQuantity(?)";
     const updateSql =
       "update cart set quantity = ? where customerId = ? and productId = ?";
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
+    const checkMsg = "Số lượng sản phẩm phải bé hơn ";
 
-    pool.query(
-      updateSql,
-      [quantity, customerId, productId],
+    pool.query(checkSql, productId,
       function (error, results, fields) {
         if (error) {
-          res.send({ message: errorMsg, checked: false });
+            res.send({ message: errorMsg, checked: false });
         } else {
-          if (results) {
-            res.status(200).send({ checked: true });
+          if (results[0].length > 0) { 
+            if(results[0][0].quantity < quantity){
+              res.status(200).send({ message: (checkMsg + results[0][0].quantity), checked: false });
+            } else {
+              pool.query(
+                updateSql,
+                [quantity, customerId, productId],
+                function (error, results, fields) {
+                  if (error) {
+                    res.send({ message: errorMsg, checked: false });
+                  } else {
+                    if (results) {
+                      res.status(200).send({ checked: true });
+                    } else {
+                      res.status(200).send({ message: errorMsg, checked: false });
+                    }
+                  }
+                }
+              );
+            }
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
         }
       }
-    );
+    );    
   }
 
   // [POST] /api/cart/order
