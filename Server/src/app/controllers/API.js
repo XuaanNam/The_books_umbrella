@@ -51,7 +51,7 @@ class API {
   }
   // [GET] /api/isauth
   isAuth(req, res, next) {
-    const authentication = req.user[0];
+    const authentication = req.user[0]; 
     res.status(200).send({ isAuth: true, authentication });
   }
 
@@ -77,10 +77,11 @@ class API {
               };
               const token = "Bearer " + encodeToken(payload);
 
-              res.setHeader("isAuth", token);
+              //res.setHeader("isAuth", token);
               res.send({
                 checked: true,
                 token,
+                id: results[0].id,
                 username: results[0].username,
                 authentication: results[0].authentication,
               });
@@ -327,31 +328,49 @@ class API {
     const productId = req.body.productId;
     const quantity = req.body.quantity;
 
+    const checkSql = "call checkQuantity(?)";
     const insertSql =
       "insert into cart (productId, customerId, quantity) value (?, ? ,?)";
     const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào giỏ hàng!";
     const existMsg = "Sản phẩm đã có sẵn trong giỏ hàng!";
     const successMsg = "Sản phẩm đã được thêm vào giỏ hàng!";
+    const checkMsg = "Số lượng sản phẩm phải bé hơn ";
 
-    pool.query(
-      insertSql,
-      [productId, customerId, quantity],
+    pool.query(checkSql, productId,
       function (error, results, fields) {
         if (error) {
-          if ((error.errno = 1062)) {
-            res.send({ message: existMsg, checked: false });
-          } else {
             res.send({ message: errorMsg, checked: false });
-          }
         } else {
-          if (results) {
-            res.status(200).send({ message: successMsg, checked: true });
+          if (results[0].length > 0) { 
+            if(results[0][0].quantity < quantity){
+              res.status(200).send({ message: (checkMsg + results[0][0].quantity), checked: false });
+            } else {
+              pool.query(
+                insertSql,
+                [productId, customerId, quantity],
+                function (error, results, fields) {
+                  if (error) {
+                    if ((error.errno = 1062)) {
+                      res.send({ duplicate: true });
+                    } else {
+                      res.send({ message: errorMsg, checked: false });
+                    }
+                  } else {
+                    if (results) {
+                      res.status(200).send({ message: successMsg, checked: true });
+                    } else {
+                      res.status(200).send({ message: errorMsg, checked: false });
+                    }
+                  }
+                }
+              );
+            }
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
         }
       }
-    );
+    );   
   }
 
   //[DELETE] /api/cart/remove
@@ -388,25 +407,43 @@ class API {
     if (quantity <= 0) {
       quantity = 1;
     }
+    const checkSql = "call checkQuantity(?)";
     const updateSql =
       "update cart set quantity = ? where customerId = ? and productId = ?";
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
+    const checkMsg = "Số lượng sản phẩm phải bé hơn ";
 
-    pool.query(
-      updateSql,
-      [quantity, customerId, productId],
+    pool.query(checkSql, productId,
       function (error, results, fields) {
         if (error) {
-          res.send({ message: errorMsg, checked: false });
+            res.send({ message: errorMsg, checked: false });
         } else {
-          if (results) {
-            res.status(200).send({ checked: true });
+          if (results[0].length > 0) { 
+            if(results[0][0].quantity < quantity){
+              res.status(200).send({ message: (checkMsg + results[0][0].quantity), checked: false });
+            } else {
+              pool.query(
+                updateSql,
+                [quantity, customerId, productId],
+                function (error, results, fields) {
+                  if (error) {
+                    res.send({ message: errorMsg, checked: false });
+                  } else {
+                    if (results) {
+                      res.status(200).send({ checked: true });
+                    } else {
+                      res.status(200).send({ message: errorMsg, checked: false });
+                    }
+                  }
+                }
+              );
+            }
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
         }
       }
-    );
+    );    
   }
 
   // [POST] /api/cart/order
@@ -474,7 +511,7 @@ class API {
     );
   }
 
-  //[DELETE] /api/cart/order/delete\
+  //[DELETE] /api/cart/order/delete
   deleteOrder(req, res) {
     const customerId = req.user[0].id;
     const productId = req.body.productId;
@@ -556,7 +593,7 @@ class API {
 
   //[POST] /api/payment/paypal
   paymentByPaypal(req, res, next) {
-    const customerId = req.user[0].id;
+    const customerId = req.user[0].id;  
     const totalPrice = +(Math.round(req.body.totalPrice + "e+4") + "e-4"); // làm tròn số tiền 4 số sau dấu thập phân
     const listProduct = req.body.listProduct;
     const quantity = req.body.quantity;
@@ -570,7 +607,7 @@ class API {
         return_url:
           process.env.return_url +
           `/api/paymentsuccess?id=${customerId}&totalprice=${totalPrice}`,
-        cancel_url: process.env.cancel_url + `/cart`,
+        cancel_url: process.env.return_url + `/api/paymentfailed?id=${customerId}`,
       },
       transactions: [
         {
@@ -609,10 +646,11 @@ class API {
 
   //[GET] /api/paymentsuccess?id=${customerId}&totalprice=${totalPrice}`
   paymentSuccess(req, res) {
+    
     const customerId = req.query.id;
+    
     const totalPrice = req.query.totalprice;
-    const updateSql =
-      "update orders set pay = 2 where customerId = ? and deliveryMethod = 2";
+    const updateSql = "update orders set pay = 2 where customerId = ? and deliveryMethod = 2 and status = 1";
     const payerId = req.query.PayerID;
     const paymentId = req.query.paymentId;
     const excute_payment_json = {
@@ -630,14 +668,25 @@ class API {
       paymentId,
       excute_payment_json,
       function (error, payment) {
-        if (error) {
+        if (error) { 
           res.redirect(process.env.cancel_url + `/cart`);
-        } else {
-          pool.query(updateSql, customerId);
+        } else { 
+          pool.query(updateSql, customerId)
           res.redirect(process.env.cancel_url + `/cart`);
         }
       }
     );
+  }
+
+  //[GET] /api/paymentfailes?id=${customerId}`
+  paymentFailed(req, res) {   
+    const customerId = req.query.id;
+    
+    const updateSql = "update orders set status = 4 where customerId = ? and deliveryMethod = 2 and status = 1";
+
+    pool.query(updateSql, customerId, function (error, results, fields) {
+      res.redirect(process.env.cancel_url + `/cart`);
+    });    
   }
 
   //[GET] /api/admin/warehouse
@@ -646,7 +695,7 @@ class API {
     const selectSql = "select * from ListAllProducts";
     const message = "Lỗi hệ thống, vui lòng thử lại!";
 
-    if (auth === 0) {
+    if(auth !== 1){
       res.send({ authentication: false });
     } else {
       pool.query(selectSql, function (error, results, fields) {
@@ -692,7 +741,7 @@ class API {
     const existMsg = "Sản phẩm đã có sẵn trong kho hàng!";
     const successMsg = "Sản phẩm đã được thêm vào kho hàng!";
 
-    if (auth === 0) {
+    if(auth !== 1){
       res.send({ authentication: false });
     } else {
       pool.query(
@@ -744,7 +793,9 @@ class API {
 
   //[PATCH] /api/admin/product/update
   updateProduct(req, res, next) {
-    const auth = req.user[0].authentication;
+    const auth = req.user[0].authentication; 
+    const productId = req.body.productId; 
+
     const image = req.body.image;
     const productName = req.body.productName;
     const chapter = req.body.chapter ? req.body.chapter : null;
@@ -764,52 +815,26 @@ class API {
     const updateSql =
       "update product set image = ?, productName = ?, chapter = ?, author = ?, translator = ?, price = ?, publisher = ?, " +
       "publicationDate = ?, age = ?, packagingSize = ?, form = ?, quantity = ?, description = ?, status = ? where id = ?";
+    
+    const errorMsg = "Lỗi hệ thống, không thể chỉnh sửa sản phẩm vào lúc này!";
+    const successMsg = "Sản phẩm đã được chỉnh sửa!";
 
-    const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào kho hàng!";
-    const existMsg = "Sản phẩm đã có sẵn trong kho hàng!";
-    const successMsg = "Sản phẩm đã được thêm vào kho hàng!";
-
-    if (auth === 0) {
+    if(auth !== 1){
       res.send({ authentication: false });
-    } else {
+    } else { console.log(image, productName, chapter, author, translator, price, publisher, 
+      publicationDate, age, packagingSize, form, quantity, description, status, productId); 
       pool.query(
         updateSql,
         [
-          image,
-          productName,
-          chapter,
-          author,
-          translator,
-          price,
-          publisher,
-          publicationDate,
-          age,
-          packagingSize,
-          form,
-          quantity,
-          description,
-          status,
+          image, productName, chapter, author, translator, price, publisher, 
+          publicationDate, age, packagingSize, form, quantity, description, status, productId
         ],
         function (error, results, fields) {
           if (error) {
-            if ((error.errno = 1062)) {
-              res.send({ message: existMsg, checked: false });
-            } else {
-              res.send({ message: errorMsg, checked: false });
-            }
+            res.send({ message: errorMsg, checked: false });
           } else {
-            if (results) {
-              pool.query(
-                insertSql2,
-                [results.insertId, genre],
-                function (error, results, fields) {
-                  if (results) {
-                    res
-                      .status(200)
-                      .send({ message: successMsg, checked: true });
-                  }
-                }
-              );
+            if (results) { 
+              res.send({ message: successMsg, checked: true });        
             } else {
               res.status(200).send({ message: errorMsg, checked: false });
             }
@@ -820,7 +845,42 @@ class API {
   }
 
   //[PATCH] /api/admin/product/disable
-  disableProduct(req, res, next) {}
+  disableProduct(req, res, next) {
+    const auth = req.user[0].authentication; 
+    const productId = req.body.productId; 
+    const status = req.body.status;
+    const newStatus = req.body.status;
+    if(status === 1){
+      newStatus
+    }
+    const updateSql = "update product set status = " + newStatus +" where id = ?";
+    
+    const errorMsg = "Lỗi hệ thống, không thể chỉnh sửa sản phẩm vào lúc này!";
+    const successMsg = "Sản phẩm đã được chỉnh sửa!";
+
+    if(auth !== 1){
+      res.send({ authentication: false });
+    } else { 
+      pool.query(
+        updateSql,
+        [
+          image, productName, chapter, author, translator, price, publisher, 
+          publicationDate, age, packagingSize, form, quantity, description, status, productId
+        ],
+        function (error, results, fields) {
+          if (error) {
+            res.send({ message: errorMsg, checked: false });
+          } else {
+            if (results) { 
+              res.send({ message: successMsg, checked: true });        
+            } else {
+              res.status(200).send({ message: errorMsg, checked: false });
+            }
+          }
+        }
+      );
+    }   
+  }
 
   //[PATCH] /api/admin/product/enable
   enableProduct(req, res, next) {}

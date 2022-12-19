@@ -23,19 +23,22 @@ router.get("/products/search/age", api.getProductsByAge);
 router.get("/products/search/form", api.getProductsByForm);
 
 // cart
-router.get("/cart", PassportCheck, api.getCart);
-router.post("/cart/add", PassportCheck, api.addToCart);
-router.delete("/cart/remove", PassportCheck, api.removeFromCart);
-router.patch("/cart/update", PassportCheck, api.updateCart);
-router.post("/cart/order", PassportCheck, api.createOrder);
+router.get('/cart', PassportCheck, api.getCart);
+router.post('/cart/add', PassportCheck, api.addToCart);
+router.delete('/cart/remove', PassportCheck, api.removeFromCart);
+router.patch('/cart/update', PassportCheck, api.updateCart);
+router.post('/cart/order', PassportCheck, api.createOrder);
+
+router.delete('/cart/order/delete', PassportCheck, api.deleteOrder);
 
 // profile
 router.get("/profile", PassportCheck, api.getProfile);
 router.patch("/profile/update", PassportCheck, api.updateProfile);
 
 // payment
-router.post("/payment/paypal", PassportCheck, api.paymentByPaypal);
-router.get("/paymentsuccess", api.paymentSuccess);
+router.post('/payment/paypal', PassportCheck, api.paymentByPaypal);
+router.get('/paymentsuccess', api.paymentSuccess);
+router.get('/paymentfailed', api.paymentFailed);
 
 //admin
 router.get("/admin/warehouse", PassportCheck, api.getWarehouse);
