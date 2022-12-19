@@ -33,13 +33,10 @@ const Homepage = () => {
   return (
     <div className="text-lg">
       <HeaderUser></HeaderUser>
-      <div className="bg-slate-100 pt-24">
-        <div className="px-5 py-4 cursor-pointer">
-          Trang chủ {">"} Sách Tiếng Việt
-        </div>
-        <div className="flex mx-5 pb-5 ">
-          <div className="w-[20%] h-[810px] bg-white rounded drop-shadow-md">
-            <div className="p-3 font-medium text-lg hover:text-violet-700 cursor-pointer">
+      <div className="bg-slate-50 pt-28">
+        <div className="flex mx-5 pb-5 gap-5">
+          <div className="w-[18%] h-[810px] bg-white rounded-xl drop-shadow-xl">
+            <div className="p-3 font-medium text-xl hover:text-violet-700 cursor-pointer">
               Tất cả thể loại
             </div>
             <div className="pl-5">
@@ -112,9 +109,11 @@ const Homepage = () => {
               </div>
             </div>
           </div>
-          <div className="ml-3 p-2 w-[80%] bg-white rounded drop-shadow-lg">
-            <div className="grid grid-cols-2 w-[400px] place-items-center p-5 text-lg">
-              <div className="font-medium text-slate-700">Sắp xếp theo</div>
+          <div className="ml-3 p-2 w-[80%] bg-white rounded-xl drop-shadow-xl">
+            <div className="grid grid-cols-2 w-[400px] place-items-center p-5 mb-2 text-lg">
+              <div className="font-medium text-slate-700 text-xl ">
+                Sắp xếp theo
+              </div>
               <Select
                 className="hover:bg-slate-800 text-lg"
                 defaultValue="Giá bán"
@@ -126,15 +125,15 @@ const Homepage = () => {
                 options={[
                   {
                     value: "Giá bán",
-                    label: "Giá bán",
+                    label: <div className="text-lg">Giá bán</div>,
                   },
                   {
                     value: "Bán chạy tuần",
-                    label: "Bán chạy tuần",
+                    label: <div className="text-lg">Bán chạy tuần</div>,
                   },
                   {
                     value: "Bán chạy tháng",
-                    label: "Bán chạy tháng",
+                    label: <div className="text-lg">Bán chạy tháng</div>,
                   },
                 ]}
               />
@@ -155,7 +154,7 @@ const Homepage = () => {
                       />
                       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black group-hover:from-black/70 group-hover:via-black/60 group-hover:to-black/70"></div>
                       <div className="absolute inset-0 flex translate-y-[60%] flex-col items-center justify-center px-6 transition-all duration-500 group-hover:translate-y-0">
-                        <p className="h-44 p-2 italic text-ellipsis overflow-hidden  text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                        <p className="h-44 py-2 px-3 italic text-ellipsis overflow-hidden  text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                           {product.description}
                         </p>
                         <button

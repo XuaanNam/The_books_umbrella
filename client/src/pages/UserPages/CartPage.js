@@ -145,16 +145,16 @@ const CartPage = () => {
     dispatch(clearCart());
   };
   return (
-    <div className="bg-slate-100 min-h-screen text-xl">
+    <div className="bg-slate-50 min-h-screen text-xl">
       <HeaderUser></HeaderUser>
       <div className="pt-24">
         <div className="p-5 text-xl font-semibold">GIỎ HÀNG</div>
-        <div className="mx-5 bg-white font-medium text-xl rounded p-7 grid grid-cols-12 drop-shadow-lg">
-          <div className="col-start-1 col-span-6 flex items-center pl-9">
+        <div className="mx-5 bg-white font-medium text-xl rounded-xl p-7 grid grid-cols-12 drop-shadow-xl">
+          <div className="col-start-1 col-span-6 gap-4 flex items-center pl-9">
             <input
               type="checkbox"
               name="allSelect"
-              className="w-6 h-6 cursor-pointer rounded-lg"
+              className="w-7 h-7 cursor-pointer"
               checked={!carts?.some((cart) => cart?.isChecked !== true)}
               onChange={handleChange}
             />
@@ -165,7 +165,7 @@ const CartPage = () => {
           <div className="col-start-10 col-span-1 text-center">Tổng giá</div>
         </div>
 
-        <div className="m-5 pb-5 bg-white rounded drop-shadow-lg">
+        <div className="m-5 pb-5 bg-white rounded-xl drop-shadow-xl">
           {carts &&
             carts?.map((cartItem) => (
               <div
@@ -175,16 +175,26 @@ const CartPage = () => {
                 <input
                   name={cartItem.productName}
                   type="checkbox"
-                  className="col-start-1 w-6 h-6 cursor-pointer rounded-lg"
+                  className="col-start-1 w-7 h-7 cursor-pointer"
                   checked={cartItem.isChecked || false}
                   onChange={handleChange}
                 />
-                <img
+                <div className="col-start-2 col-span-2 px-2 w-full grid justify-center items-center drop-shadow-lg transition-all cursor-pointer mb-3">
+                  <div className="group drop-shadow-xl text-justify text-lg h-[250px] w-[200px] rounded-xl relative cursor-pointer items-center justify-center overflow-hidden transition-shadow hover:shadow-xl hover:shadow-black/30">
+                    <img
+                      className=" h-[240px] mt-5 object-cover w-full transition-transform duration-500 group-hover:scale-125"
+                      src={cartItem.image}
+                      alt={cartItem.productName}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black group-hover:from-black/70 group-hover:via-black/60 group-hover:to-black/70"></div>
+                  </div>
+                </div>
+                {/* <img
                   className="col-start-2 col-span-2 h-40 cursor-pointer"
                   onClick={() => Navigate(`/detail/${cartItem.id})`)}
                   src={cartItem.image}
                   alt={cartItem.productName}
-                ></img>
+                ></img> */}
                 <div
                   className="col-start-4 col-span-3 text-2xl font-medium text-cyan-700 text-left cursor-pointer"
                   onClick={() => Navigate(`/detail/${cartItem.id})`)}

@@ -57,7 +57,7 @@ const OrderMethod = () => {
           paymentMethod: item.paymentMethod,
         };
         dispatch(payOrder(data));
-        // Navigate("/CompleteOrder");
+        Navigate("/complete");
         return 0;
       });
     }
@@ -112,7 +112,7 @@ const OrderMethod = () => {
                   onChange={(values) => {}}
                 >
                   {(formik) => {
-                    setValue(formik.values);
+                    setTimeout(() => setValue(formik.values), 0);
                     const watchShip = formik.values.ship;
                     const watchPay = formik.values.pay;
                     return (
@@ -120,8 +120,9 @@ const OrderMethod = () => {
                         <div className="pb-7 text-3xl text-slate-900">
                           Phương thức vận chuyển
                         </div>
-                        <div className="border border-slate-400 rounded-xl">
+                        <div className="border border-slate-400 rounded-xl cursor-pointer">
                           <InputRadio
+                            className=" cursor-pointer"
                             type="radio"
                             name="ship"
                             id="fastship"
@@ -133,6 +134,7 @@ const OrderMethod = () => {
                           <hr className=""></hr>
 
                           <InputRadio
+                            className=" cursor-pointer"
                             type="radio"
                             name="ship"
                             id="savingship"
@@ -147,6 +149,7 @@ const OrderMethod = () => {
                         </div>
                         <div className="border border-slate-400 rounded-xl">
                           <InputRadio
+                            className=" cursor-pointer"
                             type="radio"
                             name="pay"
                             id="cod"
@@ -157,12 +160,13 @@ const OrderMethod = () => {
                           <hr className=""></hr>
 
                           <InputRadio
+                            className=" cursor-pointer"
                             type="radio"
                             name="pay"
                             id="bank"
                             value="bank"
                             checked={watchPay === "bank" ? true : false}
-                            label="Chuyển khoản qua ngân hàng"
+                            label="Thanh toán qua PayPal"
                           ></InputRadio>
                         </div>
                         <div className="grid place-items-end ">

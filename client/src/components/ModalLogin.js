@@ -71,7 +71,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
           }}
           validationSchema={Yup.object({
             email: Yup.string()
-              .max(20, "Tên đăng nhập chứa tối đa 20 ký tự")
+              // .min(20, "Tên đăng nhập chứa tối đa 20 ký tự")
               .required("Vui lòng điền vào trường trống"),
             password: Yup.string()
               .required("Vui lòng điền vào trường trống")

@@ -29,7 +29,7 @@ const DropDown = () => {
         onClick={onClickHandlerUser}
         show={showUser}
         name="Khách hàng"
-        ref={nodeRef}
+        // ref={nodeRef}
       ></Menu>
 
       <CSSTransition
