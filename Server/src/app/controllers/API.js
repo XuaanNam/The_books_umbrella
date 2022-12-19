@@ -351,7 +351,7 @@ class API {
                 function (error, results, fields) {
                   if (error) {
                     if ((error.errno = 1062)) {
-                      res.send({ message: existMsg, checked: false });
+                      res.send({ duplicate: true });
                     } else {
                       res.send({ message: errorMsg, checked: false });
                     }
