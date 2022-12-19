@@ -155,7 +155,7 @@ class API {
   //[GET] /api/products/detail/:id
   getProductById(req, res, next) {
     const id = req.params.id;
-    
+
     const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
     const emptyMgs = "Không tìm thấy thông tin sản phẩm!";
     const selectSql = "call getProductById(?)";
@@ -186,7 +186,7 @@ class API {
       if (error) {
         res.status(200).send({ message: errorMgs, checked: false });
       } else {
-        if (results[0].length > 0) { 
+        if (results[0].length > 0) {
           res.send({ results: results[0], checked: true });
         } else {
           res.send({ message: nullMgs, checked: false });
@@ -207,6 +207,7 @@ class API {
         res.status(200).send({ message: errorMgs, checked: false });
       } else {
         if (results[0].length > 0) {
+          console.log(results);
           res.send({ results: results[0], checked: true });
         } else {
           res.send({ message: errorMgs, checked: false });
@@ -223,17 +224,21 @@ class API {
     const errorMgs = "Lỗi hệ thống, vui lòng thử lại!";
     const selectSql = "call getProductsByPrice(?,?)";
 
-    pool.query(selectSql, [minPrice, maxPrice], function (error, results, fields) {
-      if (error) {
-        res.status(200).send({ message: errorMgs, checked: false });
-      } else {
-        if (results[0].length > 0) {
-          res.send({ results: results[0], checked: true });
+    pool.query(
+      selectSql,
+      [minPrice, maxPrice],
+      function (error, results, fields) {
+        if (error) {
+          res.status(200).send({ message: errorMgs, checked: false });
         } else {
-          res.send({ message: errorMgs, checked: false });
+          if (results[0].length > 0) {
+            res.send({ results: results[0], checked: true });
+          } else {
+            res.send({ message: errorMgs, checked: false });
+          }
         }
       }
-    });
+    );
   }
 
   //[GET] /api/products/search/publisher
@@ -408,7 +413,7 @@ class API {
   // [POST] /api/cart/order
   createOrder(req, res, next) {
     const quantity = req.body.quantity;
-    const customerId = req.body.customerId;
+    const customerId = req.user[0].id;
     const productId = req.body.productId;
     if (quantity <= 0) {
       quantity = 1;
@@ -419,25 +424,26 @@ class API {
     const phone = req.body.phone;
     const address = req.body.address;
 
-    let deliveryMethod = req.body.deliveryMethod; 
-    if(deliveryMethod === "fast") { 
+    let deliveryMethod = req.body.deliveryMethod;
+    if (deliveryMethod === "fast") {
       deliveryMethod = 1;
-    } else { 
+    } else {
       deliveryMethod = 2;
     }
 
     let paymentMethod = req.body.paymentMethod;
-    if(paymentMethod === "bank") { 
+    if (paymentMethod === "bank") {
       paymentMethod = 2;
-    } else { 
+    } else {
       paymentMethod = 1;
     }
     const timeOfOrder = new Date(Date.now());
     const discount = req.body.voucher ? req.body.voucher : null;
-   
-    const insertSql = "insert into orders " + 
-      "(productId, customerId, quantity, price, fullname, email, phone, address, deliveryMethod, paymentMethod, timeOfOrder, discount) "
-      + "value (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    const insertSql =
+      "insert into orders " +
+      "(productId, customerId, quantity, price, fullname, email, phone, address, deliveryMethod, paymentMethod, timeOfOrder, discount) " +
+      "value (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     pool.query(
       insertSql,
@@ -469,7 +475,7 @@ class API {
     );
   }
 
-  //[DELETE] /api/cart/order/delete\
+  //[DELETE] /api/cart/order/delete
   deleteOrder(req, res) {
     const customerId = req.user[0].id;
     const productId = req.body.productId;
@@ -551,11 +557,11 @@ class API {
 
   //[POST] /api/payment/paypal
   paymentByPaypal(req, res, next) {
-    const customerId = req.body.customerId;  
+    const customerId = req.user[0].id;  
     const totalPrice = +(Math.round(req.body.totalPrice + "e+4") + "e-4"); // làm tròn số tiền 4 số sau dấu thập phân
-    const listProduct = req.body.listProduct; 
+    const listProduct = req.body.listProduct;
     const quantity = req.body.quantity;
-    
+
     const create_payment_json = {
       intent: "sale",
       payer: {
@@ -637,42 +643,19 @@ class API {
   }
 
   //[GET] /api/paymentfailes?id=${customerId}`
-  paymentFailed(req, res) {
-    
+  paymentFailed(req, res) {   
     const customerId = req.query.id;
     
-    const totalPrice = req.query.totalprice;
-    const updateSql = "update orders set pay = 2 where customerId = ? and deliveryMethod = 2 and status = 1";
-    const payerId = req.query.PayerID;
-    const paymentId = req.query.paymentId;
-    const excute_payment_json = {
-      payer_id: payerId,
-      transactions: [
-        {
-          amount: {
-            currency: "USD",
-            total: totalPrice,
-          },
-        },
-      ],
-    };
-    paypal.payment.execute(
-      paymentId,
-      excute_payment_json,
-      function (error, payment) {
-        if (error) { 
-          res.redirect(process.env.cancel_url + `/cart`);
-        } else { 
-          pool.query(updateSql, customerId)
-          res.redirect(process.env.cancel_url + `/cart`);
-        }
-      }
-    );
+    const updateSql = "update orders set status = 4 where customerId = ? and deliveryMethod = 2 and status = 1";
+
+    pool.query(updateSql, customerId, function (error, results, fields) {
+      res.redirect(process.env.cancel_url + `/cart`);
+    });    
   }
-  
+
   //[GET] /api/admin/warehouse
   getWarehouse(req, res, next) {
-    const auth = req.user[0].authentication; 
+    const auth = req.user[0].authentication;
     const selectSql = "select * from ListAllProducts";
     const message = "Lỗi hệ thống, vui lòng thử lại!";
 
@@ -690,17 +673,17 @@ class API {
           }
         }
       });
-    }    
+    }
   }
 
   //[POST] /api/admin/product/create
   createProduct(req, res, next) {
-    const auth = req.user[0].authentication; 
+    const auth = req.user[0].authentication;
     const image = req.body.image;
     const productName = req.body.productName;
-    const chapter = req.body.chapter?req.body.chapter:null;
+    const chapter = req.body.chapter ? req.body.chapter : null;
     const author = req.body.author;
-    const translator = req.body.translator? req.body.translator : null;
+    const translator = req.body.translator ? req.body.translator : null;
     const price = req.body.price;
     const publisher = req.body.publisher;
     const publicationDate = req.body.publicationDate;
@@ -711,12 +694,13 @@ class API {
     const description = req.body.description;
     const status = req.body.status;
     const genre = req.body.genre;
-    
+
     const insertSql =
-      "insert into product (image,productName,chapter,author,translator,price,publisher, " + 
-      "publicationDate,age, packagingSize, form, quantity, description, status) " + 
+      "insert into product (image,productName,chapter,author,translator,price,publisher, " +
+      "publicationDate,age, packagingSize, form, quantity, description, status) " +
       "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    const insertSql2 = "insert into bookgenredata (productId, productGenreId) value (?, ?);"
+    const insertSql2 =
+      "insert into bookgenredata (productId, productGenreId) value (?, ?);";
     const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào kho hàng!";
     const existMsg = "Sản phẩm đã có sẵn trong kho hàng!";
     const successMsg = "Sản phẩm đã được thêm vào kho hàng!";
@@ -727,8 +711,20 @@ class API {
       pool.query(
         insertSql,
         [
-          image, productName, chapter, author, translator, price, publisher, 
-          publicationDate, age, packagingSize, form, quantity, description, status
+          image,
+          productName,
+          chapter,
+          author,
+          translator,
+          price,
+          publisher,
+          publicationDate,
+          age,
+          packagingSize,
+          form,
+          quantity,
+          description,
+          status,
         ],
         function (error, results, fields) {
           if (error) {
@@ -740,20 +736,23 @@ class API {
           } else {
             if (results) {
               pool.query(
-                insertSql2, 
-                [results.insertId, genre], 
+                insertSql2,
+                [results.insertId, genre],
                 function (error, results, fields) {
                   if (results) {
-                    res.status(200).send({ message: successMsg, checked: true });
-                  } 
-              })              
+                    res
+                      .status(200)
+                      .send({ message: successMsg, checked: true });
+                  }
+                }
+              );
             } else {
               res.status(200).send({ message: errorMsg, checked: false });
             }
           }
         }
       );
-    }    
+    }
   }
 
   //[PATCH] /api/admin/product/update
@@ -763,9 +762,9 @@ class API {
 
     const image = req.body.image;
     const productName = req.body.productName;
-    const chapter = req.body.chapter?req.body.chapter:null;
+    const chapter = req.body.chapter ? req.body.chapter : null;
     const author = req.body.author;
-    const translator = req.body.translator? req.body.translator : null;
+    const translator = req.body.translator ? req.body.translator : null;
     const price = req.body.price;
     const publisher = req.body.publisher;
     const publicationDate = req.body.publicationDate;
@@ -776,9 +775,9 @@ class API {
     const description = req.body.description;
     const status = req.body.status;
     const genre = req.body.genre;
-    
+
     const updateSql =
-      "update product set image = ?, productName = ?, chapter = ?, author = ?, translator = ?, price = ?, publisher = ?, " + 
+      "update product set image = ?, productName = ?, chapter = ?, author = ?, translator = ?, price = ?, publisher = ?, " +
       "publicationDate = ?, age = ?, packagingSize = ?, form = ?, quantity = ?, description = ?, status = ? where id = ?";
     
     const errorMsg = "Lỗi hệ thống, không thể chỉnh sửa sản phẩm vào lúc này!";
@@ -806,7 +805,7 @@ class API {
           }
         }
       );
-    }    
+    }
   }
 
   //[PATCH] /api/admin/product/disable
@@ -848,10 +847,7 @@ class API {
   }
 
   //[PATCH] /api/admin/product/enable
-  enableProduct(req, res, next) {
-  
-  }
-
+  enableProduct(req, res, next) {}
 }
 
 module.exports = new API();

@@ -1,39 +1,28 @@
 import React, { useEffect, useState } from "react";
 import HeaderUser from "../../layouts/HeaderUser";
-import Footer from "../../layouts/Footer";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { totalPrice } from "../../redux-toolkit/cartSlice";
-import Input from "../../components/Input";
-import { useGetAllAddressQuery } from "../../redux-toolkit/addressApi";
-import useSWR from "swr";
-import InputRadio from "../../components/InputRadio";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { IconContext } from "react-icons";
 
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
-
 const CompleteOrder = () => {
-  // const { data, error, isLoading } = useGetAllAddressQuery();
-  const { data, error, isLoading } = useSWR(
-    "thongtindoanhnghiep.co/api/city",
-    fetcher
-  );
-  console.log(data);
-
-  const order = useSelector((state) => state.cart);
-  console.log(order.orderItems);
+  const { orderItems, loading, error } = useSelector((state) => state.cart);
+  console.log(orderItems);
   const [total, setTotal] = useState(0);
+  const [shipingfee, setShipingFee] = useState(1);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     let totalPrice = 0;
-    order.orderItems.map((item) => {
+    orderItems.map((item) => {
       totalPrice += item.price * item.cartQuantity;
+      if (item.deliveryMethod === "fast") setShipingFee(30000);
+      else {
+        setShipingFee(20000);
+      }
       return totalPrice;
     });
     setTotal(totalPrice);
   });
-  const dispatch = useDispatch();
   return (
     <div className="bg-slate-200 h-screen text-lg">
       <HeaderUser></HeaderUser>
@@ -56,7 +45,7 @@ const CompleteOrder = () => {
                 </IconContext.Provider>
                 <div>
                   <div className=" text-3xl pb-2">Đặt hàng thành công!</div>
-                  <div className="text-xl pb-1">Mã đơn hàng CCO108674</div>
+                  <div className="text-xl pb-1">{orderItems[0].id}</div>
                   <div className="text-xl pb-1">Cảm ơn bạn đã mua hàng!</div>
                 </div>
               </div>
@@ -67,10 +56,18 @@ const CompleteOrder = () => {
                 <div className="text-xl pb-3 font-medium">
                   Thông tin vận chuyển
                 </div>
-                <div className="text-xl pb-3">Tên người nhận: Quốc Anh</div>
-                <div className="text-xl pb-3">Điện thoại: 0933090546</div>
-                <div className="text-xl pb-3">Email: oruku8888@gmail.com</div>
-                <div className="text-xl pb-3">Địa chỉ</div>
+                <div className="text-xl pb-3">
+                  Tên người nhận: {orderItems[0].fullname}
+                </div>
+                <div className="text-xl pb-3">
+                  Điện thoại: {orderItems[0].phone}
+                </div>
+                <div className="text-xl pb-3">
+                  Email: {orderItems[0].emailOrder}
+                </div>
+                <div className="text-xl pb-3">
+                  Địa chỉ: {orderItems[0].address}
+                </div>
                 <div className="text-xl pb-3">Huyện ...</div>
                 <div className="text-xl pb-3">Tỉnh ...</div>
                 <div className="text-xl pb-3">Việt Nam</div>
@@ -84,7 +81,7 @@ const CompleteOrder = () => {
             </div>
 
             <div className="pl-20">
-              {order.orderItems.map((orderItem, index) => (
+              {orderItems.map((orderItem, index) => (
                 <div className="flex gap-5 pb-5" key={index}>
                   <img
                     className="h-32 w-[150px] object-fit border-rounded-lg drop-shadow-xl transition-transform duration-500 group-hover:scale-125"
@@ -100,29 +97,20 @@ const CompleteOrder = () => {
                 </div>
               ))}
               <hr className="my-3"></hr>
-              <div className="flex gap-5">
-                <input
-                  type="text"
-                  placeholder="Mã giảm giá"
-                  className="w-[450px] h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
-                ></input>
-                <button className="w-52 h-16 p-4 text-2xl my-2 text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl ">
-                  Sử dụng
-                </button>
-              </div>
-              <hr className="my-3"></hr>
               <div className="grid grid-cols-2 text-2xl py-5 ">
                 <div className="grid place-items-start">Tạm tính</div>
                 <div className="grid place-items-end">{total} đ</div>
               </div>
               <div className="grid grid-cols-2 text-2xl py-5 ">
                 <div className="grid place-items-start">Phí ship</div>
-                <div className="grid place-items-end">-</div>
+                <div className="grid place-items-end">{shipingfee}</div>
               </div>
               <hr className="my-3"></hr>
               <div className="grid grid-cols-2 text-3xl py-5 text-slate-700 font-medium">
                 <div className="grid place-items-start">Tổng tiền</div>
-                <div className="grid place-items-end">{total} đ</div>
+                <div className="grid place-items-end">
+                  {total + shipingfee} đ
+                </div>
               </div>
             </div>
           </div>

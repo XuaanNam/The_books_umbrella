@@ -32,9 +32,7 @@ const HeaderUser = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    setTimeout(() => {
-      Navigate("/");
-    }, 1000);
+    Navigate("/");
   };
 
   const user = localStorage.getItem("user");

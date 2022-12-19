@@ -1,27 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import HeaderUser from "../../layouts/HeaderUser";
 import Footer from "../../layouts/Footer";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { totalPrice } from "../../redux-toolkit/cartSlice";
+import {
+  totalPrice,
+  mergeMethod,
+  payOrder,
+  paypal,
+} from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
 import useSWR from "swr";
 import InputRadio from "../../components/InputRadio";
 import { useNavigate } from "react-router-dom";
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
+// const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 const OrderMethod = () => {
   // const { data, error, isLoading } = useGetAllAddressQuery();
-  const { data, error, isLoading } = useSWR(
-    "thongtindoanhnghiep.co/api/city",
-    fetcher
-  );
-  console.log(data);
-
+  // const { data, error, isLoading } = useSWR(
+  //   "thongtindoanhnghiep.co/api/city",
+  //   fetcher
+  // );
   const order = useSelector((state) => state.cart);
-  console.log(order.orderItems);
   const [total, setTotal] = useState(0);
+  const [value, setValue] = useState([]);
+  const dispatch = useDispatch();
+  const Navigate = useNavigate();
   useEffect(() => {
     let totalPrice = 0;
     order.orderItems.map((item) => {
@@ -29,9 +34,44 @@ const OrderMethod = () => {
       return totalPrice;
     });
     setTotal(totalPrice);
-  });
-  const Navigate = useNavigate();
-  const dispatch = useDispatch();
+  }, []);
+  // let value = formikRef.current?.values;
+  console.log(value);
+  useEffect(() => {
+    if (value) {
+      dispatch(mergeMethod(value));
+    }
+  }, [value, dispatch]);
+  const handleClick = (values) => {
+    if (order.orderItems[0].paymentMethod) {
+      order.orderItems.map((item) => {
+        const data = {
+          quantity: item.cartQuantity,
+          productId: item.id,
+          price: item.price,
+          fullname: item.fullname,
+          email: item.emailOrder,
+          phone: item.phone,
+          address: item.address,
+          deliveryMethod: item.deliveryMethod,
+          paymentMethod: item.paymentMethod,
+        };
+        dispatch(payOrder(data));
+        Navigate("/complete");
+        return 0;
+      });
+    }
+    console.log(order.orderItems[0].paymentMethod === "bank");
+    if (order.orderItems[0].paymentMethod === "bank") {
+      const dataPaypal = {
+        quantity: order.orderItems.length,
+        totalPrice: total,
+        listProduct: "zzzz",
+      };
+      console.log(dataPaypal);
+      dispatch(paypal(dataPaypal));
+    }
+  };
   return (
     <div className="bg-slate-200 h-screen text-lg">
       <HeaderUser></HeaderUser>
@@ -62,27 +102,27 @@ const OrderMethod = () => {
                     pay: Yup.string()
                       .required("Please select your method payment")
                       .oneOf(
-                        ["code", "bank"],
+                        ["cod", "bank"],
                         "You can only select code or bank"
                       ),
                   })}
                   onSubmit={(values) => {
-                    // HandleLogin(values);
+                    handleClick(values);
                   }}
+                  onChange={(values) => {}}
                 >
                   {(formik) => {
-                    console.log(formik.values);
+                    setTimeout(() => setValue(formik.values), 0);
                     const watchShip = formik.values.ship;
                     const watchPay = formik.values.pay;
-                    console.log("Rendering formik", watchShip, watchPay);
-
                     return (
                       <Form className="">
                         <div className="pb-7 text-3xl text-slate-900">
                           Phương thức vận chuyển
                         </div>
-                        <div className="border border-slate-400 rounded-xl">
+                        <div className="border border-slate-400 rounded-xl cursor-pointer">
                           <InputRadio
+                            className=" cursor-pointer"
                             type="radio"
                             name="ship"
                             id="fastship"
@@ -94,6 +134,7 @@ const OrderMethod = () => {
                           <hr className=""></hr>
 
                           <InputRadio
+                            className=" cursor-pointer"
                             type="radio"
                             name="ship"
                             id="savingship"
@@ -108,6 +149,7 @@ const OrderMethod = () => {
                         </div>
                         <div className="border border-slate-400 rounded-xl">
                           <InputRadio
+                            className=" cursor-pointer"
                             type="radio"
                             name="pay"
                             id="cod"
@@ -118,20 +160,19 @@ const OrderMethod = () => {
                           <hr className=""></hr>
 
                           <InputRadio
+                            className=" cursor-pointer"
                             type="radio"
                             name="pay"
                             id="bank"
                             value="bank"
                             checked={watchPay === "bank" ? true : false}
-                            label="Chuyển khoản qua ngân hàng"
+                            label="Thanh toán qua PayPal"
                           ></InputRadio>
                         </div>
                         <div className="grid place-items-end ">
                           <button
                             className="w-[200px] h-20 mt-10 p-4 text-2xl text-white bg-cyan-600 hover:bg-cyan-500 rounded-xl "
-                            onClick={() => {
-                              Navigate("/complete");
-                            }}
+                            type="submit"
                           >
                             Đặt hàng
                           </button>

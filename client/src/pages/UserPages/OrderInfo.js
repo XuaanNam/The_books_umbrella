@@ -4,27 +4,31 @@ import Footer from "../../layouts/Footer";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { totalPrice } from "../../redux-toolkit/cartSlice";
+import { totalPrice, mergeInfo } from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
 import { useGetAllAddressQuery } from "../../redux-toolkit/addressApi";
 import { Navigate, useNavigate } from "react-router-dom";
 
 const OrderInfo = () => {
-  const order = useSelector((state) => state.cart);
+  const { orderItems, loading, error } = useSelector((state) => state.cart);
   const [total, setTotal] = useState(0);
   useEffect(() => {
     let totalPrice = 0;
-    order.orderItems.map((item) => {
+    orderItems.map((item) => {
       totalPrice += item.price * item.cartQuantity;
       return totalPrice;
     });
     setTotal(totalPrice);
-  }, [order.orderItems]);
-  const [disable, setDisable] = useState(false);
+  }, [orderItems]);
+
+  const [orderItem, setOrderItem] = useState([]);
+
+  console.log(orderItem);
   const handleClick = (values) => {
-    console.log(values);
-    // Navigate("/checkout/step2");
+    dispatch(mergeInfo(values));
+    Navigate("/checkout/step2");
   };
+
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   return (
@@ -65,13 +69,9 @@ const OrderInfo = () => {
                       "Vui lòng điền vào trường trống"
                     ),
                   })}
-                  // onSubmit={(values, isValid) => {
-                  //   console.log(values);
-                  //   console.log(isValid);
-                  // }}
-                  // onChange={(values, isValid) => {
-                  //   // Navigate("/checkout/step2");
-                  // }}
+                  onSubmit={(values) => {
+                    handleClick(values);
+                  }}
                 >
                   {(formik) => {
                     return (
@@ -109,7 +109,8 @@ const OrderInfo = () => {
                         <div className="grid place-items-end ">
                           <button
                             className="bg-cyan-700 hover:bg-cyan-600 w-[400px] h-20 mt-10 p-4 text-2xl text-white rounded-xl font-medium"
-                            onClick={handleClick(formik.values)}
+                            type="submit"
+                            // onClick={handleClick(formik.values)}
                           >
                             Phương thức thanh toán
                           </button>
@@ -123,7 +124,7 @@ const OrderInfo = () => {
             </div>
 
             <div className="pl-20">
-              {order.orderItems.map((orderItem, index) => (
+              {orderItems.map((orderItem, index) => (
                 <div className="flex gap-5 pb-5" key={index}>
                   <img
                     className="h-32 w-[150px] object-fit border-rounded-lg drop-shadow-xl transition-transform duration-500 group-hover:scale-125"
