@@ -14,14 +14,7 @@ import Input from "../../components/Input";
 import useSWR from "swr";
 import InputRadio from "../../components/InputRadio";
 import { useNavigate } from "react-router-dom";
-// const fetcher = (...args) => fetch(...args).then((res) => res.json());
-
 const OrderMethod = () => {
-  // const { data, error, isLoading } = useGetAllAddressQuery();
-  // const { data, error, isLoading } = useSWR(
-  //   "thongtindoanhnghiep.co/api/city",
-  //   fetcher
-  // );
   const order = useSelector((state) => state.cart);
   const [total, setTotal] = useState(0);
   const [value, setValue] = useState([]);
@@ -35,7 +28,6 @@ const OrderMethod = () => {
     });
     setTotal(totalPrice);
   }, []);
-  // let value = formikRef.current?.values;
   console.log(value);
   useEffect(() => {
     if (value) {
@@ -43,19 +35,24 @@ const OrderMethod = () => {
     }
   }, [value, dispatch]);
   const handleClick = (values) => {
+    const token =
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0aGUgYm9va3MgdW1icmVsbGEiLCJpZCI6NjU5MzIzODMzLCJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiYXV0aGVudGljYXRpb24iOjAsImlhdCI6MTY3MTQ4NDA2MCwiZXhwIjoxOTMwNjg0MDYwfQ.oT5xuP-8n4To5Ff31IE7JynubNJmArX_2LQmhiDyt0U";
     if (order.orderItems[0].paymentMethod) {
       order.orderItems.map((item) => {
-        const data = {
-          quantity: item.cartQuantity,
-          productId: item.id,
-          price: item.price,
-          fullname: item.fullname,
-          email: item.emailOrder,
-          phone: item.phone,
-          address: item.address,
-          deliveryMethod: item.deliveryMethod,
-          paymentMethod: item.paymentMethod,
-        };
+        const data = [
+          {
+            quantity: item.cartQuantity,
+            productId: item.id,
+            price: item.price,
+            fullname: item.fullname,
+            email: item.emailOrder,
+            phone: item.phone,
+            address: item.address,
+            deliveryMethod: item.deliveryMethod,
+            paymentMethod: item.paymentMethod,
+          },
+          token,
+        ];
         dispatch(payOrder(data));
         Navigate("/complete");
         return 0;

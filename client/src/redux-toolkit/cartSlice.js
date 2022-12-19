@@ -59,11 +59,16 @@ export const removeCart = createAsyncThunk("removecart", async (body) => {
   });
   return await res.json();
 });
-export const payOrder = createAsyncThunk("payorder", async (body) => {
+export const payOrder = createAsyncThunk("payorder", async (body, token) => {
+  let Auth = token;
+  if (localStorage.getItem("token")) {
+    Auth = localStorage.getItem("token");
+  }
   const res = await fetch("http://localhost:5000/api/cart/order", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: Auth,
     },
     body: JSON.stringify(body),
   });
@@ -114,6 +119,7 @@ const cartSlice = createSlice({
       if (state.orderItems) {
         state.orderItems = [];
       }
+      console.log(payload);
       payload.map((item) => {
         if (item.isChecked) state.orderItems.push(item);
         return state;
@@ -154,8 +160,6 @@ const cartSlice = createSlice({
       const itemIndex = state.cartItems.findIndex(
         (item) => item.id === action.payload.id
       );
-
-      //
       state.cartItems[itemIndex].cartQuantity += 1;
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
@@ -167,18 +171,6 @@ const cartSlice = createSlice({
       if (state.cartItems[itemIndex].cartQuantity > 1) {
         state.cartItems[itemIndex].cartQuantity -= 1;
       }
-      // else if (state.cartItems[itemIndex].cartQuantity === 1) {
-      //   const nextCartItems = state.cartItems.filter(
-      //     (item) => item.id !== action.payload.id
-      //   );
-
-      //   state.cartItems = nextCartItems;
-
-      //   toast.error("Đã xóa sản phẩm", {
-      //     position: "bottom-right",
-      //   });
-      // }
-
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
     },
     removeFromCart(state, action) {
@@ -246,6 +238,7 @@ const cartSlice = createSlice({
       state.loading = true;
     },
     [addCart.fulfilled]: (state, { payload }) => {
+      state.message = payload.message;
       if (payload.duplicate) {
         toast.info(`Đã thêm ${state.count} quyển vào giỏ`, {
           position: "bottom-right",

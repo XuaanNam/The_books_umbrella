@@ -29,7 +29,7 @@ const CartPage = () => {
   const [carts, setCarts] = useState([]);
   const [disable, setDisable] = useState(true);
   const [total, setTotal] = useState(0);
-
+  console.log(carts);
   useEffect(() => {
     if (token) {
       dispatch(cartFetch());
@@ -189,12 +189,6 @@ const CartPage = () => {
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black group-hover:from-black/70 group-hover:via-black/60 group-hover:to-black/70"></div>
                   </div>
                 </div>
-                {/* <img
-                  className="col-start-2 col-span-2 h-40 cursor-pointer"
-                  onClick={() => Navigate(`/detail/${cartItem.id})`)}
-                  src={cartItem.image}
-                  alt={cartItem.productName}
-                ></img> */}
                 <div
                   className="col-start-4 col-span-3 text-2xl font-medium text-cyan-700 text-left cursor-pointer"
                   onClick={() => Navigate(`/detail/${cartItem.id})`)}

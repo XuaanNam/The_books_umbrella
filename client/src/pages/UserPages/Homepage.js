@@ -12,7 +12,7 @@ const Homepage = () => {
   const dispatch = useDispatch();
   const { items, loading, error } = useSelector((state) => state.products);
   const token = localStorage.getItem("token");
-
+  console.log(items);
   useEffect(() => {
     dispatch(productsFetch());
   }, [dispatch, token]);
@@ -154,7 +154,7 @@ const Homepage = () => {
                       />
                       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black group-hover:from-black/70 group-hover:via-black/60 group-hover:to-black/70"></div>
                       <div className="absolute inset-0 flex translate-y-[60%] flex-col items-center justify-center px-6 transition-all duration-500 group-hover:translate-y-0">
-                        <p className="h-44 py-2 px-3 italic text-ellipsis overflow-hidden  text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                        <p className="h-44 py-2 px-3 text-justify italic text-ellipsis overflow-hidden  text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                           {product.description}
                         </p>
                         <button
