@@ -27,7 +27,7 @@ router.get('/cart', PassportCheck, api.getCart);
 router.post('/cart/add', PassportCheck, api.addToCart);
 router.delete('/cart/remove', PassportCheck, api.removeFromCart);
 router.patch('/cart/update', PassportCheck, api.updateCart);
-router.post('/cart/order', PassportCheck, api.createOrder);
+router.post('/cart/order', api.createOrder);
 router.delete('/cart/order/delete', PassportCheck, api.deleteOrder);
 
 
@@ -36,8 +36,9 @@ router.get('/profile', PassportCheck, api.getProfile);
 router.patch('/profile/update', PassportCheck, api.updateProfile);
 
 // payment
-router.post('/payment/paypal', PassportCheck, api.paymentByPaypal);
+router.post('/payment/paypal', api.paymentByPaypal);
 router.get('/paymentsuccess', api.paymentSuccess);
+router.get('/paymentfailed', api.paymentFailed);
 
 //admin
 router.get('/admin/warehouse', PassportCheck, api.getWarehouse);
