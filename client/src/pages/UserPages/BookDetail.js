@@ -23,6 +23,8 @@ const BookDetail = () => {
   const { items, similarItems, loading, error } = useSelector(
     (state) => state.products
   );
+  const user = useSelector((state) => state.user);
+  console.log(user);
   const productItem = [{ ...items[0], isChecked: true, cartQuantity: 1 }];
   console.log(productItem);
   const Navigate = useNavigate();
@@ -33,7 +35,7 @@ const BookDetail = () => {
     dispatch(productDetailFetch(bookId));
   }, [dispatch, bookId]);
   useEffect(() => {
-    if (items[0].genreId) {
+    if (items[0]?.genreId) {
       dispatch(searchProductByGenre(items[0].genreId));
     }
   }, [dispatch, items]);

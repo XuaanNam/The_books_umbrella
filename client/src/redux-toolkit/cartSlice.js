@@ -12,6 +12,7 @@ const initialState = {
   cartTotalAmount: 0,
   count: 1,
   loading: false,
+  check: false,
   message: "",
   error: "",
   paypalLink: "",
@@ -239,6 +240,7 @@ const cartSlice = createSlice({
     },
     [addCart.fulfilled]: (state, { payload }) => {
       state.message = payload.message;
+      state.check = payload.checked;
       if (payload.duplicate) {
         toast.info(`Đã thêm ${state.count} quyển vào giỏ`, {
           position: "bottom-right",

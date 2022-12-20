@@ -51,7 +51,7 @@ class API {
   }
   // [GET] /api/isauth
   isAuth(req, res, next) {
-    const authentication = req.user[0]; 
+    const authentication = req.user[0];
     res.status(200).send({ isAuth: true, authentication });
   }
 
@@ -336,41 +336,44 @@ class API {
     const successMsg = "Sản phẩm đã được thêm vào giỏ hàng!";
     const checkMsg = "Số lượng sản phẩm phải bé hơn ";
 
-    pool.query(checkSql, productId,
-      function (error, results, fields) {
-        if (error) {
-            res.send({ message: errorMsg, checked: false });
-        } else {
-          if (results[0].length > 0) { 
-            if(results[0][0].quantity < quantity){
-              res.status(200).send({ message: (checkMsg + results[0][0].quantity), checked: false });
-            } else {
-              pool.query(
-                insertSql,
-                [productId, customerId, quantity],
-                function (error, results, fields) {
-                  if (error) {
-                    if ((error.errno = 1062)) {
-                      res.send({ duplicate: true });
-                    } else {
-                      res.send({ message: errorMsg, checked: false });
-                    }
+    pool.query(checkSql, productId, function (error, results, fields) {
+      if (error) {
+        console.log(error);
+        res.send({ message: "0", checked: false });
+      } else {
+        if (results[0].length > 0) {
+          if (results[0][0].quantity < quantity) {
+            res.status(200).send({
+              message: checkMsg + results[0][0].quantity,
+              checked: false,
+            });
+          } else {
+            pool.query(
+              insertSql,
+              [productId, customerId, quantity],
+              function (error, results, fields) {
+                if (error) {
+                  if ((error.errno = 1062)) {
+                    res.send({ duplicate: true });
                   } else {
-                    if (results) {
-                      res.status(200).send({ message: successMsg, checked: true });
-                    } else {
-                      res.status(200).send({ message: errorMsg, checked: false });
-                    }
+                    console.log(error);
+                    res.send({ message: "1", checked: false });
+                  }
+                } else {
+                  if (results) {
+                    res.status(200).send({ message: "2", checked: true });
+                  } else {
+                    res.status(200).send({ message: "3", checked: false });
                   }
                 }
-              );
-            }
-          } else {
-            res.status(200).send({ message: errorMsg, checked: false });
+              }
+            );
           }
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
         }
       }
-    );   
+    });
   }
 
   //[DELETE] /api/cart/remove
@@ -413,37 +416,38 @@ class API {
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
     const checkMsg = "Số lượng sản phẩm phải bé hơn ";
 
-    pool.query(checkSql, productId,
-      function (error, results, fields) {
-        if (error) {
-            res.send({ message: errorMsg, checked: false });
-        } else {
-          if (results[0].length > 0) { 
-            if(results[0][0].quantity < quantity){
-              res.status(200).send({ message: (checkMsg + results[0][0].quantity), checked: false });
-            } else {
-              pool.query(
-                updateSql,
-                [quantity, customerId, productId],
-                function (error, results, fields) {
-                  if (error) {
-                    res.send({ message: errorMsg, checked: false });
+    pool.query(checkSql, productId, function (error, results, fields) {
+      if (error) {
+        res.send({ message: errorMsg, checked: false });
+      } else {
+        if (results[0].length > 0) {
+          if (results[0][0].quantity < quantity) {
+            res.status(200).send({
+              message: checkMsg + results[0][0].quantity,
+              checked: false,
+            });
+          } else {
+            pool.query(
+              updateSql,
+              [quantity, customerId, productId],
+              function (error, results, fields) {
+                if (error) {
+                  res.send({ message: errorMsg, checked: false });
+                } else {
+                  if (results) {
+                    res.status(200).send({ checked: true });
                   } else {
-                    if (results) {
-                      res.status(200).send({ checked: true });
-                    } else {
-                      res.status(200).send({ message: errorMsg, checked: false });
-                    }
+                    res.status(200).send({ message: errorMsg, checked: false });
                   }
                 }
-              );
-            }
-          } else {
-            res.status(200).send({ message: errorMsg, checked: false });
+              }
+            );
           }
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
         }
       }
-    );    
+    });
   }
 
   // [POST] /api/cart/order
@@ -593,7 +597,7 @@ class API {
 
   //[POST] /api/payment/paypal
   paymentByPaypal(req, res, next) {
-    const customerId = req.user[0].id;  
+    const customerId = req.user[0].id;
     const totalPrice = +(Math.round(req.body.totalPrice + "e+4") + "e-4"); // làm tròn số tiền 4 số sau dấu thập phân
     const listProduct = req.body.listProduct;
     const quantity = req.body.quantity;
@@ -607,7 +611,8 @@ class API {
         return_url:
           process.env.return_url +
           `/api/paymentsuccess?id=${customerId}&totalprice=${totalPrice}`,
-        cancel_url: process.env.return_url + `/api/paymentfailed?id=${customerId}`,
+        cancel_url:
+          process.env.return_url + `/api/paymentfailed?id=${customerId}`,
       },
       transactions: [
         {
@@ -646,11 +651,11 @@ class API {
 
   //[GET] /api/paymentsuccess?id=${customerId}&totalprice=${totalPrice}`
   paymentSuccess(req, res) {
-    
     const customerId = req.query.id;
-    
+
     const totalPrice = req.query.totalprice;
-    const updateSql = "update orders set pay = 2 where customerId = ? and deliveryMethod = 2 and status = 1";
+    const updateSql =
+      "update orders set pay = 2 where customerId = ? and deliveryMethod = 2 and status = 1";
     const payerId = req.query.PayerID;
     const paymentId = req.query.paymentId;
     const excute_payment_json = {
@@ -668,10 +673,10 @@ class API {
       paymentId,
       excute_payment_json,
       function (error, payment) {
-        if (error) { 
+        if (error) {
           res.redirect(process.env.cancel_url + `/cart`);
-        } else { 
-          pool.query(updateSql, customerId)
+        } else {
+          pool.query(updateSql, customerId);
           res.redirect(process.env.cancel_url + `/cart`);
         }
       }
@@ -679,14 +684,15 @@ class API {
   }
 
   //[GET] /api/paymentfailes?id=${customerId}`
-  paymentFailed(req, res) {   
+  paymentFailed(req, res) {
     const customerId = req.query.id;
-    
-    const updateSql = "update orders set status = 4 where customerId = ? and deliveryMethod = 2 and status = 1";
+
+    const updateSql =
+      "update orders set status = 4 where customerId = ? and deliveryMethod = 2 and status = 1";
 
     pool.query(updateSql, customerId, function (error, results, fields) {
       res.redirect(process.env.cancel_url + `/cart`);
-    });    
+    });
   }
 
   //[GET] /api/admin/warehouse
@@ -695,7 +701,7 @@ class API {
     const selectSql = "select * from ListAllProducts";
     const message = "Lỗi hệ thống, vui lòng thử lại!";
 
-    if(auth !== 1){
+    if (auth !== 1) {
       res.send({ authentication: false });
     } else {
       pool.query(selectSql, function (error, results, fields) {
@@ -741,7 +747,7 @@ class API {
     const existMsg = "Sản phẩm đã có sẵn trong kho hàng!";
     const successMsg = "Sản phẩm đã được thêm vào kho hàng!";
 
-    if(auth !== 1){
+    if (auth !== 1) {
       res.send({ authentication: false });
     } else {
       pool.query(
@@ -793,8 +799,8 @@ class API {
 
   //[PATCH] /api/admin/product/update
   updateProduct(req, res, next) {
-    const auth = req.user[0].authentication; 
-    const productId = req.body.productId; 
+    const auth = req.user[0].authentication;
+    const productId = req.body.productId;
 
     const image = req.body.image;
     const productName = req.body.productName;
@@ -815,26 +821,55 @@ class API {
     const updateSql =
       "update product set image = ?, productName = ?, chapter = ?, author = ?, translator = ?, price = ?, publisher = ?, " +
       "publicationDate = ?, age = ?, packagingSize = ?, form = ?, quantity = ?, description = ?, status = ? where id = ?";
-    
+
     const errorMsg = "Lỗi hệ thống, không thể chỉnh sửa sản phẩm vào lúc này!";
     const successMsg = "Sản phẩm đã được chỉnh sửa!";
 
-    if(auth !== 1){
+    if (auth !== 1) {
       res.send({ authentication: false });
-    } else { console.log(image, productName, chapter, author, translator, price, publisher, 
-      publicationDate, age, packagingSize, form, quantity, description, status, productId); 
+    } else {
+      console.log(
+        image,
+        productName,
+        chapter,
+        author,
+        translator,
+        price,
+        publisher,
+        publicationDate,
+        age,
+        packagingSize,
+        form,
+        quantity,
+        description,
+        status,
+        productId
+      );
       pool.query(
         updateSql,
         [
-          image, productName, chapter, author, translator, price, publisher, 
-          publicationDate, age, packagingSize, form, quantity, description, status, productId
+          image,
+          productName,
+          chapter,
+          author,
+          translator,
+          price,
+          publisher,
+          publicationDate,
+          age,
+          packagingSize,
+          form,
+          quantity,
+          description,
+          status,
+          productId,
         ],
         function (error, results, fields) {
           if (error) {
             res.send({ message: errorMsg, checked: false });
           } else {
-            if (results) { 
-              res.send({ message: successMsg, checked: true });        
+            if (results) {
+              res.send({ message: successMsg, checked: true });
             } else {
               res.status(200).send({ message: errorMsg, checked: false });
             }
@@ -846,40 +881,54 @@ class API {
 
   //[PATCH] /api/admin/product/disable
   disableProduct(req, res, next) {
-    const auth = req.user[0].authentication; 
-    const productId = req.body.productId; 
+    const auth = req.user[0].authentication;
+    const productId = req.body.productId;
     const status = req.body.status;
     const newStatus = req.body.status;
-    if(status === 1){
-      newStatus
+    if (status === 1) {
+      newStatus;
     }
-    const updateSql = "update product set status = " + newStatus +" where id = ?";
-    
+    const updateSql =
+      "update product set status = " + newStatus + " where id = ?";
+
     const errorMsg = "Lỗi hệ thống, không thể chỉnh sửa sản phẩm vào lúc này!";
     const successMsg = "Sản phẩm đã được chỉnh sửa!";
 
-    if(auth !== 1){
+    if (auth !== 1) {
       res.send({ authentication: false });
-    } else { 
+    } else {
       pool.query(
         updateSql,
         [
-          image, productName, chapter, author, translator, price, publisher, 
-          publicationDate, age, packagingSize, form, quantity, description, status, productId
+          image,
+          productName,
+          chapter,
+          author,
+          translator,
+          price,
+          publisher,
+          publicationDate,
+          age,
+          packagingSize,
+          form,
+          quantity,
+          description,
+          status,
+          productId,
         ],
         function (error, results, fields) {
           if (error) {
             res.send({ message: errorMsg, checked: false });
           } else {
-            if (results) { 
-              res.send({ message: successMsg, checked: true });        
+            if (results) {
+              res.send({ message: successMsg, checked: true });
             } else {
               res.status(200).send({ message: errorMsg, checked: false });
             }
           }
         }
       );
-    }   
+    }
   }
 
   //[PATCH] /api/admin/product/enable

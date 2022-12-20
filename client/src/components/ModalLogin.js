@@ -31,8 +31,6 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
   const resetForm = () => {
     formikRef.current?.resetForm();
     setMess("");
-    // user.msg = "";
-    console.log(mess);
     handleClose();
   };
   return (
