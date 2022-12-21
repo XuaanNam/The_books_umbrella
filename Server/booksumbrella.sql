@@ -247,6 +247,14 @@ $$
 -- drop view ListAllOrders  
 
 delimiter $$
+create view ListAllCustomers as
+	select c.id, fullname, birthdate, email, username, phone, address, cg.genre
+	from customerdata c
+    inner join customergenres cg on cg.id = c.customerGenre
+$$
+-- drop view ListAllCustomers
+
+delimiter $$
 create trigger TG_INSERT_ORDERS after insert on orders for each row  
 begin
     update product set quantity = quantity - new.quantity  where id = new.productId;
@@ -617,4 +625,9 @@ INSERT INTO `thebooksumbrella`.`payorder` (`id`, `pay`) VALUES ('1', 'Chưa than
 INSERT INTO `thebooksumbrella`.`orderstatus` (`id`, `status`) VALUES ('1', 'Chờ Xác Nhận'), ('2', 'Đang vận chuyển'), ('3', 'Hoàn thành'), ('4', 'Đã Hủy');
 
 INSERT INTO `thebooksumbrella`.`discountcode` (`id`, `code`, `discountTypeId`, `discountValue`) VALUES (1, 'NONE', 1, 0);
+
+
+
+
+
 
