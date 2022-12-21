@@ -5,20 +5,23 @@ import PropTypes from "prop-types";
 import { signInUser } from "../redux-toolkit/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Input from "../components/Input";
+import { useNavigate } from "react-router-dom";
 
 const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
   const user = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const formikRef = useRef();
   const [mess, setMess] = useState("");
 
-  useEffect(() => {
-    if (user.msg !== "") {
-      setMess(user.msg);
-    }
-  }, [user]);
+  // useEffect(() => {
 
+  // }, [user, mess]);
+  const handleChangePopup = () => {
+    handleRegister();
+    setMess("");
+  };
   const handleLogin = (values, isValid) => {
     if (isValid && values.email !== "" && values.password !== "") {
       dispatch(signInUser(values));
@@ -26,11 +29,18 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
     } else if (isValid && values.email === "" && values.password === "") {
       setMess("Vui lòng điền vào trường trống");
     }
+    if (user.auth && user.auth === 1) {
+      navigate("/warehouse");
+    }
+    if (user.signinmsg) {
+      setMess(user.signinmsg);
+    }
   };
 
   const resetForm = () => {
     formikRef.current?.resetForm();
     setMess("");
+    console.log(mess);
     handleClose();
   };
   return (
@@ -68,9 +78,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
             password: "",
           }}
           validationSchema={Yup.object({
-            email: Yup.string()
-              // .min(20, "Tên đăng nhập chứa tối đa 20 ký tự")
-              .required("Vui lòng điền vào trường trống"),
+            email: Yup.string().required("Vui lòng điền vào trường trống"),
             password: Yup.string()
               .required("Vui lòng điền vào trường trống")
               .min(8, "Mật khẩu chứa ít nhất 8 ký tự"),
@@ -82,27 +90,29 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
         >
           {(formik) => {
             return (
-              <Form className="">
-                <Input
-                  className="w-full h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  id="email"
-                ></Input>
-                <Input
-                  className="w-full h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
-                  type="password"
-                  name="password"
-                  placeholder="Mật khẩu"
-                  id="password"
-                ></Input>
-                {mess && formik.isValid && (
-                  <div className="text-red-500 text-lg">{mess}</div>
-                )}
+              <Form className="grid place-items-center">
+                <div>
+                  <Input
+                    className="w-[550px] h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    id="email"
+                  ></Input>
+                  <Input
+                    className="w-[550px] h-16 text-xl my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
+                    type="password"
+                    name="password"
+                    placeholder="Mật khẩu"
+                    id="password"
+                  ></Input>
+                  {mess && formik.isValid && (
+                    <div className="text-red-500 text-lg text-left">{mess}</div>
+                  )}
+                </div>
 
                 <button
-                  className="w-full mt-3 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl "
+                  className="w-[550px] mt-3 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl "
                   type="button"
                   onClick={() => {
                     handleLogin(formik.values, formik.isValid);
@@ -116,7 +126,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
         </Formik>
         <div
           className="text-xl text-slate-600 mt-5 cursor-pointer w-full"
-          onClick={handleRegister}
+          onClick={handleChangePopup}
         >
           Chưa có tài khoản? Đăng ký ngay
         </div>

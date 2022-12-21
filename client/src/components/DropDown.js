@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 import { CSSTransition } from "react-transition-group";
@@ -9,11 +9,11 @@ const DropDown = () => {
   const [showUser, setShowUser] = useState(false);
   const [showProduct, setShowProduct] = useState(false);
   const [showOrder, setShowOrder] = useState(false);
-  const nodeRef = useRef(null);
-  const onClickHandlerUser = (e) => {
+  useEffect(() => {});
+  // const nodeRef = useRef(null);
+  const onClickHandlerUser = () => {
     setShowUser(!showUser);
-    nodeRef.current = showUser;
-    console.log(nodeRef.current);
+    // console.log(nodeRef.current);
   };
   const onClickHandlerProduct = () => {
     setShowProduct(!showProduct);
@@ -23,15 +23,13 @@ const DropDown = () => {
   };
   const Navigate = useNavigate();
   return (
-    <div className="h-screen w-72 overflow-auto bg-teal-600 top-0 bottom-0 left-0 text-slate-200 text-lg">
+    <div className="h-screen w-80 overflow-auto bg-teal-600 top-0 bottom-0 left-0 text-slate-200 text-lg">
       <div className="h-24"></div>
       <Menu
         onClick={onClickHandlerUser}
         show={showUser}
         name="Khách hàng"
-        // ref={nodeRef}
       ></Menu>
-
       <CSSTransition
         in={showUser}
         className="dropdown"
@@ -47,6 +45,7 @@ const DropDown = () => {
           </Button>,
         ])}
       </CSSTransition>
+
       <Menu
         onClick={onClickHandlerProduct}
         show={showProduct}
@@ -59,12 +58,6 @@ const DropDown = () => {
         timeout={200}
       >
         {DropdownList([
-          <Button
-            className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
-            onClick={() => Navigate("/productlist")}
-          >
-            Danh sách sản phẩm
-          </Button>,
           <Button
             className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
             onClick={() => Navigate("/warehouse")}
@@ -123,9 +116,9 @@ function DropdownList(props) {
   if (typeof document === "undefined") return null;
   return (
     <div className="top-full transition-all ">
-      {props.map((item) => {
-        return <div className="cursor-pointer hover:bg-sky-700">{item}</div>;
-      })}
+      {/* {props.map((item) => { */}
+      <div className="cursor-pointer hover:bg-sky-700">{props}</div>
+      {/* })} */}
     </div>
   );
 }

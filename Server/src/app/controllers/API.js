@@ -105,7 +105,7 @@ class API {
   // [POST] /api/check/email
   emailCheck(req, res, next) {
     const sql = "select * from customerdata where email = ? ";
-    const message = "Email đã tồn tại, vui lòng nhấn 'Quên mật khẩu'!";
+    const message = "Email đã tồn tại, vui lòng nhập lại";
     const email = req.body.email;
 
     pool.query(sql, email, function (error, results, fields) {

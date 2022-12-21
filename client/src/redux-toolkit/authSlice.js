@@ -2,13 +2,25 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
   auth: "",
-  msg: "",
+  signinmsg: "",
+  signupmsg: "",
   username: "",
   token: "",
   loading: false,
   error: "",
-  checked: false,
+  checked: true,
+  emailChecked: true,
 };
+export const authentication = createAsyncThunk("authentication", async () => {
+  const res = await fetch("http://localhost:5000/api/isauth", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+  });
+  return await res.json();
+});
 export const signInUser = createAsyncThunk("signinuser", async (body) => {
   const res = await fetch("http://localhost:5000/api/login", {
     method: "POST",
@@ -30,17 +42,41 @@ export const signUpUser = createAsyncThunk("signupuser", async (body) => {
   });
   return await res.json();
 });
+export const emailChecked = createAsyncThunk("emailChecked", async (body) => {
+  console.log("body", body);
+  const res = await fetch("http://localhost:5000/api/check/email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
 const authSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    auth: (sstate, action) => {},
+    auth: (state, action) => {},
     logout: (state, action) => {
       state.token = null;
       localStorage.clear();
     },
   },
   extraReducers: {
+    [emailChecked.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [emailChecked.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.emailChecked = payload.checked;
+      if (payload.checked === false) {
+        state.msg = payload.message;
+      }
+    },
+    [emailChecked.rejected]: (state, action) => {
+      state.loading = true;
+    },
     [signUpUser.pending]: (state, action) => {
       state.loading = true;
     },
@@ -51,10 +87,10 @@ const authSlice = createSlice({
       state.loading = false;
       if (error) {
         state.error = error;
-        state.msg = message;
+        state.signupmsg = message;
       } else {
         if (checked) {
-          state.msg = message;
+          state.signupmsg = message;
           state.checked = checked;
         }
       }
@@ -82,16 +118,29 @@ const authSlice = createSlice({
           localStorage.setItem("auth", authentication);
           localStorage.setItem("token", token);
           localStorage.setItem("user", username);
-          state.msg = "";
-          window.location.reload();
+          state.signinmsg = "";
+          if (authentication !== 1) {
+            window.location.reload();
+          }
         } else {
-          state.msg = message;
+          state.signinmsg = message;
         }
       }
     },
     [signInUser.rejected]: (state, action) => {
       state.loading = true;
     },
+
+    [authentication.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [authentication.fulfilled]: (state, { payload }) => {
+      state.auth = payload.authentication;
+      state.checked = payload.isAuth;
+    },
+  },
+  [authentication.rejected]: (state, action) => {
+    state.loading = true;
   },
 });
 export const { addToken, addUser, logout } = authSlice.actions;

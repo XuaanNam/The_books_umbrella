@@ -1,11 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import PropTypes from "prop-types";
 import Input from "./Input";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { signUpUser } from "../redux-toolkit/authSlice";
+import { signUpUser, emailChecked } from "../redux-toolkit/authSlice";
 
 const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
   const user = useSelector((state) => state.user);
@@ -13,10 +13,19 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const formikRef = useRef();
-  console.log(formikRef);
-  let [mess, setMess] = useState("");
+  console.log(user);
+  const [mess, setMess] = useState("");
+  const [value, setValue] = useState([]);
+  useEffect(() => {
+    if (value.email) {
+      const body = { email: value.email };
+      dispatch(emailChecked(body));
+      if (user.emailChecked === false) {
+        setMess(user.msg);
+      }
+    }
+  }, [dispatch, value.email, user.msg]);
   const handleRegister = (values, isValid) => {
-    console.log(values);
     if (
       isValid &&
       values.email !== "" &&
@@ -40,8 +49,6 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
   const resetForm = () => {
     formikRef.current?.resetForm();
     setMess("");
-    console.log(mess);
-
     handleClose();
   };
   return (
@@ -50,7 +57,7 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
         className="absolute inset-0 bg-black bg-opacity-60 overlay"
         onClick={resetForm}
       ></div>
-      <div className="relative z-10 p-10 bg-white rounded-xl modal-content h-[500px] w-[850px]">
+      <div className="relative z-10 p-10 bg-white rounded-xl modal-content h-[600px] w-[850px]">
         <span
           className="absolute top-0 right-0 flex items-center justify-center w-10 h-10 p-1 bg-white rounded-full cursor-pointer -translate-y-2/4 translate-x-2/4 hover:bg-gray-200"
           onClick={resetForm}
@@ -92,48 +99,50 @@ const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
         >
           {(formik) => {
             console.log(formik);
+            setTimeout(() => setValue(formik.values), 0);
             return (
-              <Form>
-                <div className="grid grid-cols-2 gap-6">
+              <Form className="grid place-items-center">
+                <div>
                   <Input
-                    className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
-                    type="text"
-                    label="Tên đăng nhập"
-                    name="username"
-                    placeholder="Nhập tên"
-                    id="username"
-                  ></Input>
-                  <Input
-                    className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
-                    type="password"
-                    label="Mật khẩu"
-                    name="password"
-                    placeholder="Nhập mật khẩu"
-                    id="password"
-                  ></Input>
-                </div>
-                <div className="grid grid-cols-2 gap-6">
-                  <Input
-                    className="w-[370px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
+                    className="w-[550px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
                     type="email"
                     label="Email"
                     name="email"
-                    placeholder="Nhập email"
+                    placeholder="Email"
                     id="email"
                   ></Input>
+                  {user.emailChecked === false && (
+                    <div className="text-red-500 text-lg">{mess}</div>
+                  )}
+                  <Input
+                    className="w-[550px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
+                    type="text"
+                    label="Tên đăng nhập"
+                    name="username"
+                    placeholder="Tên đăng nhập"
+                    id="username"
+                  ></Input>
+                  <Input
+                    className="w-[550px] h-16 text-lg my-2 border border-slate-400 hover:border-2 outline-none p-2 rounded-xl"
+                    type="password"
+                    label="Mật khẩu"
+                    name="password"
+                    placeholder="Mật khẩu"
+                  ></Input>
+
+                  {formik.isValid && user.msg && (
+                    <div className="text-red-500 text-lg">{mess}</div>
+                  )}
+                  <button
+                    className="w-full mt-3 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg"
+                    type="button"
+                    onClick={() => {
+                      handleRegister(formik.values, formik.isValid);
+                    }}
+                  >
+                    Đăng ký
+                  </button>
                 </div>
-                {formik.isValid && user.msg && (
-                  <div className="text-red-500 text-lg">{mess}</div>
-                )}
-                <button
-                  className="w-full mt-8 p-4 text-2xl font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg"
-                  type="button"
-                  onClick={() => {
-                    handleRegister(formik.values, formik.isValid);
-                  }}
-                >
-                  Đăng ký
-                </button>
               </Form>
             );
           }}
