@@ -146,7 +146,7 @@ const Homepage = () => {
                     key={product.id}
                     className="px-2 h-[full] transition-all cursor-pointer mb-5"
                   >
-                    <div className="group relative rounded-xl cursor-pointer items-center justify-center overflow-hidden transition-shadow hover:shadow-xl hover:shadow-black/30">
+                    <div className="group relative rounded-xl drop-shadow-lg cursor-pointer items-center justify-center overflow-hidden transition-shadow hover:shadow-xl hover:shadow-black/30">
                       <img
                         className="max-h-[340px] w-full object-cover transition-transform duration-500 group-hover:scale-125"
                         src={product.image}

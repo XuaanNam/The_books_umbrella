@@ -28,7 +28,6 @@ const OrderInfo = () => {
     dispatch(mergeInfo(values));
     Navigate("/checkout/step2");
   };
-
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   return (

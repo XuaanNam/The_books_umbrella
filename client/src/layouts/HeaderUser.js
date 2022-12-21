@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "../components/Modal";
 import { Dropdown, Menu, Space } from "antd";
 
@@ -7,25 +7,23 @@ import { IoCart } from "react-icons/io5";
 import { BiSearchAlt } from "react-icons/bi";
 import { FiMenu } from "react-icons/fi";
 import { FaUserAlt } from "react-icons/fa";
-import { logout } from "../redux-toolkit/authSlice";
-import { useDispatch } from "react-redux";
+import { authentication, logout } from "../redux-toolkit/authSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { productsFetch, searchProduct } from "../redux-toolkit/productsSlice";
+import { searchProduct } from "../redux-toolkit/productsSlice";
 
 const HeaderUser = () => {
   const [showModal, setShowModal] = useState(false);
   const [active, setActive] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const Navigate = useNavigate();
   const username = localStorage.getItem("user");
   const isAuth = localStorage.getItem("auth");
   const [keywords, setKeywords] = useState("");
-  // const handleChange = (e) => {
-  //   let kw = "";
-  //   kw = e.targert.value;
-  //   console.log(e?.targert?.value);
-  //   // setKeywords(kw);
-  // };
+  const user = useSelector((state) => state.usser);
+  console.log(isAuth);
+
   const hangdleSearch = (e) => {
     dispatch(searchProduct(keywords));
   };
@@ -35,10 +33,9 @@ const HeaderUser = () => {
     Navigate("/");
   };
 
-  const user = localStorage.getItem("user");
   return (
     <div className="h-24 fixed w-screen z-50 text-lg">
-      <div className="font-medium h-full text-gray-700 bg-teal-500 grid grid-cols-10 place-items-center drop-shadow-[0_4px_5px_rgba(0,0,0,0.3)]">
+      <div className="font-medium h-full text-gray-700 bg-teal-600 grid grid-cols-9 place-items-center drop-shadow-[0_4px_5px_rgba(0,0,0,0.3)]">
         <a
           className="col-start-1 col-span-2 cursor-pointer text-slate-100 hover:text-slate-700 drop-shadow-lg"
           href="/"
@@ -58,7 +55,7 @@ const HeaderUser = () => {
                 <Space direction="vertical">
                   <Space wrap>
                     <Dropdown overlay={MenuDropdown} placement="bottomRight">
-                      <button className="h-14 w-20 rounded-xl bg-violet-500 hover:bg-violet-400">
+                      <button className="h-14 w-20 drop-shadow-lg rounded-xl bg-violet-500 hover:bg-violet-400">
                         <div className="grid place-items-center">
                           <FiMenu className="" />
                         </div>
@@ -69,7 +66,7 @@ const HeaderUser = () => {
               </IconContext.Provider>
             </div>
 
-            <div className="col-start-4 col-span-4 h-14 w-[550px] rounded-xl flex cursor-pointer ">
+            <div className="col-start-4 col-span-3 h-14 w-[550px] rounded-xl drop-shadow-lg flex cursor-pointer ">
               <input
                 className="w-[410px] font-normal pl-5 outline-none rounded-xl focus:border-2 focus:border-slate-600"
                 type="text"
@@ -98,7 +95,7 @@ const HeaderUser = () => {
               </div>
             </div>
             <a
-              className="col-start-8 grid-cols-2 text-xl place-items-center cursor-pointer hover:drop-shadow-lg"
+              className="col-start-7 grid-cols-2 text-xl place-items-center cursor-pointer hover:drop-shadow-lg"
               href="/cart"
             >
               <IconContext.Provider
@@ -116,15 +113,19 @@ const HeaderUser = () => {
         ) : (
           <div></div>
         )}
-        {user ? (
-          <div className="relative col-start-9 hover:text-slate-700 hover:drop-shadow-lg text-black text-xl cursor-pointer">
+        {isAuth ? (
+          <div
+            className={`relative ${
+              isAuth ? "col-start-7" : "col-start-8"
+            }  hover:text-slate-700 w-[95%] drop-shadow-lg text-black text-xl cursor-pointer}`}
+          >
             <Space direction="vertical">
               <Space wrap>
                 <Dropdown
                   overlay={ProfileDropdown({ handleLogout })}
                   placement="bottomRight"
                 >
-                  <div className="flex gap-2 p-2 ">
+                  <div className="flex place-items-start gap-3 w-44 rounded-xl py-3 px-5 drop-shadow-lg border">
                     <IconContext.Provider
                       value={{
                         size: "25px",
@@ -148,14 +149,14 @@ const HeaderUser = () => {
           </div>
         ) : (
           <button
-            className="col-start-9 w-24 text-white h-9 bg-violet-600 hover:bg-violet-500 rounded"
+            className="col-start-8 w-32 text-white h-12 bg-violet-600 hover:bg-violet-500 drop-shadow-lg rounded-xl"
             onClick={() => setShowModal(true)}
           >
             Login
           </button>
         )}
         <div
-          className={`col-start-10 w-28 h-10 border-2  border-slate-500 rounded-3xl my-auto flex items-center cursor-pointer ${
+          className={`col-start-9 w-28 h-10 border-2  border-slate-500 rounded-3xl drop-shadow-lg my-auto flex items-center cursor-pointer ${
             active ? "bg-green-400" : "bg-gray-400"
           }`}
           onClick={() => {

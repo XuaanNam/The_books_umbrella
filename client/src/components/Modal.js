@@ -15,6 +15,7 @@ const Modal = ({ open = false, handleClose = () => {} }) => {
       }, 500);
     }
   }, [open]);
+  const [message, setMessage] = useState("");
   const handleRegister = () => {
     setShowModalRegister(true);
     setShowModalLogin(false);
@@ -23,6 +24,7 @@ const Modal = ({ open = false, handleClose = () => {} }) => {
     setShowModalLogin(true);
     setShowModalRegister(false);
   };
+  const handleMessage = () => {};
   if (typeof document === "undefined") return <div className="modal"></div>;
   return ReactDOM.createPortal(
     <div
