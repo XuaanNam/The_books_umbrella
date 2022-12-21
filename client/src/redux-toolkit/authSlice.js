@@ -138,9 +138,9 @@ const authSlice = createSlice({
       state.auth = payload.authentication;
       state.checked = payload.isAuth;
     },
-  },
-  [authentication.rejected]: (state, action) => {
-    state.loading = true;
+    [authentication.rejected]: (state, action) => {
+      state.loading = true;
+    },
   },
 });
 export const { addToken, addUser, logout } = authSlice.actions;

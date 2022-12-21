@@ -2,12 +2,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dropdown, Menu, Space } from "antd";
 import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 import DropDown from "../../components/DropDown";
-import React from "react";
+import React, { useEffect } from "react";
 import Button from "../../components/Button";
 import HeaderUser from "../../layouts/HeaderUser";
 import menu from "../../components/menu";
+import { useDispatch, useSelector } from "react-redux";
+import { warehouseFetch } from "../../redux-toolkit/adminSlice";
 
 const Warehouse = () => {
+  const admin = useSelector((state) => state.admin);
+  const dispatch = useDispatch();
+  const token = localStorage.getItem("token");
+  useEffect(() => {
+    dispatch(warehouseFetch());
+  }, [dispatch, token]);
   return (
     <div className="w-screen h-auto flex text-lg">
       <DropDown></DropDown>
@@ -75,67 +83,42 @@ const Warehouse = () => {
                       />
                     </th>
                     <th className="w-12">Ảnh</th>
-                    <th className="w-44 text-left pl-6">Tên sách</th>
-                    <th className="w-24 text-left">Loại</th>
-                    <th className="w-24 text-left">Giá bán</th>
+                    <th className="w-24 text-left pl-6">Tên sách</th>
+                    <th className="w-24 text-center pr-10">Loại</th>
+                    <th className="w-16 text-left">Giá bán</th>
                     <th className="w-24 text-left">Nhà xuất bản</th>
                     <th className="w-20 text-left">Còn trong kho</th>
                   </tr>
                 </thead>
-                <tbody className=" w-full h-32">
-                  <tr className="">
-                    <td className="text-center">
-                      <input
-                        type="checkbox"
-                        className=" checked:bg-blue-500 cursor-pointer h-6 w-6"
-                      />
-                    </td>
-                    <td>
-                      <img
-                        className="mx-auto h-12 w-16 object-fit"
-                        src="https://salt.tikicdn.com/cache/750x750/ts/product/80/3d/5a/3010e66c0524903d9256b2b7231f4d56.jpg.webp"
-                        alt="bookimages"
-                      ></img>
-                    </td>
-                    <td className="pl-6">Cà phê cùng Tony</td>
-                    <td>Bìa mềm</td>
-                    <td>90000</td>
-                    <td>NXB Kim Đồng</td>
-                  </tr>
-
-                  <tr className="">
-                    <td className="text-center">
-                      <input type="checkbox" className=" checked:bg-blue-500" />
-                    </td>
-                    <td>
-                      <img
-                        className="mx-auto h-12 w-16 object-fit"
-                        src="https://salt.tikicdn.com/cache/750x750/ts/product/80/3d/5a/3010e66c0524903d9256b2b7231f4d56.jpg.webp"
-                        alt="bookimages"
-                      ></img>
-                    </td>
-                    <td className="pl-6">Cà phê cùng Tony</td>
-                    <td>Bìa mềm</td>
-                    <td>90000</td>
-                    <td>NXB Kim Đồng</td>
-                  </tr>
-
-                  <tr className="">
-                    <td className="text-center">
-                      <input type="checkbox" className=" checked:bg-blue-500" />
-                    </td>
-                    <td>
-                      <img
-                        className="mx-auto h-12 w-16 object-fit"
-                        src="https://salt.tikicdn.com/cache/750x750/ts/product/80/3d/5a/3010e66c0524903d9256b2b7231f4d56.jpg.webp"
-                        alt="bookimages"
-                      ></img>
-                    </td>
-                    <td className="pl-6">Cà phê cùng Tony</td>
-                    <td>Bìa mềm</td>
-                    <td>90000</td>
-                    <td>NXB Kim Đồng</td>
-                  </tr>
+                <tbody className=" w-full h-32 mt-5">
+                  {admin.items &&
+                    admin.items.map((item, index) => (
+                      <tr className="h-20 text-xl" key={index}>
+                        <td className="text-center">
+                          <input
+                            type="checkbox"
+                            className=" checked:bg-blue-500 cursor-pointer h-6 w-6"
+                          />
+                        </td>
+                        <td>
+                          <div className="col-start-2 col-span-2 px-2 w-full grid justify-center items-center drop-shadow-lg transition-all cursor-pointer mb-3">
+                            <div className="group drop-shadow-xl text-justify text-lg h-[150px] w-[100px] rounded-xl relative cursor-pointer items-center justify-center overflow-hidden transition-shadow hover:shadow-xl hover:shadow-black/30">
+                              <img
+                                className=" h-[140px] mt-5 object-cover w-full transition-transform duration-500 group-hover:scale-125"
+                                src={item.image}
+                                alt={item.productName}
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black group-hover:from-black/70 group-hover:via-black/60 group-hover:to-black/70"></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className=" w-[100px]">{item.productName}</td>
+                        <td className="text-center pr-5">{item.form}</td>
+                        <td>{item.price}</td>
+                        <td>{item.publisher}</td>
+                        <td className="pl-10 font-medium">{item.quantity}</td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>

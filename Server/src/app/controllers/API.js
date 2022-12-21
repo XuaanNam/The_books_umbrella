@@ -6,7 +6,7 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const saltRound = 7;
 const encodeToken = require("../../util/encodeToken");
-const createError = require('http-errors');
+const createError = require("http-errors");
 const CronJob = require("cron").CronJob;
 const io = require("socket.io-client");
 const job = [];
@@ -53,12 +53,11 @@ class API {
   // [GET] /api/isauth
   isAuth(req, res, next) {
     const auth = req.user[0];
-    if(auth){
+    if (auth) {
       res.status(200).send({ authentication });
     } else {
       return next(createError(401));
     }
-    
   }
 
   // [POST] /api/login
@@ -517,7 +516,6 @@ class API {
     );
   }
 
-  
   //[GET] /api/profile
   getProfile(req, res, next) {
     const customerId = req.user[0].id;
@@ -669,12 +667,12 @@ class API {
 
     const updateSql =
       "update orders set status = 4 where customerId = ? and deliveryMethod = 2 and status = 1 and pay = 1";
-      
+
     pool.query(updateSql, customerId, function (error, results, fields) {
       res.redirect(process.env.cancel_url + `/cart?payment=true`);
     });
   }
-  
+
   //[GET] /api/admin/warehouse
   getWarehouse(req, res, next) {
     const auth = req.user[0].authentication;
@@ -846,37 +844,42 @@ class API {
   changeProductStatus(req, res, next) {
     const auth = req.user[0].authentication;
     const productId = req.body.productId;
-    const status = req.body.status; 
+    const status = req.body.status;
     let successMsg = "Sản phẩm đã được đưa vào kho!";
 
     let newStatus = 1;
-    if (status === "1") { 
-      newStatus = 2;     
+    if (status === "1") {
+      newStatus = 2;
       successMsg = "Sản phẩm đã được đưa lên website!";
-    } 
+    }
 
     const updateSql = "update product set status = ? where id = ?";
-    const errorMsg = "Lỗi hệ thống, không thể chuyển đổi trạng thái vào lúc này. Vui lòng thử lại sau!";
-    
+    const errorMsg =
+      "Lỗi hệ thống, không thể chuyển đổi trạng thái vào lúc này. Vui lòng thử lại sau!";
+
     if (auth !== 1) {
       return next(createError(401));
     } else {
-      pool.query(updateSql, [newStatus, productId], function (error, results, fields) {
-        if (error) {
-          res.send({ message: errorMsg, checked: false });
-        } else {
-          if (results) {
-            res.send({ message: successMsg, checked: true });
+      pool.query(
+        updateSql,
+        [newStatus, productId],
+        function (error, results, fields) {
+          if (error) {
+            res.send({ message: errorMsg, checked: false });
           } else {
-            res.status(200).send({ message: errorMsg, checked: false });
+            if (results) {
+              res.send({ message: successMsg, checked: true });
+            } else {
+              res.status(200).send({ message: errorMsg, checked: false });
+            }
           }
         }
-      });
+      );
     }
   }
 
   //[GET] /api/admin/customer
-  getCustomer(req, res, next){
+  getCustomer(req, res, next) {
     const auth = req.user[0].authentication;
     const selectSql = "select * from ListAllCustomers";
     const message = "Lỗi hệ thống, vui lòng thử lại!";
@@ -924,35 +927,31 @@ class API {
   }
 
   //[PATCH] /api/admin/customer/update/password
-  updateCustomerPassword(req, res, next) {
+  updateCustomerPassword(req, res, next) {}
 
-  }
-  
   //[GET] /api/admin/order
   getOrder(req, res, next) {
     const auth = req.user[0].authentication;
 
     const selectSql = "select * from ListAllOrders";
     const errorMsg = "Lỗi hệ thống, vui lòng thử lại sau!";
-    
+
     if (auth !== 1) {
       return next(createError(401));
     } else {
-      pool.query(
-        selectSql, function (error, results, fields) {
-          if (error) {
-            res.send({ message: error, checked: false });
+      pool.query(selectSql, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        } else {
+          if (results.length > 0) {
+            res.status(200).send({ results, checked: true });
           } else {
-            if (results.length > 0) {
-              res.status(200).send({ results, checked: true });
-            } else {
-              res.status(200).send({ message: errorMsg, checked: false });
-            }
+            res.status(200).send({ message: errorMsg, checked: false });
           }
         }
-      );
+      });
     }
-  }  
+  }
 
   //[PATCH] /api/admin/order/status
   changeOrderStatus(req, res, next) {
@@ -961,22 +960,27 @@ class API {
     const status = req.body.status;
 
     const updateSql = "update orders set status = ? where id = ?";
-    const errorMsg = "Lỗi hệ thống, không thể chuyển đổi trạng thái vào lúc này. Vui lòng thử lại sau!";
-    
+    const errorMsg =
+      "Lỗi hệ thống, không thể chuyển đổi trạng thái vào lúc này. Vui lòng thử lại sau!";
+
     if (auth !== 1) {
       return next(createError(401));
     } else {
-      pool.query(updateSql, [status, orderId], function (error, results, fields) {
-        if (error) {
-          res.send({ message: errorMsg, checked: false });
-        } else {
-          if (results) {
-            res.send({ checked: true });
+      pool.query(
+        updateSql,
+        [status, orderId],
+        function (error, results, fields) {
+          if (error) {
+            res.send({ message: errorMsg, checked: false });
           } else {
-            res.status(200).send({ message: errorMsg, checked: false });
+            if (results) {
+              res.send({ checked: true });
+            } else {
+              res.status(200).send({ message: errorMsg, checked: false });
+            }
           }
         }
-      });
+      );
     }
   }
 
@@ -988,25 +992,23 @@ class API {
     const deleteSql = "delete from orders where id = ? ";
     const successMsg = "Xóa đơn hàng thành công!";
     const errorMsg = "Lỗi hệ thống, vui lòng thử lại sau!";
-    
+
     if (auth !== 1) {
       return next(createError(401));
     } else {
-      pool.query(
-        deleteSql, orderId, function (error, results, fields) {
-          if (error) {
-            res.send({ message: error, checked: false });
+      pool.query(deleteSql, orderId, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ message: successMsg, checked: true });
           } else {
-            if (results) {
-              res.status(200).send({ message: successMsg, checked: true });
-            } else {
-              res.status(200).send({ message: errorMsg, checked: false });
-            }
+            res.status(200).send({ message: errorMsg, checked: false });
           }
         }
-      );
+      });
     }
-  }  
+  }
 }
 
 module.exports = new API();

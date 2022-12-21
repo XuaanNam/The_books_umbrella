@@ -115,9 +115,9 @@ const HeaderUser = () => {
         )}
         {isAuth ? (
           <div
-            className={`relative ${
-              isAuth ? "col-start-7" : "col-start-8"
-            }  hover:text-slate-700 w-[95%] drop-shadow-lg text-black text-xl cursor-pointer}`}
+            className={`relative text-xl cursor-pointer hover:text-slate-700 w-[95%] drop-shadow-lg text-black ${
+              isAuth === 1 ? "col-start-7" : "col-start-8"
+            } `}
           >
             <Space direction="vertical">
               <Space wrap>
