@@ -4,7 +4,7 @@ const express = require("express");
 const path = require("path");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
-const saltRound = 7;
+const saltRound = 9;
 const encodeToken = require("../../util/encodeToken");
 const createError = require('http-errors');
 const CronJob = require("cron").CronJob;
@@ -105,7 +105,7 @@ class API {
   // [POST] /api/check/email
   emailCheck(req, res, next) {
     const sql = "select * from customerdata where email = ? ";
-    const message = "Email đã tồn tại, vui lòng nhập lại";
+    const message = "Email đã tồn tại, vui lòng nhấn 'Quên mật khẩu'!";
     const email = req.body.email;
 
     pool.query(sql, email, function (error, results, fields) {
@@ -901,7 +901,7 @@ class API {
   //[GET] /api/admin/customer/:id
   getCustomerById(req, res, next) {
     const auth = req.user[0].authentication;
-    const id = req.params.id;
+    const customerId = req.params.id;
 
     const selectSql = "select * from ListAllCustomers where id = ?";
     const errorMsg = "Lỗi hệ thống, vui lòng thử lại!";
@@ -909,7 +909,7 @@ class API {
     if (auth !== 1) {
       return next(createError(401));
     } else {
-      pool.query(selectSql, id, function (error, results, fields) {
+      pool.query(selectSql, customerId, function (error, results, fields) {
         if (error) {
           res.status(200).send({ errorMsg, checked: false });
         } else {
@@ -925,7 +925,31 @@ class API {
 
   //[PATCH] /api/admin/customer/update/password
   updateCustomerPassword(req, res, next) {
+    const auth = req.user[0].authentication;
+    const customerId = req.body.id;
+    const newPassword = req.body.password;
 
+    const updateSql = "update customerdata set password = ? where id = ?";
+    const errorMsg = "Lỗi hệ thống, vui lòng thử lại!";
+
+    if (auth !== 1) {
+      return next(createError(401));
+    } else {
+      bcrypt.hash(newPassword, saltRound, (err, hash) => {
+        if (err) {
+          res.status(200).send({ message: errorMsg, checked: false });
+        } else {
+          pool.query(updateSql, [hash, customerId], function (error, results, fields) {
+              if (error) {
+                res.send({ message: errorMsg, checked: false });
+              } else {
+                res.send({ message: successMsg, checked: true });
+              }
+            }
+          );
+        }
+      });
+    }
   }
   
   //[GET] /api/admin/order
