@@ -4,7 +4,7 @@ const express = require("express");
 const path = require("path");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
-const saltRound = 7;
+const saltRound = 9;
 const encodeToken = require("../../util/encodeToken");
 const createError = require("http-errors");
 const CronJob = require("cron").CronJob;
@@ -104,7 +104,7 @@ class API {
   // [POST] /api/check/email
   emailCheck(req, res, next) {
     const sql = "select * from customerdata where email = ? ";
-    const message = "Email đã tồn tại, vui lòng nhập lại";
+    const message = "Email đã tồn tại, vui lòng nhấn 'Quên mật khẩu'!";
     const email = req.body.email;
 
     pool.query(sql, email, function (error, results, fields) {
@@ -136,6 +136,57 @@ class API {
           res.status(200).send({ checked: true });
         }
       }
+    });
+  }
+
+  // [PATCH] /api/update/password
+  updatePassword(req, res, next) {
+    const id = req.user[0].id;
+    const updateSql = "update customerdata set password = ? where id = ?";
+    const selectSql = "select password from customerdata where id = ?";
+    const password = req.body.password;
+    const newPassword = req.body.newPassword;
+
+    pool.getConnection(function (err, connection) {
+      //if (err) throw err; // not connected!
+      connection.query(selectSql, id, function (error, results, fields) {
+        if (error) {
+          res.send({ message: "Kết nối DataBase thất bại", checked: false });
+        }
+        if (results.length > 0) {
+          bcrypt.compare(password, results[0].password, (err, response) => {
+            if (response) {
+              bcrypt.hash(newPassword, saltRound, (err, hash) => {
+                connection.query(
+                  updateSql,
+                  [hash, id],
+                  function (err, results, fields) {
+                    if (err) {
+                      res
+                        .status(200)
+                        .send({ message: err.sqlMessage, checked: false });
+                    } else {
+                      res.send({
+                        message: "Đổi mật khẩu thành công!",
+                        checked: true,
+                      });
+                    }
+                  }
+                );
+              });
+            } else {
+              res
+                .status(200)
+                .send({ message: "Mật khẩu cũ không đúng!", checked: false });
+            }
+          });
+        } else {
+          res
+            .status(200)
+            .send({ message: "Kết nối DataBase thất bại", checked: false });
+        }
+      });
+      connection.release();
     });
   }
 
@@ -904,7 +955,7 @@ class API {
   //[GET] /api/admin/customer/:id
   getCustomerById(req, res, next) {
     const auth = req.user[0].authentication;
-    const id = req.params.id;
+    const customerId = req.params.id;
 
     const selectSql = "select * from ListAllCustomers where id = ?";
     const errorMsg = "Lỗi hệ thống, vui lòng thử lại!";
@@ -912,7 +963,7 @@ class API {
     if (auth !== 1) {
       return next(createError(401));
     } else {
-      pool.query(selectSql, id, function (error, results, fields) {
+      pool.query(selectSql, customerId, function (error, results, fields) {
         if (error) {
           res.status(200).send({ errorMsg, checked: false });
         } else {
@@ -927,7 +978,38 @@ class API {
   }
 
   //[PATCH] /api/admin/customer/update/password
-  updateCustomerPassword(req, res, next) {}
+  updateCustomerPassword(req, res, next) {
+    const auth = req.user[0].authentication;
+    const customerId = req.body.customerId;
+    const newPassword = req.body.password;
+
+    const updateSql = "update customerdata set password = ? where id = ?";
+    const errorMsg = "Lỗi hệ thống, vui lòng thử lại!";
+    const successMsg =
+      "Đổi password cho người dùng " + customerId + " thành công!";
+
+    if (auth !== 1) {
+      return next(createError(401));
+    } else {
+      bcrypt.hash(newPassword, saltRound, (err, hash) => {
+        if (err) {
+          res.status(200).send({ message: errorMsg, checked: false });
+        } else {
+          pool.query(
+            updateSql,
+            [hash, customerId],
+            function (error, results, fields) {
+              if (error) {
+                res.send({ message: errorMsg, checked: false });
+              } else {
+                res.send({ message: successMsg, checked: true });
+              }
+            }
+          );
+        }
+      });
+    }
+  }
 
   //[GET] /api/admin/order
   getOrder(req, res, next) {
@@ -958,29 +1040,82 @@ class API {
     const auth = req.user[0].authentication;
     const orderId = req.body.orderId;
     const status = req.body.status;
+    const info = "Giao dịch được thực thi tự động";
 
+    const selectSql = "select * from ListAllOrders where id = ?";
     const updateSql = "update orders set status = ? where id = ?";
+    const insertSql =
+      "insert into transaction (orderId, productId, customerId, timeOfPurchase, price, amount, transactionInfor) values (?, ?, ?, ?, ?, ?, ?)";
     const errorMsg =
       "Lỗi hệ thống, không thể chuyển đổi trạng thái vào lúc này. Vui lòng thử lại sau!";
 
     if (auth !== 1) {
       return next(createError(401));
     } else {
-      pool.query(
-        updateSql,
-        [status, orderId],
-        function (error, results, fields) {
-          if (error) {
-            res.send({ message: errorMsg, checked: false });
-          } else {
-            if (results) {
-              res.send({ checked: true });
-            } else {
-              res.status(200).send({ message: errorMsg, checked: false });
+      pool.getConnection(function (err, connection) {
+        if (status == "4") {
+          connection.query(selectSql, orderId, function (err, rs, fields) {
+            if (!err) {
+              if (rs.length > 0) {
+                const timeOfPurchase = new Date(Date.now());
+                connection.query(
+                  insertSql,
+                  [
+                    orderId,
+                    rs[0].productId,
+                    rs[0].customerId,
+                    timeOfPurchase,
+                    rs[0].price,
+                    rs[0].quantity,
+                    info,
+                  ],
+                  function (e, r, fields) {
+                    if (e) {
+                    } else {
+                      if (r) {
+                        connection.query(
+                          updateSql,
+                          [status, orderId],
+                          function (error, results, fields) {
+                            if (error) {
+                              res.send({ message: errorMsg, checked: false });
+                            } else {
+                              if (results) {
+                                res.send({ checked: true, createTran: true });
+                              } else {
+                                res
+                                  .status(200)
+                                  .send({ message: errorMsg, checked: false });
+                              }
+                            }
+                          }
+                        );
+                      }
+                    }
+                  }
+                );
+              }
             }
-          }
+          });
+        } else {
+          connection.query(
+            updateSql,
+            [status, orderId],
+            function (error, results, fields) {
+              if (error) {
+                res.send({ message: errorMsg, checked: false });
+              } else {
+                if (results) {
+                  res.send({ checked: true });
+                } else {
+                  res.status(200).send({ message: errorMsg, checked: false });
+                }
+              }
+            }
+          );
         }
-      );
+        connection.release();
+      });
     }
   }
 
@@ -1007,6 +1142,42 @@ class API {
           }
         }
       });
+    }
+  }
+
+  //[POST] /api/admin/transaction/create
+  createTransaction(req, res, next) {
+    const auth = req.user[0].authentication;
+    const orderId = req.body.orderId;
+    const productId = req.body.productId;
+    const customerId = req.body.customerId;
+    const price = req.body.price;
+    const quantity = req.body.quantity;
+    const info = req.body.info;
+    const timeOfPurchase = new Date(Date.now());
+
+    const insertSql =
+      "insert into transaction (orderId, productId, customerId, timeOfPurchase, price, amount, transactionInfor) values (?, ?, ?, ?, ?, ?, ?)";
+    const errorMsg =
+      "Lỗi hệ thống, không thể tạo giao dịch. Vui lòng thử lại sau!";
+    const successMsg = "Tạo giao dịch thành công!";
+
+    if (auth !== 1) {
+      return next(createError(401));
+    } else {
+      pool.query(
+        insertSql,
+        [orderId, productId, customerId, timeOfPurchase, price, quantity, info],
+        function (err, results, fields) {
+          if (err) {
+            res.send({ checked: false, message: errorMsg });
+          } else {
+            if (results) {
+              res.send({ checked: true, message: successMsg });
+            }
+          }
+        }
+      );
     }
   }
 }

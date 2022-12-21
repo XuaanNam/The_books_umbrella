@@ -9,6 +9,7 @@ router.post("/register", api.register);
 router.post("/login", api.login);
 router.post("/check/email", api.emailCheck);
 router.post("/check/username", api.usernameCheck);
+router.patch("/update/password", PassportCheck, api.updatePassword);
 
 router.get("/isauth", PassportCheck, api.isAuth);
 
@@ -53,6 +54,9 @@ router.patch("/admin/customer/update/password", PassportCheck, api.updateCustome
 router.get('/admin/order', PassportCheck, api.getOrder);
 router.patch("/admin/order/status", PassportCheck, api.changeOrderStatus);
 router.delete('/admin/order/delete', PassportCheck, api.deleteOrder);
+
+//admin - transaction
+router.post("/admin/transaction/create", PassportCheck, api.createTransaction);
 
 
 module.exports = router;
