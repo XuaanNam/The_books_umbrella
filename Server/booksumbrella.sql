@@ -50,6 +50,7 @@ status int default 1
 )
 ; -- drop table product;
 
+
 create table bookgenredata(
 id int not null primary key AUTO_INCREMENT,
 productId int not null,
@@ -123,6 +124,7 @@ email char(50) not null CHECK(email !=""),
 phone char(15) not null,
 address char(200) not null,
 deliveryMethod int not null default 1,
+paymentMethod int not null default 1,
 timeOfOrder datetime,
 discount int,
 status int default 1,
@@ -134,6 +136,12 @@ ALTER TABLE orders AUTO_INCREMENT = 791928;
 create table deliverymethod(
 id int not null primary key AUTO_INCREMENT,
 delivery char(70) not null
+)
+; 
+
+create table paymentmethod(
+id int not null primary key AUTO_INCREMENT,
+payment char(70) not null
 )
 ; 
 
@@ -184,50 +192,91 @@ add foreign key (productId) references product(id);
 alter table orders add foreign key (customerId) references customerdata(id), 
 add foreign key (productId) references product(id),
 add foreign key (deliveryMethod) references deliverymethod(id),
+add foreign key (paymentMethod) references paymentmethod(id),
 add foreign key (discount) references discountcode(id),
 add foreign key (status) references orderstatus(id),
 add foreign key (pay) references payorder(id);
 
 alter table discountcode add foreign key (discountTypeId) references discounttype(id);
 
+
 -- ========================================================= Trigger View Proccedure ============================================================
 
 -- call getProductByKeywords('%ănn%')
--- select * from ListProducts
+-- select * from ListAllProducts
 delimiter $$
 create view ListProducts as
-select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
-	c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
-from bookgenredata b 
-inner join product p on p.id = b.productId 
-inner join productgenres g on g.id = b.productGenreId 
-inner join classifypublishers c on c.id = p.publisher 
-inner join productform f on f.id = p.form 
-inner join classifyproducts cp on cp.id = g.classifyProductsId
+	select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+		c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+	from bookgenredata b 
+	inner join product p on p.id = b.productId 
+	inner join productgenres g on g.id = b.productGenreId 
+	inner join classifypublishers c on c.id = p.publisher 
+	inner join productform f on f.id = p.form 
+	inner join classifyproducts cp on cp.id = g.classifyProductsId
+	where p.status = 2
 $$
+-- drop view ListProducts   
+
+delimiter $$
+create view ListAllProducts as
+	select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
+		c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+	from bookgenredata b 
+	inner join product p on p.id = b.productId 
+	inner join productgenres g on g.id = b.productGenreId 
+	inner join classifypublishers c on c.id = p.publisher 
+	inner join productform f on f.id = p.form 
+	inner join classifyproducts cp on cp.id = g.classifyProductsId
+$$
+-- drop view ListAllProducts   
+
+delimiter $$
+create view ListAllOrders as
+	select o.id, o.productId, p.productName, p.chapter, o.customerId, o.quantity, o.price, o.fullname, o.email, o.phone, o.address,
+		d.delivery, pm.payment, o.timeOfOrder, dc.code as discountCode, dt.type as discountType, dc.discountValue, os.status,  po.pay
+	from orders o
+    inner join product p on p.id = o.productId
+	inner join deliverymethod d on d.id = o.deliveryMethod 
+	inner join paymentmethod pm on pm.id = o.paymentMethod 
+	inner join discountcode dc on dc.id = o.discount 
+    inner join discounttype dt on dt.id = dc.discountTypeId
+	inner join orderstatus os on os.id = o.status 
+	inner join payorder po on po.id = o.pay
+$$
+-- drop view ListAllOrders  
 
 delimiter $$
 create trigger TG_INSERT_ORDERS after insert on orders for each row  
 begin
     update product set quantity = quantity - new.quantity  where id = new.productId;
-    delete from cart where customerId = new.customerId and productId = new.productId;
+    if(new.customerId != 659323833) then 
+		delete from cart where customerId = new.customerId and productId = new.productId;
+	end if;
 end$$
 -- drop trigger TG_INSERT_ORDERS   
 
+delimiter $$
+create procedure checkQuantity (IN productId int)
+begin
+    select quantity
+    from product 
+    WHERE id = productId and status = 2;
+end$$ -- drop procedure checkQuantity
 
 delimiter $$
 create procedure getProductById(IN id int )
 begin
     select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
-			c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
+			c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description, g.id as genreId
     from bookgenredata b 
 	inner join product p on p.id = b.productId 
 	inner join productgenres g on g.id = b.productGenreId 
 	inner join classifypublishers c on c.id = p.publisher 
 	inner join productform f on f.id = p.form 
 	inner join classifyproducts cp on cp.id = g.classifyProductsId
-    WHERE p.id = id;
-end$$ 
+    WHERE p.id = id and p.status = 2;
+end$$ -- drop procedure getProductById
  
 delimiter $$
 create procedure getProductByKeywords(IN keywords text )
@@ -240,8 +289,8 @@ begin
 	inner join classifypublishers c on c.id = p.publisher 
 	inner join productform f on f.id = p.form 
 	inner join classifyproducts cp on cp.id = g.classifyProductsId
-    WHERE p.productName like  keywords  
-            or p.author like keywords;
+    WHERE p.status = 2 and (p.productName like  keywords  
+            or p.author like keywords);
 end$$ -- drop procedure getProductByKeywords
 
 delimiter $$
@@ -255,21 +304,23 @@ begin
 	inner join classifypublishers c on c.id = p.publisher 
 	inner join productform f on f.id = p.form 
 	inner join classifyproducts cp on cp.id = g.classifyProductsId
-    WHERE b.productGenreId = genre;
+    WHERE b.productGenreId = genre and p.status = 2;
 end$$ -- drop procedure getProductsByGenre            
 
 delimiter $$
-create procedure getProductsByPrice(IN price double )
+create procedure getProductsByPrice(IN minPrice double, maxPrice double )
 begin
     select p.id, p.image, p.productName, p.chapter, g.genre, cp.typeOfBooks, p.author, p.translator, p.price, 
 			c.publisher, p.publicationDate, p.age, p.packagingSize, f.form, p.quantity, p.description
-    from bookgenredata b 
+    from (bookgenredata b 
 	inner join product p on p.id = b.productId 
 	inner join productgenres g on g.id = b.productGenreId 
 	inner join classifypublishers c on c.id = p.publisher 
 	inner join productform f on f.id = p.form 
-	inner join classifyproducts cp on cp.id = g.classifyProductsId
-    WHERE p.price = price;
+	inner join classifyproducts cp on cp.id = g.classifyProductsId)
+    where p.price >= minPrice and p.price <= maxPrice
+    order by p.price;
+    
 end$$ -- drop procedure getProductsByPrice   
 
 delimiter $$
@@ -344,7 +395,15 @@ begin
 end$$
 -- drop procedure getCart   
 
-
+delimiter $$
+create procedure createProduct (IN image varchar(300),  productName varchar(300), chapter int, author char(100), translator char(100), price double, publisher int,
+								publicationDate char(100), age int, packagingSize char(30), form int, quantity int, description text(1000), status int)
+begin
+	insert into product (image,productName,chapter,author,translator,price,publisher,publicationDate,age, packagingSize, form, quantity, description, status)
+    values (image,productName,chapter,author,translator,price,publisher,publicationDate,age, packagingSize, form, quantity, description, status);
+    
+end$$
+-- drop procedure createProduct  
 
 -- ========================================================= SAMPLE DATA ============================================================
 
@@ -354,9 +413,10 @@ INSERT INTO `thebooksumbrella`.`customergenres` (`id`, `genre`) VALUES
 ('3', 'gold'),
 ('4', 'diamond');
 
-INSERT INTO `thebooksumbrella`.`customerdata` (`email`, `username`, `password`, `authentication`) VALUES 
-('admin@gmail.com', 'admin', '$2b$07$wU8/x4Ke7v9Jq3f4./ZBo.7dCW1wYgBNbwaDMCSzIZ9CbXbZQgwYC', '1'),
-('xuaannam@gmail.com', 'xuannam', '$2b$07$wU8/x4Ke7v9Jq3f4./ZBo.7dCW1wYgBNbwaDMCSzIZ9CbXbZQgwYC', '0');
+INSERT INTO `thebooksumbrella`.`customerdata` (`id`, `email`, `username`, `password`, `authentication`) VALUES 
+(659323832, 'admin@gmail.com', 'admin', '$2b$07$wU8/x4Ke7v9Jq3f4./ZBo.7dCW1wYgBNbwaDMCSzIZ9CbXbZQgwYC', '1'),
+(659323833, 'tbucustomer@gmail.com', 'customer', '$2b$07$wU8/x4Ke7v9Jq3f4./ZBo.7dCW1wYgBNbwaDMCSzIZ9CbXbZQgwYC', '0'),
+(659323834, 'xuaannam@gmail.com', 'xuannam', '$2b$07$wU8/x4Ke7v9Jq3f4./ZBo.7dCW1wYgBNbwaDMCSzIZ9CbXbZQgwYC', '0');
 
 INSERT INTO `thebooksumbrella`.`classifyproducts` (`id`, `typeOfBooks`) VALUES 
 ('1', 'VĂN HỌC'),
@@ -537,17 +597,18 @@ INSERT INTO `thebooksumbrella`.`product` (`image`, `productName`, `chapter`, `au
 ('57', '19'),
 ('58', '20'),
 ('59', '20'),
-('60', '20'),
-('1', '4');
-
+('60', '20')
 
 INSERT INTO `thebooksumbrella`.`cart` (`productId`, `customerId`, `quantity`) VALUES 
-('2', '659323833', '3'),
-('9', '659323833', '19');
+('2', '659323834', '3'),
+('9', '659323834', '19');
 
 INSERT INTO `thebooksumbrella`.`deliverymethod` (`delivery`) VALUES 
-('Thanh toán khi giao hàng (COD)'),
-('Chuyển khoản qua ngân hàng');
+('Giao hàng nhanh'),
+('Giao hàng tiết kiệm');
+
+INSERT INTO `thebooksumbrella`.`paymentmethod` (`id`, `payment`) VALUES ('1', 'Thanh toán khi giao hàng (COD)'), ('2', 'Thanh toán qua PayPal');
+
 
 INSERT INTO `thebooksumbrella`.`discounttype` (`type`) VALUES ('Voucher '), ('Coupon ');
 
@@ -555,8 +616,5 @@ INSERT INTO `thebooksumbrella`.`payorder` (`id`, `pay`) VALUES ('1', 'Chưa than
 
 INSERT INTO `thebooksumbrella`.`orderstatus` (`id`, `status`) VALUES ('1', 'Chờ Xác Nhận'), ('2', 'Đang vận chuyển'), ('3', 'Hoàn thành'), ('4', 'Đã Hủy');
 
-INSERT INTO `thebooksumbrella`.`discountcode` (`code`, `discountTypeId`, `discountValue`) VALUES ('BANMOI2022', 1, 30000);
-
-
-
+INSERT INTO `thebooksumbrella`.`discountcode` (`id`, `code`, `discountTypeId`, `discountValue`) VALUES (1, 'NONE', 1, 0);
 

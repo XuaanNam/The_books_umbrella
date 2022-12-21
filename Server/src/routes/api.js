@@ -29,8 +29,6 @@ router.delete('/cart/remove', PassportCheck, api.removeFromCart);
 router.patch('/cart/update', PassportCheck, api.updateCart);
 router.post('/cart/order', PassportCheck, api.createOrder);
 
-router.delete('/cart/order/delete', PassportCheck, api.deleteOrder);
-
 // profile
 router.get("/profile", PassportCheck, api.getProfile);
 router.patch("/profile/update", PassportCheck, api.updateProfile);
@@ -40,12 +38,21 @@ router.post('/payment/paypal', PassportCheck, api.paymentByPaypal);
 router.get('/paymentsuccess', api.paymentSuccess);
 router.get('/paymentfailed', api.paymentFailed);
 
-//admin
+//admin - product
 router.get("/admin/warehouse", PassportCheck, api.getWarehouse);
 router.post("/admin/product/create", PassportCheck, api.createProduct);
 router.patch("/admin/product/update", PassportCheck, api.updateProduct);
-router.patch("/admin/product/disable", PassportCheck, api.disableProduct);
-router.patch("/admin/product/enable", PassportCheck, api.enableProduct);
-// router.post('/admin/order', PassportCheck, api.createOrder);
+router.patch("/admin/product/status", PassportCheck, api.changeProductStatus);
+
+//admin - customer
+router.get("/admin/customer", PassportCheck, api.getCustomer);
+router.get("/admin/customer/:id", PassportCheck, api.getCustomerById);
+router.patch("/admin/customer/update/password", PassportCheck, api.updateCustomerPassword);
+
+//admin - order
+router.get('/admin/order', PassportCheck, api.getOrder);
+router.patch("/admin/order/status", PassportCheck, api.changeOrderStatus);
+router.delete('/admin/order/delete', PassportCheck, api.deleteOrder);
+
 
 module.exports = router;

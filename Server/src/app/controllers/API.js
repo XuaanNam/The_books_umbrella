@@ -6,6 +6,7 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const saltRound = 7;
 const encodeToken = require("../../util/encodeToken");
+const createError = require('http-errors');
 const CronJob = require("cron").CronJob;
 const io = require("socket.io-client");
 const job = [];
@@ -51,8 +52,13 @@ class API {
   }
   // [GET] /api/isauth
   isAuth(req, res, next) {
-    const authentication = req.user[0];
-    res.status(200).send({ isAuth: true, authentication });
+    const auth = req.user[0];
+    if(auth){
+      res.status(200).send({ authentication });
+    } else {
+      return next(createError(401));
+    }
+    
   }
 
   // [POST] /api/login
@@ -167,7 +173,7 @@ class API {
         if (results[0].length > 0) {
           res.send({ results: results[0], checked: true });
         } else {
-          res.send({ message: results, checked: false });
+          res.send({ message: emptyMgs, checked: false });
         }
       }
     });
@@ -181,7 +187,6 @@ class API {
     const nullMgs = "Không tìm thấy sản phẩm nào!";
     const selectSql = "call getProductByKeywords(?)";
 
-    console.log(keywords);
     pool.query(selectSql, keywords, function (error, results, fields) {
       if (error) {
         res.status(200).send({ message: errorMgs, checked: false });
@@ -207,7 +212,6 @@ class API {
         res.status(200).send({ message: errorMgs, checked: false });
       } else {
         if (results[0].length > 0) {
-          console.log(results);
           res.send({ results: results[0], checked: true });
         } else {
           res.send({ message: errorMgs, checked: false });
@@ -338,7 +342,6 @@ class API {
 
     pool.query(checkSql, productId, function (error, results, fields) {
       if (error) {
-        console.log(error);
         res.send({ message: "0", checked: false });
       } else {
         if (results[0].length > 0) {
@@ -356,7 +359,6 @@ class API {
                   if ((error.errno = 1062)) {
                     res.send({ duplicate: true });
                   } else {
-                    console.log(error);
                     res.send({ message: "1", checked: false });
                   }
                 } else {
@@ -478,7 +480,7 @@ class API {
       paymentMethod = 1;
     }
     const timeOfOrder = new Date(Date.now());
-    const discount = req.body.voucher ? req.body.voucher : null;
+    const discount = req.body.voucher ? req.body.voucher : 1;
 
     const insertSql =
       "insert into orders " +
@@ -515,30 +517,7 @@ class API {
     );
   }
 
-  //[DELETE] /api/cart/order/delete
-  deleteOrder(req, res) {
-    const customerId = req.user[0].id;
-    const productId = req.body.productId;
-
-    const deleteSql = "delete from order where id = ? ";
-
-    pool.query(
-      deleteSql,
-      [customerId, productId],
-      function (error, results, fields) {
-        if (error) {
-          res.send({ message: errorMsg, checked: false });
-        } else {
-          if (results) {
-            res.status(200).send({ message: successMsg, checked: true });
-          } else {
-            res.status(200).send({ message: errorMsg, checked: false });
-          }
-        }
-      }
-    );
-  }
-
+  
   //[GET] /api/profile
   getProfile(req, res, next) {
     const customerId = req.user[0].id;
@@ -655,7 +634,8 @@ class API {
 
     const totalPrice = req.query.totalprice;
     const updateSql =
-      "update orders set pay = 2 where customerId = ? and deliveryMethod = 2 and status = 1";
+      "update orders set pay = 2 where customerId = ? and deliveryMethod = 2 and status = 1 and pay = 1";
+
     const payerId = req.query.PayerID;
     const paymentId = req.query.paymentId;
     const excute_payment_json = {
@@ -674,10 +654,10 @@ class API {
       excute_payment_json,
       function (error, payment) {
         if (error) {
-          res.redirect(process.env.cancel_url + `/cart`);
+          res.redirect(process.env.cancel_url + `/cart?payment=true`);
         } else {
           pool.query(updateSql, customerId);
-          res.redirect(process.env.cancel_url + `/cart`);
+          res.redirect(process.env.cancel_url + `/cart?payment=false`);
         }
       }
     );
@@ -688,13 +668,13 @@ class API {
     const customerId = req.query.id;
 
     const updateSql =
-      "update orders set status = 4 where customerId = ? and deliveryMethod = 2 and status = 1";
-
+      "update orders set status = 4 where customerId = ? and deliveryMethod = 2 and status = 1 and pay = 1";
+      
     pool.query(updateSql, customerId, function (error, results, fields) {
-      res.redirect(process.env.cancel_url + `/cart`);
+      res.redirect(process.env.cancel_url + `/cart?payment=true`);
     });
   }
-
+  
   //[GET] /api/admin/warehouse
   getWarehouse(req, res, next) {
     const auth = req.user[0].authentication;
@@ -702,7 +682,7 @@ class API {
     const message = "Lỗi hệ thống, vui lòng thử lại!";
 
     if (auth !== 1) {
-      res.send({ authentication: false });
+      return next(createError(401));
     } else {
       pool.query(selectSql, function (error, results, fields) {
         if (error) {
@@ -748,7 +728,7 @@ class API {
     const successMsg = "Sản phẩm đã được thêm vào kho hàng!";
 
     if (auth !== 1) {
-      res.send({ authentication: false });
+      return next(createError(401));
     } else {
       pool.query(
         insertSql,
@@ -826,25 +806,8 @@ class API {
     const successMsg = "Sản phẩm đã được chỉnh sửa!";
 
     if (auth !== 1) {
-      res.send({ authentication: false });
+      return next(createError(401));
     } else {
-      console.log(
-        image,
-        productName,
-        chapter,
-        author,
-        translator,
-        price,
-        publisher,
-        publicationDate,
-        age,
-        packagingSize,
-        form,
-        quantity,
-        description,
-        status,
-        productId
-      );
       pool.query(
         updateSql,
         [
@@ -879,49 +842,109 @@ class API {
     }
   }
 
-  //[PATCH] /api/admin/product/disable
-  disableProduct(req, res, next) {
+  //[PATCH] /api/admin/product/status
+  changeProductStatus(req, res, next) {
     const auth = req.user[0].authentication;
     const productId = req.body.productId;
-    const status = req.body.status;
-    const newStatus = req.body.status;
-    if (status === 1) {
-      newStatus;
-    }
-    const updateSql =
-      "update product set status = " + newStatus + " where id = ?";
+    const status = req.body.status; 
+    let successMsg = "Sản phẩm đã được đưa vào kho!";
 
-    const errorMsg = "Lỗi hệ thống, không thể chỉnh sửa sản phẩm vào lúc này!";
-    const successMsg = "Sản phẩm đã được chỉnh sửa!";
+    let newStatus = 1;
+    if (status === "1") { 
+      newStatus = 2;     
+      successMsg = "Sản phẩm đã được đưa lên website!";
+    } 
+
+    const updateSql = "update product set status = ? where id = ?";
+    const errorMsg = "Lỗi hệ thống, không thể chuyển đổi trạng thái vào lúc này. Vui lòng thử lại sau!";
+    
+    if (auth !== 1) {
+      return next(createError(401));
+    } else {
+      pool.query(updateSql, [newStatus, productId], function (error, results, fields) {
+        if (error) {
+          res.send({ message: errorMsg, checked: false });
+        } else {
+          if (results) {
+            res.send({ message: successMsg, checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
+      });
+    }
+  }
+
+  //[GET] /api/admin/customer
+  getCustomer(req, res, next){
+    const auth = req.user[0].authentication;
+    const selectSql = "select * from ListAllCustomers";
+    const message = "Lỗi hệ thống, vui lòng thử lại!";
 
     if (auth !== 1) {
-      res.send({ authentication: false });
+      return next(createError(401));
+    } else {
+      pool.query(selectSql, function (error, results, fields) {
+        if (error) {
+          res.status(200).send({ message, checked: false });
+        } else {
+          if (results.length > 0) {
+            res.send({ results, checked: true });
+          } else {
+            res.send({ message, checked: false });
+          }
+        }
+      });
+    }
+  }
+
+  //[GET] /api/admin/customer/:id
+  getCustomerById(req, res, next) {
+    const auth = req.user[0].authentication;
+    const id = req.params.id;
+
+    const selectSql = "select * from ListAllCustomers where id = ?";
+    const errorMsg = "Lỗi hệ thống, vui lòng thử lại!";
+
+    if (auth !== 1) {
+      return next(createError(401));
+    } else {
+      pool.query(selectSql, id, function (error, results, fields) {
+        if (error) {
+          res.status(200).send({ errorMsg, checked: false });
+        } else {
+          if (results.length > 0) {
+            res.send({ results, checked: true });
+          } else {
+            res.send({ errorMsg, checked: false });
+          }
+        }
+      });
+    }
+  }
+
+  //[PATCH] /api/admin/customer/update/password
+  updateCustomerPassword(req, res, next) {
+
+  }
+  
+  //[GET] /api/admin/order
+  getOrder(req, res, next) {
+    const auth = req.user[0].authentication;
+
+    const selectSql = "select * from ListAllOrders";
+    const errorMsg = "Lỗi hệ thống, vui lòng thử lại sau!";
+    
+    if (auth !== 1) {
+      return next(createError(401));
     } else {
       pool.query(
-        updateSql,
-        [
-          image,
-          productName,
-          chapter,
-          author,
-          translator,
-          price,
-          publisher,
-          publicationDate,
-          age,
-          packagingSize,
-          form,
-          quantity,
-          description,
-          status,
-          productId,
-        ],
-        function (error, results, fields) {
+        selectSql, function (error, results, fields) {
           if (error) {
-            res.send({ message: errorMsg, checked: false });
+            res.send({ message: error, checked: false });
           } else {
-            if (results) {
-              res.send({ message: successMsg, checked: true });
+            if (results.length > 0) {
+              res.status(200).send({ results, checked: true });
             } else {
               res.status(200).send({ message: errorMsg, checked: false });
             }
@@ -929,10 +952,61 @@ class API {
         }
       );
     }
+  }  
+
+  //[PATCH] /api/admin/order/status
+  changeOrderStatus(req, res, next) {
+    const auth = req.user[0].authentication;
+    const orderId = req.body.orderId;
+    const status = req.body.status;
+
+    const updateSql = "update orders set status = ? where id = ?";
+    const errorMsg = "Lỗi hệ thống, không thể chuyển đổi trạng thái vào lúc này. Vui lòng thử lại sau!";
+    
+    if (auth !== 1) {
+      return next(createError(401));
+    } else {
+      pool.query(updateSql, [status, orderId], function (error, results, fields) {
+        if (error) {
+          res.send({ message: errorMsg, checked: false });
+        } else {
+          if (results) {
+            res.send({ checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
+      });
+    }
   }
 
-  //[PATCH] /api/admin/product/enable
-  enableProduct(req, res, next) {}
+  //[DELETE] /api/admin/order/delete
+  deleteOrder(req, res) {
+    const auth = req.user[0].authentication;
+    const orderId = req.body.orderId;
+
+    const deleteSql = "delete from orders where id = ? ";
+    const successMsg = "Xóa đơn hàng thành công!";
+    const errorMsg = "Lỗi hệ thống, vui lòng thử lại sau!";
+    
+    if (auth !== 1) {
+      return next(createError(401));
+    } else {
+      pool.query(
+        deleteSql, orderId, function (error, results, fields) {
+          if (error) {
+            res.send({ message: error, checked: false });
+          } else {
+            if (results) {
+              res.status(200).send({ message: successMsg, checked: true });
+            } else {
+              res.status(200).send({ message: errorMsg, checked: false });
+            }
+          }
+        }
+      );
+    }
+  }  
 }
 
 module.exports = new API();
