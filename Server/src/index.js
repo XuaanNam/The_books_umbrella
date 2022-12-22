@@ -5,17 +5,7 @@ const route = require('./routes');
 const helmet = require("helmet");
 require('dotenv').config();
 const port = parseInt(process.env.PORT);
-//const socket = require('./app/controllers/Io');
-//const portSocket = parseInt(process.env.PORT_IO);
-const { Server} = require('socket.io');
-const http = require('http');
-const server = http.createServer(app);
-const io = new Server (server, {
-    cors: {
-        origin: process.env.ORIGIN_PATH,
-        method: ["GET", "POST"]
-    }
-});
+
 
 app.use(
     cors({
@@ -30,6 +20,8 @@ if(process.env.NODE_ENV === 'development'){
     const morgan = require("morgan");
     app.use(morgan("combined"));
 }
+
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

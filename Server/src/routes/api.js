@@ -4,6 +4,11 @@ const router = express.Router();
 const passport = require("passport");
 const PassportCheck = passport.authenticate("jwt", { session: false });
 const fileUploader = require('../app/middleware/cloudinary-upload.js');
+const myOAuth2Client = require('../app/configs/oauth2client');
+const nodemailer = require('nodemailer') 
+
+// const transport = require('../app/middleware/nodemailer')
+
 
 // guest
 router.post("/register", api.register);
@@ -13,6 +18,7 @@ router.post("/check/username", api.usernameCheck);
 router.patch("/update/password", PassportCheck, api.updatePassword);
 
 router.get("/isauth", PassportCheck, api.isAuth);
+router.post("/email/send", api.sendEmail);
 
 // product
 router.get("/products", api.getProducts);
@@ -59,5 +65,8 @@ router.delete('/admin/order/delete', PassportCheck, api.deleteOrder);
 //admin - transaction
 router.post("/admin/transaction/create", PassportCheck, api.createTransaction);
 
+
+
+  
 
 module.exports = router;

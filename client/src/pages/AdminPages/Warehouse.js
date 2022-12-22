@@ -28,6 +28,20 @@ const Warehouse = () => {
       productId: item,
       status: status,
     };
+    let newStatus = "Cửa hàng";
+    if(status === 2){ newStatus = "Trong kho"}
+    if(admin.checked){
+      let products = [];
+      products = [...product];
+      const index = product.findIndex((i) => i.id === item);
+      products[index] = {
+        ...product[index],
+        status: newStatus,
+      };
+
+      setProduct(products);
+    }
+    
     dispatch(changeStatus(data));
   };
   const handleChange = (e) => {
@@ -148,7 +162,7 @@ const Warehouse = () => {
             </tr>
           </thead>
           <tbody className=" w-full h-32">
-            {product &&
+            {product && 
               product.map((item) => (
                 <tr className="h-20 text-xl" key={item.id}>
                   <td className="text-center">
