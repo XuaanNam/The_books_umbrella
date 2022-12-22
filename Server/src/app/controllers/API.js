@@ -587,7 +587,7 @@ class API {
     });
   }
 
-  //[POST] /api/profile/update
+  //[PATCH] /api/profile/update
   updateProfile(req, res, next) {
     const customerId = req.user[0].id;
     const fullname = req.body.fullname ? req.body.fullname : null;
