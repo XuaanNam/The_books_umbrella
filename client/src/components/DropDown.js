@@ -5,7 +5,7 @@ import { CSSTransition } from "react-transition-group";
 import { useNavigate } from "react-router-dom";
 import Button from "./Button";
 
-const DropDown = () => {
+const DropDown = ({ ...props }) => {
   const [showUser, setShowUser] = useState(false);
   const [showProduct, setShowProduct] = useState(false);
   const [showOrder, setShowOrder] = useState(false);
@@ -23,9 +23,9 @@ const DropDown = () => {
   };
   const Navigate = useNavigate();
   return (
-    <div className="h-screen w-80 overflow-auto bg-teal-600 top-0 bottom-0 left-0 text-slate-200 text-lg">
-      <div className="h-24"></div>
+    <div {...props}>
       <Menu
+        key="1"
         onClick={onClickHandlerUser}
         show={showUser}
         name="Khách hàng"
@@ -38,8 +38,9 @@ const DropDown = () => {
       >
         {DropdownList([
           <Button
+            key="1"
             className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
-            onClick={() => Navigate("/customerlist")}
+            onClick={() => Navigate("/admin/customerlist")}
           >
             Danh sách khách hàng
           </Button>,
@@ -47,9 +48,10 @@ const DropDown = () => {
       </CSSTransition>
 
       <Menu
+        key="2"
         onClick={onClickHandlerProduct}
         show={showProduct}
-        name="Sản phẩm"
+        name="Quản lý kho"
       ></Menu>
       <CSSTransition
         in={showProduct}
@@ -59,14 +61,32 @@ const DropDown = () => {
       >
         {DropdownList([
           <Button
+            key="2"
             className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
-            onClick={() => Navigate("/warehouse")}
+            onClick={() => Navigate("/admin/warehouse")}
           >
-            Quản lý kho
+            Sản phẩm
+          </Button>,
+        ])}
+      </CSSTransition>
+      <CSSTransition
+        in={showProduct}
+        className="dropdown"
+        unmountOnExit
+        timeout={200}
+      >
+        {DropdownList([
+          <Button
+            key="3"
+            className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
+            onClick={() => Navigate("/admin/addproduct")}
+          >
+            Thêm sản phẩm
           </Button>,
         ])}
       </CSSTransition>
       <Menu
+        key="4"
         onClick={onClickHandlerOrder}
         show={showOrder}
         name="Đơn hàng"
@@ -79,8 +99,9 @@ const DropDown = () => {
       >
         {DropdownList([
           <Button
+            key=""
             className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
-            onClick={() => Navigate("/order")}
+            onClick={() => Navigate("/admin/order")}
           >
             Danh sách đơn hàng
           </Button>,
@@ -95,7 +116,7 @@ function Menu(props) {
   if (typeof document === "undefined") return null;
   return (
     <div
-      className="grid grid-cols-3 p-5 w-full cursor-pointer hover:bg-teal-500 rounded duration-200 transition-all"
+      className="grid grid-cols-3 p-7 w-full cursor-pointer hover:bg-teal-500 rounded duration-200 transition-all"
       onClick={props.onClick}
     >
       <span className="col-start-1 col-span-2 text-md font-medium ">
@@ -116,9 +137,7 @@ function DropdownList(props) {
   if (typeof document === "undefined") return null;
   return (
     <div className="top-full transition-all ">
-      {/* {props.map((item) => { */}
       <div className="cursor-pointer hover:bg-sky-700">{props}</div>
-      {/* })} */}
     </div>
   );
 }

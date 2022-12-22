@@ -2,8 +2,7 @@ import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import AdminLayout from "./layouts/AdminLayout";
-import ProductList from "./pages/AdminPages/ProductList";
+import AdminLayout from "./pages/AdminPages/AdminLayout";
 import CustomerList from "./pages/AdminPages/CustomerList";
 import Profile from "./pages/UserPages/Profile";
 import Warehouse from "./pages/AdminPages/Warehouse";
@@ -15,6 +14,7 @@ import CheckOrder from "./pages/UserPages/OrderInfo";
 import Homepage from "./pages/UserPages/Homepage";
 import OrderMethod from "./pages/UserPages/OrderMethod";
 import CompleteOrder from "./pages/UserPages/CompleteOrder";
+import AddProduct from "./pages/AdminPages/AddProduct";
 
 function App() {
   return (
@@ -23,17 +23,13 @@ function App() {
         <ToastContainer></ToastContainer>
         <Routes>
           <Route path="/" exact element={<Homepage />} />
-          <Route path="/productlist" element={<ProductList />} />
-          <Route path="/customerlist" element={<CustomerList />} />
+          <Route path="/admin/:adminpage" element={<AdminLayout />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/warehouse" element={<Warehouse />} />
-          <Route path="/order" element={<Order />} />
           <Route path="/detail" element={<BookDetail />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout/step1" element={<CheckOrder />} />
           <Route path="/checkout/step2" element={<OrderMethod />} />
           <Route path="/complete" element={<CompleteOrder />} />
-
           <Route
             path="/detail/:bookId"
             element={<BookDetail></BookDetail>}
