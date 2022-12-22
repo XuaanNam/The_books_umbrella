@@ -766,12 +766,8 @@ class API {
     const status = req.body.status;
     const genre = req.body.genre;
 
-    const insertSql =
-      "insert into product (image,productName,chapter,author,translator,price,publisher, " +
-      "publicationDate,age, packagingSize, form, quantity, description, status) " +
-      "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    const insertSql2 =
-      "insert into bookgenredata (productId, productGenreId) value (?, ?);";
+    const insertSql = "call createProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
     const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào kho hàng!";
     const existMsg = "Sản phẩm đã có sẵn trong kho hàng!";
     const successMsg = "Sản phẩm đã được thêm vào kho hàng!";
@@ -791,6 +787,7 @@ class API {
           publisher,
           publicationDate,
           age,
+          genre,
           packagingSize,
           form,
           quantity,
@@ -806,17 +803,7 @@ class API {
             }
           } else {
             if (results) {
-              pool.query(
-                insertSql2,
-                [results.insertId, genre],
-                function (error, results, fields) {
-                  if (results) {
-                    res
-                      .status(200)
-                      .send({ message: successMsg, checked: true });
-                  }
-                }
-              );
+              res.send({ message: successMsg, checked: true });
             } else {
               res.status(200).send({ message: errorMsg, checked: false });
             }
