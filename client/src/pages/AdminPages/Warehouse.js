@@ -24,7 +24,6 @@ const Warehouse = () => {
 
   const nodeRef = useRef();
   const handleChangeStatus = (item, status) => {
-    console.log("change:", item, status);
     const data = {
       productId: item,
       status: status,
@@ -183,7 +182,7 @@ const Warehouse = () => {
                   {item.status === "Trong kho" ? (
                     <td>
                       <button
-                        className="bg-teal-400 text-white w-[80%] grid place-items-center text-center my-auto p-1 rounded-xl hover:drop-shadow-xl"
+                        className="bg-red-400 text-white w-[80%] grid place-items-center text-center my-auto p-1 rounded-xl hover:drop-shadow-xl"
                         onClick={() => {
                           handleChangeStatus(item.id, 1);
                         }}
@@ -192,12 +191,16 @@ const Warehouse = () => {
                       </button>
                     </td>
                   ) : (
-                    <button
-                      className="bg-red-400 text-white w-[80%] grid place-items-center text-center my-auto p-1 rounded-xl hover:drop-shadow-xl"
-                      onClick={handleChangeStatus(item.id, 2)}
-                    >
-                      Cửa hàng
-                    </button>
+                    <td>
+                      <button
+                        className="bg-teal-400 text-white w-[80%] grid place-items-center text-center my-auto p-1 rounded-xl hover:drop-shadow-xl"
+                        onClick={() => {
+                          handleChangeStatus(item.id, 2);
+                        }}
+                      >
+                        Cửa hàng
+                      </button>
+                    </td>
                   )}
                 </tr>
               ))}

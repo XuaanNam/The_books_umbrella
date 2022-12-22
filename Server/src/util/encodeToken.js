@@ -1,6 +1,6 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const secret_key = require('../app/config/token');
+const secret_key = require('../app/configs/token');
 
 
 module.exports = function encodeToken(payload){

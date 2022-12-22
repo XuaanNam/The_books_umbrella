@@ -1,7 +1,7 @@
 
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
-const secret_key = require("../config/token");
+const secret_key = require("../configs/token");
 const pool = require("../models/pool");
 
 const sql = "select id, authentication from customerdata where id = ? and username = ?";

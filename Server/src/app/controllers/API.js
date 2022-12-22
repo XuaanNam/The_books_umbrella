@@ -594,16 +594,11 @@ class API {
     const birthdate = req.body.birthdate ? req.body.birthdate : null;
     const phone = req.body.phone ? req.body.phone : null;
     const address = req.body.address ? req.body.address : null;
-    const avatar = req.body.avatar ? req.body.avatar : null;
+    let avatar = req.file ? req.file.path : null;
+    console.log(avatar);
 
     const updateSql =
-      "update customerdata set " +
-      "fullname = ?, " +
-      "birthdate = ?, " +
-      "phone = ?, " +
-      "address = ?," +
-      " avatar = ? " +
-      "where id = ?";
+      "update customerdata set fullname = ?, birthdate = ?, phone = ?, address = ?, avatar = ? where id = ?";
     const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin khách hàng!";
 
     pool.query(
@@ -750,7 +745,6 @@ class API {
   //[POST] /api/admin/product/create
   createProduct(req, res, next) {
     const auth = req.user[0].authentication;
-    const image = req.body.image;
     const productName = req.body.productName;
     const chapter = req.body.chapter ? req.body.chapter : null;
     const author = req.body.author;
@@ -768,18 +762,21 @@ class API {
 
     const insertSql =
       "call createProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
     const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào kho hàng!";
     const existMsg = "Sản phẩm đã có sẵn trong kho hàng!";
     const successMsg = "Sản phẩm đã được thêm vào kho hàng!";
 
     if (auth !== 1) {
       return next(createError(401));
+    } else if (!req.file) {
+      next(new Error("No file uploaded!"));
+      return;
     } else {
+      const img = req.file.path;
       pool.query(
         insertSql,
         [
-          image,
+          img,
           productName,
           chapter,
           author,
@@ -887,7 +884,7 @@ class API {
     let successMsg = "Sản phẩm đã được đưa vào kho!";
 
     let newStatus = 1;
-    if (status === "1") {
+    if (status === 1) {
       newStatus = 2;
       successMsg = "Sản phẩm đã được đưa lên website!";
     }

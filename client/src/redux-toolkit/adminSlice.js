@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
 const initialState = {
   items: [],
@@ -102,10 +103,12 @@ const adminSlice = createSlice({
       state.loading = true;
     },
     [changeStatus.fulfilled]: (state, { payload }) => {
-      console.log(payload);
       state.loading = false;
       state.checked = payload.checked;
       state.message = payload.message;
+      toast.success(payload.message, {
+        position: "bottom-right",
+      });
     },
     [changeStatus.rejected]: (state, action) => {
       state.loading = true;

@@ -3,6 +3,7 @@ const api = require("../app/controllers/API");
 const router = express.Router();
 const passport = require("passport");
 const PassportCheck = passport.authenticate("jwt", { session: false });
+const fileUploader = require('../app/middleware/cloudinary-upload.js');
 
 // guest
 router.post("/register", api.register);
@@ -32,7 +33,7 @@ router.post('/cart/order', PassportCheck, api.createOrder);
 
 // profile
 router.get("/profile", PassportCheck, api.getProfile);
-router.patch("/profile/update", PassportCheck, api.updateProfile);
+router.patch("/profile/update", PassportCheck, fileUploader.single('avatar'), api.updateProfile);
 
 // payment
 router.post('/payment/paypal', PassportCheck, api.paymentByPaypal);
@@ -41,7 +42,7 @@ router.get('/paymentfailed', api.paymentFailed);
 
 //admin - product
 router.get("/admin/warehouse", PassportCheck, api.getWarehouse);
-router.post("/admin/product/create", PassportCheck, api.createProduct);
+router.post("/admin/product/create", PassportCheck, fileUploader.single('image'), api.createProduct);
 router.patch("/admin/product/update", PassportCheck, api.updateProduct);
 router.patch("/admin/product/status", PassportCheck, api.changeProductStatus);
 
