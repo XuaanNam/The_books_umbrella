@@ -28,13 +28,15 @@ export const warehouseFetch = createAsyncThunk("warehouseFetch", async () => {
   });
   return await res.json();
 });
-export const orderFetch = createAsyncThunk("orderFetch", async () => {
-  const res = await fetch("http://localhost:5000/api/admin/order", {
-    method: "GET",
+export const changeStatus = createAsyncThunk("changeStatus", async (body) => {
+  console.log(body);
+  const res = await fetch("http://localhost:5000/api/admin/product/status", {
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem("token"),
     },
+    body: JSON.stringify(body),
   });
   return await res.json();
 });
@@ -49,6 +51,17 @@ export const addProduct = createAsyncThunk("addProduct", async (body) => {
   });
   return await res.json();
 });
+export const orderFetch = createAsyncThunk("orderFetch", async () => {
+  const res = await fetch("http://localhost:5000/api/admin/order", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+  });
+  return await res.json();
+});
+
 const adminSlice = createSlice({
   name: "admin",
   initialState,
@@ -85,6 +98,31 @@ const adminSlice = createSlice({
       state.loading = true;
     },
 
+    [changeStatus.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [changeStatus.fulfilled]: (state, { payload }) => {
+      console.log(payload);
+      state.loading = false;
+      state.checked = payload.checked;
+      state.message = payload.message;
+    },
+    [changeStatus.rejected]: (state, action) => {
+      state.loading = true;
+    },
+    [addProduct.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [addProduct.fulfilled]: (state, { payload }) => {
+      console.log(payload);
+      state.loading = false;
+      state.checked = payload.checked;
+      state.message = payload.message;
+    },
+    [addProduct.rejected]: (state, action) => {
+      state.loading = true;
+    },
+
     [orderFetch.pending]: (state, action) => {
       state.loading = true;
     },
@@ -98,19 +136,6 @@ const adminSlice = createSlice({
       }
     },
     [orderFetch.rejected]: (state, action) => {
-      state.loading = true;
-    },
-
-    [addProduct.pending]: (state, action) => {
-      state.loading = true;
-    },
-    [addProduct.fulfilled]: (state, { payload }) => {
-      console.log(payload);
-      state.loading = false;
-      state.checked = payload.checked;
-      state.message = payload.message;
-    },
-    [addProduct.rejected]: (state, action) => {
       state.loading = true;
     },
   },

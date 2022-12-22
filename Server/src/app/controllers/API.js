@@ -766,7 +766,8 @@ class API {
     const status = req.body.status;
     const genre = req.body.genre;
 
-    const insertSql = "call createProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const insertSql =
+      "call createProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào kho hàng!";
     const existMsg = "Sản phẩm đã có sẵn trong kho hàng!";

@@ -25,6 +25,7 @@ const DropDown = ({ ...props }) => {
   return (
     <div {...props}>
       <Menu
+        key="1"
         onClick={onClickHandlerUser}
         show={showUser}
         name="Khách hàng"
@@ -37,6 +38,7 @@ const DropDown = ({ ...props }) => {
       >
         {DropdownList([
           <Button
+            key="1"
             className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
             onClick={() => Navigate("/admin/customerlist")}
           >
@@ -46,6 +48,7 @@ const DropDown = ({ ...props }) => {
       </CSSTransition>
 
       <Menu
+        key="2"
         onClick={onClickHandlerProduct}
         show={showProduct}
         name="Quản lý kho"
@@ -58,6 +61,7 @@ const DropDown = ({ ...props }) => {
       >
         {DropdownList([
           <Button
+            key="2"
             className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
             onClick={() => Navigate("/admin/warehouse")}
           >
@@ -73,6 +77,7 @@ const DropDown = ({ ...props }) => {
       >
         {DropdownList([
           <Button
+            key="3"
             className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
             onClick={() => Navigate("/admin/addproduct")}
           >
@@ -81,6 +86,7 @@ const DropDown = ({ ...props }) => {
         ])}
       </CSSTransition>
       <Menu
+        key="4"
         onClick={onClickHandlerOrder}
         show={showOrder}
         name="Đơn hàng"
@@ -93,6 +99,7 @@ const DropDown = ({ ...props }) => {
       >
         {DropdownList([
           <Button
+            key=""
             className="text-left bg-gray-600 hover:bg-gray-500 rounded-none"
             onClick={() => Navigate("/admin/order")}
           >
@@ -130,9 +137,7 @@ function DropdownList(props) {
   if (typeof document === "undefined") return null;
   return (
     <div className="top-full transition-all ">
-      {/* {props.map((item) => { */}
       <div className="cursor-pointer hover:bg-sky-700">{props}</div>
-      {/* })} */}
     </div>
   );
 }
