@@ -9,8 +9,6 @@ import { signUpUser, emailChecked } from "../redux-toolkit/authSlice";
 
 const ModalRegister = ({ handleLogin = () => {}, handleClose = () => {} }) => {
   const user = useSelector((state) => state.user);
-
-  const Navigate = useNavigate();
   const dispatch = useDispatch();
   const formikRef = useRef();
   console.log(user);

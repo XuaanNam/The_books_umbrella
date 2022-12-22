@@ -124,7 +124,7 @@ const Warehouse = () => {
         </div>
       </div>
       <div className="bg-white rounded-b-lg">
-        <table className="w-full h-[370px] table-auto text-neutral-700">
+        <table className="w-full h-[370px]">
           <thead className="h-16">
             <tr className="bg-slate-100">
               <th className="w-10">

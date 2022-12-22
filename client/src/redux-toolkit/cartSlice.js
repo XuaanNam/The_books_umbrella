@@ -60,16 +60,12 @@ export const removeCart = createAsyncThunk("removecart", async (body) => {
   });
   return await res.json();
 });
-export const payOrder = createAsyncThunk("payorder", async (body, token) => {
-  let Auth = token;
-  if (localStorage.getItem("token")) {
-    Auth = localStorage.getItem("token");
-  }
+export const payOrder = createAsyncThunk("payorder", async (body) => {
   const res = await fetch("http://localhost:5000/api/cart/order", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: Auth,
+      Authorization: localStorage.getItem("token"),
     },
     body: JSON.stringify(body),
   });
@@ -277,7 +273,10 @@ const cartSlice = createSlice({
     [payOrder.pending]: (state, action) => {
       state.loading = true;
     },
-    [payOrder.fulfilled]: (state, { payload }) => {},
+    [payOrder.fulfilled]: (state, { payload }) => {
+      state.check = payload.checked;
+      state.loading = false;
+    },
     [payOrder.rejected]: (state, { payload }) => {
       state.loading = true;
       state.checked = payload.checked;

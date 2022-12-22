@@ -6,10 +6,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { totalPrice, mergeInfo } from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
 import { Navigate, useNavigate } from "react-router-dom";
+import Modal from "../../components/Modal";
 
 const OrderInfo = () => {
+  const token = localStorage.getItem("token");
   const { orderItems, loading, error } = useSelector((state) => state.cart);
   const [total, setTotal] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     let totalPrice = 0;
     orderItems.map((item) => {
@@ -24,7 +28,11 @@ const OrderInfo = () => {
   console.log(orderItem);
   const handleClick = (values) => {
     dispatch(mergeInfo(values));
-    Navigate("/checkout/step2");
+    if (token) {
+      Navigate("/checkout/step2");
+    } else {
+      setShowModal(true);
+    }
   };
 
   const Navigate = useNavigate();
@@ -166,6 +174,7 @@ const OrderInfo = () => {
           </div>
         </div>
       </div>
+      <Modal open={showModal} handleClose={() => setShowModal(false)}></Modal>
     </div>
   );
 };

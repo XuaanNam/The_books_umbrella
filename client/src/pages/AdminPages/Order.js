@@ -1,9 +1,12 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import DropDown from "../../components/DropDown";
 
 import { DatePicker, Space } from "antd";
 import moment from "moment";
 import HeaderUser from "../../layouts/HeaderUser";
+import { useDispatch, useSelector } from "react-redux";
+import { orderFetch, changeOrderStatus } from "../../redux-toolkit/adminSlice";
+import { useNavigate } from "react-router-dom";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "DD/MM/YYYY";
@@ -17,9 +20,26 @@ const customWeekStartEndFormat = (value) =>
     .format(weekFormat)}`;
 
 const Order = () => {
+  const admin = useSelector((state) => state.admin);
+  const Navigate = useNavigate();
+  const dispatch = useDispatch();
+  const token = localStorage.getItem("token");
+  useEffect(() => {
+    dispatch(orderFetch());
+  }, [token, dispatch]);
+  // useEffect(() => {
+  //   setProduct(admin.items);
+  // }, [admin.items]);
+  const handleChangeOrderStatus = (item, status) => {
+    const data = {
+      productId: item,
+      status: status,
+    };
+    dispatch(changeOrderStatus(data));
+  };
   const [translate, setTranslate] = useState("translate-x-[0px]");
   return (
-    <div className=" border w-[95%] rounded-lg h-[95%] mx-auto drop-shadow-xl">
+    <div className=" border w-[95%] rounded-lg h-[95%] mx-auto drop-shadow-2xl">
       <div className="flex gap-5 bg-white h-28 p-4 rounded-t-lg">
         <span className="grid place-items-center font-medium">
           Lọc theo ngày:
@@ -67,36 +87,70 @@ const Order = () => {
         <div
           className={`w-[396px] h-0.5 bg-sky-700 transition-all ${translate}`}
         ></div>
-        <table className="w-full h-[370px] table-auto text-lg text-neutral-700">
-          <thead className="h-12 bg-slate-100 w-full">
-            <tr className="w-full">
-              <th className="w-28">Mã đơn hàng</th>
-              <th className="w-24 text-left">Khách hàng</th>
-              <th className="w-20 text-left">Trạng thái</th>
-              <th className="w-28 text-left">Ghi chú</th>
+        <table className="w-full h-[620px]">
+          <thead className="h-16 bg-slate-100 w-full">
+            <tr className="w-full flex gap-5 items-center">
+              <th className="w-28">Đơn hàng</th>
+              <th className="w-32 text-left">Khách hàng</th>
+              <th className="w-44 text-left">Tên sách</th>
+              <th className="w-36 text-left">Điện thoại</th>
+              <th className="w-52 text-left">Địa chỉ</th>
+              <th className="w-36 text-left">Phương thức vận chuyển</th>
+              <th className="w-36 text-left">Phương thức thanh toán</th>
+              <th className="w-36 text-left">Ngày đặt hàng</th>
+              <th className="w-32 text-left">Trạng thái</th>
             </tr>
           </thead>
           <tbody className=" w-full h-32">
-            <tr className="">
-              <td className="text-center">1</td>
-              <td>Bìa mềm</td>
-              <td>90000</td>
-              <td>NXB Kim Đồng</td>
-            </tr>
-
-            <tr className="">
-              <td className="text-center">2</td>
-              <td>Bìa mềm</td>
-              <td>90000</td>
-              <td>NXB Kim Đồng</td>
-            </tr>
-
-            <tr className="">
-              <td className="text-center">3</td>
-              <td>Bìa mềm</td>
-              <td>90000</td>
-              <td>NXB Kim Đồng</td>
-            </tr>
+            {admin.items &&
+              admin.items.map((item) => (
+                <tr
+                  className="text-lg flex gap-5 h-20 mt-5 items-center"
+                  key={item.id}
+                >
+                  <td className="w-28 text-center">{item.id}</td>
+                  <td className="w-32 text-left text-ellipsis overflow-hidden">
+                    {item.fullname}
+                  </td>
+                  <td className="w-44 text-left text-ellipsis overflow-hidden">
+                    {item.productName}
+                  </td>
+                  <td className="w-36 text-left text-ellipsis overflow-hidden">
+                    {item.phone}
+                  </td>
+                  <td className="w-52 text-left text-ellipsis overflow-hidden">
+                    {item.address}
+                  </td>
+                  <td className="w-36 text-left text-ellipsis overflow-hidden">
+                    {item.delivery}
+                  </td>
+                  <td className="w-36 text-left text-ellipsis overflow-hidden">
+                    {item.payment}
+                  </td>
+                  <td className="w-36 text-left text-ellipsis overflow-hidden">
+                    {item.timeOfOrder}
+                  </td>
+                  {console.log(item.status)}
+                  {item.status === 1 ? (
+                    <td className="w-32 text-left text-ellipsis overflow-hidden">
+                      <button
+                        className="bg-red-400 text-white w-full grid place-items-center text-center my-auto p-1 rounded-xl hover:drop-shadow-xl"
+                        onClick={() => {
+                          handleChangeOrderStatus(item.id, item.status);
+                        }}
+                      >
+                        Chờ xác nhận
+                      </button>
+                    </td>
+                  ) : (
+                    <td className="w-32 text-left text-ellipsis overflow-hidden">
+                      <div className="bg-cyan-400 text-white w-full grid place-items-center text-center my-auto p-1 rounded-xl hover:drop-shadow-xl">
+                        Đã xác nhận
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

@@ -62,7 +62,21 @@ export const orderFetch = createAsyncThunk("orderFetch", async () => {
   });
   return await res.json();
 });
-
+export const changeOrderStatus = createAsyncThunk(
+  "changeOrderStatus",
+  async (body) => {
+    console.log(body);
+    const res = await fetch("http://localhost:5000/api/admin/order/status", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
 const adminSlice = createSlice({
   name: "admin",
   initialState,
@@ -105,10 +119,14 @@ const adminSlice = createSlice({
     [changeStatus.fulfilled]: (state, { payload }) => {
       state.loading = false;
       state.checked = payload.checked;
-      state.message = payload.message;
-      toast.success(payload.message, {
-        position: "bottom-right",
-      });
+      if (payload.message) {
+        state.message = payload.message;
+      }
+      if (payload.checked === true) {
+        toast.success(payload.message, {
+          position: "bottom-right",
+        });
+      }
     },
     [changeStatus.rejected]: (state, action) => {
       state.loading = true;
@@ -139,6 +157,22 @@ const adminSlice = createSlice({
       }
     },
     [orderFetch.rejected]: (state, action) => {
+      state.loading = true;
+    },
+
+    [changeOrderStatus.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [changeOrderStatus.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.checked = payload.checked;
+      if (payload.checked === true) {
+        state.items = payload.results;
+      } else {
+        state.message = payload.message;
+      }
+    },
+    [changeOrderStatus.rejected]: (state, action) => {
       state.loading = true;
     },
   },

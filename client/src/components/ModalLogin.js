@@ -25,7 +25,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
   const handleLogin = (values, isValid) => {
     if (isValid && values.email !== "" && values.password !== "") {
       dispatch(signInUser(values));
-      localStorage.clear("cartItems");
+      // localStorage.clear("cartItems");
     } else if (isValid && values.email === "" && values.password === "") {
       setMess("Vui lòng điền vào trường trống");
     }

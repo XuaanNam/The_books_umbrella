@@ -35,26 +35,21 @@ const OrderMethod = () => {
     }
   }, [value, dispatch]);
   const handleClick = (values) => {
-    const token =
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0aGUgYm9va3MgdW1icmVsbGEiLCJpZCI6NjU5MzIzODMzLCJ1c2VybmFtZSI6ImN1c3RvbWVyIiwiYXV0aGVudGljYXRpb24iOjAsImlhdCI6MTY3MTQ4NDA2MCwiZXhwIjoxOTMwNjg0MDYwfQ.oT5xuP-8n4To5Ff31IE7JynubNJmArX_2LQmhiDyt0U";
     if (order.orderItems[0].paymentMethod) {
       order.orderItems.map((item) => {
-        const data = [
-          {
-            quantity: item.cartQuantity,
-            productId: item.id,
-            price: item.price,
-            fullname: item.fullname,
-            email: item.emailOrder,
-            phone: item.phone,
-            address: item.address,
-            deliveryMethod: item.deliveryMethod,
-            paymentMethod: item.paymentMethod,
-          },
-          token,
-        ];
+        const data = {
+          quantity: item.cartQuantity,
+          productId: item.id,
+          price: item.price,
+          fullname: item.fullname,
+          email: item.emailOrder,
+          phone: item.phone,
+          address: item.address,
+          deliveryMethod: item.deliveryMethod,
+          paymentMethod: item.paymentMethod,
+        };
         dispatch(payOrder(data));
-        Navigate("/complete");
+        // Navigate("/complete");
         return 0;
       });
     }
