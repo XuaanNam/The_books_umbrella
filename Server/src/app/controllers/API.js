@@ -52,7 +52,7 @@ class API {
   isAuth(req, res, next) {
     const auth = req.user[0];
     if (auth) {
-      res.status(200).send({ authentication });
+      res.status(200).send({ authentication: auth });
     } else {
       return next(createError(401));
     }
@@ -1037,7 +1037,7 @@ class API {
       return next(createError(401));
     } else {
       pool.getConnection(function (err, connection) {
-        if (status == "4") {
+        if (status == "3") {
           connection.query(selectSql, orderId, function (err, rs, fields) {
             if (!err) {
               if (rs.length > 0) {
