@@ -30,10 +30,7 @@ function App() {
           <Route path="/checkout/step1" element={<CheckOrder />} />
           <Route path="/checkout/step2" element={<OrderMethod />} />
           <Route path="/complete" element={<CompleteOrder />} />
-          <Route
-            path="/detail/:bookId"
-            element={<BookDetail></BookDetail>}
-          ></Route>
+          <Route path="/detail/:bookId" element={<BookDetail/>}/>
         </Routes>
       </Router>
     </div>
