@@ -750,7 +750,6 @@ class API {
   //[POST] /api/admin/product/create
   createProduct(req, res, next) {
     const auth = req.user[0].authentication;
-    const image = req.body.image;
     const productName = req.body.productName;
     const chapter = req.body.chapter ? req.body.chapter : null;
     const author = req.body.author;
@@ -767,18 +766,22 @@ class API {
     const genre = req.body.genre;
 
     const insertSql = "call createProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
     const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào kho hàng!";
     const existMsg = "Sản phẩm đã có sẵn trong kho hàng!";
-    const successMsg = "Sản phẩm đã được thêm vào kho hàng!";
-
+    const successMsg = "Sản phẩm đã được thêm vào kho hàng!";   
+    
     if (auth !== 1) {
       return next(createError(401));
-    } else {
+    } 
+    else if (!req.file) {
+      next(new Error('No file uploaded!'));
+      return;
+    } else { 
+      const img = req.file.path
       pool.query(
         insertSql,
         [
-          image,
+          img,
           productName,
           chapter,
           author,
