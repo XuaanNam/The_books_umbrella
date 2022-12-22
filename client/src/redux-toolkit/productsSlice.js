@@ -68,10 +68,14 @@ const productsSlice = createSlice({
     [productsFetch.pending]: (state, action) => {
       state.loading = true;
     },
-    [productsFetch.fulfilled]: (state, { payload: { results, checked } }) => {
-      state.checked = checked;
+    [productsFetch.fulfilled]: (state, { payload }) => {
       state.loading = false;
-      state.items = results;
+      state.checked = payload.checked;
+      if (payload.checked === true) {
+        state.items = payload.results;
+      } else {
+        state.message = payload.message;
+      }
     },
     [productsFetch.rejected]: (state, { payload: { message, checked } }) => {
       state.loading = true;

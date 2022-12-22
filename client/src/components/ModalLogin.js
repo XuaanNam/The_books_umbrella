@@ -30,7 +30,7 @@ const ModalLogin = ({ handleRegister = () => {}, handleClose = () => {} }) => {
       setMess("Vui lòng điền vào trường trống");
     }
     if (user.auth && user.auth === 1) {
-      navigate("/warehouse");
+      navigate("/admin/customerlist");
     }
     if (user.signinmsg) {
       setMess(user.signinmsg);

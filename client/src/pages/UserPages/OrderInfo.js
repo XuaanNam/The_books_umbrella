@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import HeaderUser from "../../layouts/HeaderUser";
-import Footer from "../../layouts/Footer";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { totalPrice, mergeInfo } from "../../redux-toolkit/cartSlice";
 import Input from "../../components/Input";
-import { useGetAllAddressQuery } from "../../redux-toolkit/addressApi";
 import { Navigate, useNavigate } from "react-router-dom";
 
 const OrderInfo = () => {
@@ -28,6 +26,7 @@ const OrderInfo = () => {
     dispatch(mergeInfo(values));
     Navigate("/checkout/step2");
   };
+
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   return (
