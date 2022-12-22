@@ -33,7 +33,7 @@ router.post('/cart/order', PassportCheck, api.createOrder);
 
 // profile
 router.get("/profile", PassportCheck, api.getProfile);
-router.patch("/profile/update", PassportCheck, api.updateProfile);
+router.post("/profile/update", PassportCheck, fileUploader.single('avatar'), api.updateProfile);
 
 // payment
 router.post('/payment/paypal', PassportCheck, api.paymentByPaypal);

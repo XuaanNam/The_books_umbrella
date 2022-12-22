@@ -587,23 +587,16 @@ class API {
     });
   }
 
-  //[PATCH] /api/profile/update
+  //[POST] /api/profile/update
   updateProfile(req, res, next) {
     const customerId = req.user[0].id;
     const fullname = req.body.fullname ? req.body.fullname : null;
     const birthdate = req.body.birthdate ? req.body.birthdate : null;
     const phone = req.body.phone ? req.body.phone : null;
     const address = req.body.address ? req.body.address : null;
-    const avatar = req.body.avatar ? req.body.avatar : null;
+    let avatar = req.file?req.file.path:null; console.log( avatar)
 
-    const updateSql =
-      "update customerdata set " +
-      "fullname = ?, " +
-      "birthdate = ?, " +
-      "phone = ?, " +
-      "address = ?," +
-      " avatar = ? " +
-      "where id = ?";
+    const updateSql = "update customerdata set fullname = ?, birthdate = ?, phone = ?, address = ?, avatar = ? where id = ?";
     const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin khách hàng!";
 
     pool.query(
