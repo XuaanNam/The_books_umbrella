@@ -6,8 +6,21 @@ import AddProduct from "./AddProduct";
 import CustomerList from "./CustomerList";
 import Order from "./Order";
 import Warehouse from "./Warehouse";
+import { useDispatch, useSelector } from "react-redux";
+import { authentication } from "../../redux-toolkit/authSlice";
+
 const AdminLayout = () => {
   const { adminpage } = useParams();
+  const user = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(authentication())
+    
+    
+  }, []);
+
+  
   return (
     <div>
       <HeaderUser className="row-span-1"></HeaderUser>

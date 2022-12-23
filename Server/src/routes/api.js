@@ -48,6 +48,7 @@ router.get('/paymentfailed', api.paymentFailed);
 
 //admin - product
 router.get("/admin/warehouse", PassportCheck, api.getWarehouse);
+router.get("/admin/warehouse/search", PassportCheck, api.searchWarehouse);
 router.post("/admin/product/create", PassportCheck, fileUploader.single('image'), api.createProduct);
 router.patch("/admin/product/update", PassportCheck, api.updateProduct);
 router.patch("/admin/product/status", PassportCheck, api.changeProductStatus);

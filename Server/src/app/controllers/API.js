@@ -740,6 +740,30 @@ class API {
     }
   }
 
+  //[GET] /api/admin/warehouse/search
+  searchWarehouse(req, res, next) {
+    const auth = req.user[0].authentication;
+    const keywords = req.query.keywords
+    const selectSql = "select * from ListAllProducts where (productName like '%"+ keywords +"%' or author like '%"+ keywords +"%');";
+    const message = "Lỗi hệ thống, vui lòng thử lại!";
+
+    if (auth !== 1) {
+      return next(createError(401));
+    } else {
+      pool.query(selectSql, function (error, results, fields) {
+        if (error) {
+          res.status(200).send({ error, checked: false });
+        } else {
+          if (results.length > 0) {
+            res.send({ results, checked: true });
+          } else {
+            res.send({ message, checked: false });
+          }
+        }
+      });
+    }
+  }
+
   //[POST] /api/admin/product/create
   createProduct(req, res, next) {
     const auth = req.user[0].authentication;

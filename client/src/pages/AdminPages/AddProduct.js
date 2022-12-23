@@ -21,7 +21,7 @@ const AddProduct = () => {
         </div>
         <Formik
           initialValues={{
-            image: "",
+            image: null,
             productName: "",
             chapter: "",
             author: "",
@@ -38,7 +38,7 @@ const AddProduct = () => {
             genre: "",
           }}
           validationSchema={Yup.object({
-            image: Yup.string().required("Vui lòng điền vào trường trống"),
+            image: Yup.string().required("Vui lòng thêm hình ảnh"),
             productName: Yup.string().required(
               "Vui lòng điền vào trường trống"
             ),
@@ -74,15 +74,14 @@ const AddProduct = () => {
               <Form className="grid place-items-center">
                 <div className="w-[80%]">
                   <div className="grid grid-cols-3 gap-5 place-items-start">
-                    <div>
-                      <Input
-                        className="w-[350px] border border-slate-100 drop-shadow-lg  h-16 text-xl my-2 drop-shadow-auto focus:border-2 focus:border-cyan-600 outline-none p-2 rounded-xl"
-                        type="text"
-                        name="productName"
-                        label="Tên sản phẩm"
-                        id="productName"
-                      ></Input>
-                    </div>
+                    
+                    <Input
+                      className="w-[350px] border border-slate-100 drop-shadow-lg  h-16 text-xl my-2 drop-shadow-auto focus:border-2 focus:border-cyan-600 outline-none p-2 rounded-xl"
+                      type="text"
+                      name="productName"
+                      label="Tên sản phẩm"
+                      id="productName"
+                    ></Input>
                     <Input
                       className="w-[350px] border border-slate-100 drop-shadow-lg  h-16 text-xl my-2  focus:border-2 focus:border-cyan-600 outline-none p-2 rounded-xl"
                       type="text"
@@ -143,7 +142,7 @@ const AddProduct = () => {
                     <div className="">
                       <Input
                         className="w-[520px] border border-slate-100 drop-shadow-lg  h-16 text-xl my-2  focus:border-2 focus:border-cyan-600 outline-none p-2 rounded-xl"
-                        type="text"
+                        type="file"
                         name="image"
                         label="Hình ảnh"
                         id="image"
