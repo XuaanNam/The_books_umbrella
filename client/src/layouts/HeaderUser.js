@@ -22,10 +22,9 @@ const HeaderUser = () => {
   const isAuth = localStorage.getItem("auth");
   const [keywords, setKeywords] = useState("");
   const user = useSelector((state) => state.usser);
-  console.log(isAuth);
-
   const hangdleSearch = (e) => {
     dispatch(searchProduct(keywords));
+    Navigate("/");
   };
 
   const handleLogout = () => {

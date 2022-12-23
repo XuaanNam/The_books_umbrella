@@ -29,6 +29,16 @@ export const warehouseFetch = createAsyncThunk("warehouseFetch", async () => {
   });
   return await res.json();
 });
+export const searchByKeyword = createAsyncThunk("searchByKeyword", async () => {
+  const res = await fetch("http://localhost:5000/api/admin/customer", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+  });
+  return await res.json();
+});
 export const changeStatus = createAsyncThunk("changeStatus", async (body) => {
   console.log(body);
   const res = await fetch("http://localhost:5000/api/admin/product/status", {
@@ -112,7 +122,22 @@ const adminSlice = createSlice({
     [warehouseFetch.rejected]: (state, action) => {
       state.loading = true;
     },
-
+    [searchByKeyword.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [searchByKeyword.fulfilled]: (state, { payload }) => {
+      state.items = payload.results;
+      state.checked = payload.checked;
+      state.loading = false;
+      if (payload.message) {
+        state.message = payload.message;
+      }
+    },
+    [searchByKeyword.rejected]: (state, { payload }) => {
+      state.loading = true;
+      state.checked = payload.checked;
+      state.message = payload.message;
+    },
     [changeStatus.pending]: (state, action) => {
       state.loading = true;
     },
@@ -167,7 +192,9 @@ const adminSlice = createSlice({
       state.loading = false;
       state.checked = payload.checked;
       if (payload.checked === true) {
-        state.items = payload.results;
+        toast.success("Đã xác nhận đơn hàng", {
+          position: "bottom-right",
+        });
       } else {
         state.message = payload.message;
       }

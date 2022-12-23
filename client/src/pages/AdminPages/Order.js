@@ -24,19 +24,38 @@ const Order = () => {
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
+  const [orders, setOrders] = useState([]);
   useEffect(() => {
     dispatch(orderFetch());
   }, [token, dispatch]);
-  // useEffect(() => {
-  //   setProduct(admin.items);
-  // }, [admin.items]);
+  useEffect(() => {
+    setOrders(admin.items);
+  }, [admin.items]);
+  const [showConfirmOrder, setShowConfirmOrder] = useState([]);
+  const handleConfirm = () => {};
   const handleChangeOrderStatus = (item, status) => {
     const data = {
-      productId: item,
+      orderId: item,
       status: status,
     };
     dispatch(changeOrderStatus(data));
+    let newStatus = "Xác nhận";
+    if (status === 2) {
+      newStatus = "Đã xác nhận";
+    }
+    if (admin.checked) {
+      let order = [];
+      order = [...orders];
+      const index = orders.findIndex((i) => i.id === item);
+      order[index] = {
+        ...orders[index],
+        status: newStatus,
+      };
+      setOrders(order);
+    }
   };
+  console.log(orders);
+
   const [translate, setTranslate] = useState("translate-x-[0px]");
   return (
     <div className=" border w-[95%] rounded-lg h-[95%] mx-auto drop-shadow-2xl">
@@ -75,7 +94,7 @@ const Order = () => {
             className="w-full h-full grid place-items-center hover:bg-gray-100 cursor-pointer"
             onClick={() => setTranslate("translate-x-[792px]")}
           >
-            Đã xác nhận
+            Đã thanh toán
           </div>
           <div
             className="w-full h-full grid place-items-center hover:bg-gray-100 cursor-pointer"
@@ -102,54 +121,56 @@ const Order = () => {
             </tr>
           </thead>
           <tbody className=" w-full h-32">
-            {admin.items &&
-              admin.items.map((item) => (
-                <tr
-                  className="text-lg flex gap-5 h-20 mt-5 items-center"
-                  key={item.id}
-                >
-                  <td className="w-28 text-center">{item.id}</td>
-                  <td className="w-32 text-left text-ellipsis overflow-hidden">
-                    {item.fullname}
-                  </td>
-                  <td className="w-44 text-left text-ellipsis overflow-hidden">
-                    {item.productName}
-                  </td>
-                  <td className="w-36 text-left text-ellipsis overflow-hidden">
-                    {item.phone}
-                  </td>
-                  <td className="w-52 text-left text-ellipsis overflow-hidden">
-                    {item.address}
-                  </td>
-                  <td className="w-36 text-left text-ellipsis overflow-hidden">
-                    {item.delivery}
-                  </td>
-                  <td className="w-36 text-left text-ellipsis overflow-hidden">
-                    {item.payment}
-                  </td>
-                  <td className="w-36 text-left text-ellipsis overflow-hidden">
-                    {item.timeOfOrder}
-                  </td>
-                  {console.log(item.status)}
-                  {item.status === 1 ? (
+            {orders &&
+              orders.map((item) => (
+                <div>
+                  <tr
+                    className="text-lg flex gap-5 h-20 mt-5 items-center"
+                    key={item.id}
+                  >
+                    <td className="w-28 text-center">{item.id}</td>
                     <td className="w-32 text-left text-ellipsis overflow-hidden">
-                      <button
-                        className="bg-red-400 text-white w-full grid place-items-center text-center my-auto p-1 rounded-xl hover:drop-shadow-xl"
-                        onClick={() => {
-                          handleChangeOrderStatus(item.id, item.status);
-                        }}
-                      >
-                        Chờ xác nhận
-                      </button>
+                      {item.fullname}
                     </td>
-                  ) : (
-                    <td className="w-32 text-left text-ellipsis overflow-hidden">
-                      <div className="bg-cyan-400 text-white w-full grid place-items-center text-center my-auto p-1 rounded-xl hover:drop-shadow-xl">
-                        Đã xác nhận
-                      </div>
+                    <td className="w-44 text-left text-ellipsis overflow-hidden">
+                      {item.productName}
                     </td>
-                  )}
-                </tr>
+                    <td className="w-36 text-left text-ellipsis overflow-hidden">
+                      {item.phone}
+                    </td>
+                    <td className="w-52 text-left text-ellipsis overflow-hidden">
+                      {item.address}
+                    </td>
+                    <td className="w-36 text-left text-ellipsis overflow-hidden">
+                      {item.delivery}
+                    </td>
+                    <td className="w-36 text-left text-ellipsis overflow-hidden">
+                      {item.payment}
+                    </td>
+                    <td className="w-36 text-left text-ellipsis overflow-hidden">
+                      {item.timeOfOrder}
+                    </td>
+                    {item.status === 1 ? (
+                      <td className="w-32 text-left text-ellipsis overflow-hidden">
+                        <button
+                          className="bg-red-400 text-white w-full grid place-items-center text-center my-auto p-1 rounded-xl hover:drop-shadow-xl"
+                          onClick={() => {
+                            handleChangeOrderStatus(item.id, 2);
+                          }}
+                        >
+                          Xác nhận
+                        </button>
+                      </td>
+                    ) : (
+                      <td className="w-32 text-left text-ellipsis overflow-hidden">
+                        <div className="bg-cyan-400 text-white w-full grid place-items-center text-center my-auto p-1 rounded-xl hover:drop-shadow-xl">
+                          Đã xác nhận
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                  <hr className="w-full"></hr>
+                </div>
               ))}
           </tbody>
         </table>

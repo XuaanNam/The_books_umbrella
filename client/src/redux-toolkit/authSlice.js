@@ -42,6 +42,28 @@ export const signUpUser = createAsyncThunk("signupuser", async (body) => {
   });
   return await res.json();
 });
+export const getProfile = createAsyncThunk("getProfile", async () => {
+  const res = await fetch("http://localhost:5000/api/profile", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+  });
+  return await res.json();
+});
+export const changeProfile = createAsyncThunk("changeProfile", async (body) => {
+  console.log("body", body);
+  const res = await fetch("http://localhost:5000/api/profile/update", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
 export const emailChecked = createAsyncThunk("emailChecked", async (body) => {
   console.log("body", body);
   const res = await fetch("http://localhost:5000/api/check/email", {
@@ -139,6 +161,32 @@ const authSlice = createSlice({
       state.checked = payload.isAuth;
     },
     [authentication.rejected]: (state, action) => {
+      state.loading = true;
+    },
+    [getProfile.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getProfile.fulfilled]: (state, { payload }) => {
+      if (payload.results) state.items = { ...payload.results[0] };
+      else {
+        state.message = payload.message;
+      }
+    },
+    [getProfile.rejected]: (state, action) => {
+      state.loading = true;
+    },
+
+    [changeProfile.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [changeProfile.fulfilled]: (state, { payload }) => {
+      if (payload.checked === true) {
+        state.checked = payload.checked;
+      } else {
+        state.message = payload.message;
+      }
+    },
+    [changeProfile.rejected]: (state, action) => {
       state.loading = true;
     },
   },

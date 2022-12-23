@@ -29,8 +29,10 @@ const Warehouse = () => {
       status: status,
     };
     let newStatus = "Cửa hàng";
-    if(status === 2){ newStatus = "Trong kho"}
-    if(admin.checked){
+    if (status === 2) {
+      newStatus = "Trong kho";
+    }
+    if (admin.checked) {
       let products = [];
       products = [...product];
       const index = product.findIndex((i) => i.id === item);
@@ -41,8 +43,11 @@ const Warehouse = () => {
 
       setProduct(products);
     }
-    
+
     dispatch(changeStatus(data));
+  };
+  const handleReload = () => {
+    window.reload();
   };
   const handleChange = (e) => {
     const { name, checked } = e.target;
@@ -97,7 +102,7 @@ const Warehouse = () => {
                   </div>
                 </Dropdown>
               </div>
-
+              {console.log(menu[1].props)}
               <div className="mt-4 h-14 border border-teal-500 hover:border-teal-300 hover:drop-shadow-lg rounded flex cursor-pointer ">
                 <Dropdown overlay={menu[1]} placement="bottom">
                   <div className="grid place-items-center w-36 rounded">
@@ -162,7 +167,7 @@ const Warehouse = () => {
             </tr>
           </thead>
           <tbody className=" w-full h-32">
-            {product && 
+            {product &&
               product.map((item) => (
                 <tr className="h-20 text-xl" key={item.id}>
                   <td className="text-center">
