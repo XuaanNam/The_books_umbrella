@@ -3,12 +3,11 @@ const api = require("../app/controllers/API");
 const router = express.Router();
 const passport = require("passport");
 const PassportCheck = passport.authenticate("jwt", { session: false });
-const fileUploader = require('../app/middleware/cloudinary-upload.js');
-const myOAuth2Client = require('../app/configs/oauth2client');
-const nodemailer = require('nodemailer') 
+const fileUploader = require("../app/middleware/cloudinary-upload.js");
+const myOAuth2Client = require("../app/configs/oauth2client");
+const nodemailer = require("nodemailer");
 
 // const transport = require('../app/middleware/nodemailer')
-
 
 // guest
 router.post("/register", api.register);
@@ -31,43 +30,53 @@ router.get("/products/search/age", api.getProductsByAge);
 router.get("/products/search/form", api.getProductsByForm);
 
 // cart
-router.get('/cart', PassportCheck, api.getCart);
-router.post('/cart/add', PassportCheck, api.addToCart);
-router.delete('/cart/remove', PassportCheck, api.removeFromCart);
-router.patch('/cart/update', PassportCheck, api.updateCart);
-router.post('/cart/order', PassportCheck, api.createOrder);
+router.get("/cart", PassportCheck, api.getCart);
+router.post("/cart/add", PassportCheck, api.addToCart);
+router.delete("/cart/remove", PassportCheck, api.removeFromCart);
+router.patch("/cart/update", PassportCheck, api.updateCart);
+router.post("/cart/order", PassportCheck, api.createOrder);
 
 // profile
 router.get("/profile", PassportCheck, api.getProfile);
-router.patch("/profile/update", PassportCheck, fileUploader.single('avatar'), api.updateProfile);
+router.patch(
+  "/profile/update",
+  PassportCheck,
+  fileUploader.single("avatar"),
+  api.updateProfile
+);
 
 // payment
-router.post('/payment/paypal', PassportCheck, api.paymentByPaypal);
-router.get('/paymentsuccess', api.paymentSuccess);
-router.get('/paymentfailed', api.paymentFailed);
+router.post("/payment/paypal", PassportCheck, api.paymentByPaypal);
+router.get("/paymentsuccess", api.paymentSuccess);
+router.get("/paymentfailed", api.paymentFailed);
 
 //admin - product
 router.get("/admin/warehouse", PassportCheck, api.getWarehouse);
 router.get("/admin/warehouse/search", PassportCheck, api.searchWarehouse);
-router.post("/admin/product/create", PassportCheck, fileUploader.single('image'), api.createProduct);
+router.post(
+  "/admin/product/create",
+  PassportCheck,
+  fileUploader.single("image"),
+  api.createProduct
+);
 router.patch("/admin/product/update", PassportCheck, api.updateProduct);
 router.patch("/admin/product/status", PassportCheck, api.changeProductStatus);
 
 //admin - customer
 router.get("/admin/customer", PassportCheck, api.getCustomer);
 router.get("/admin/customer/:id", PassportCheck, api.getCustomerById);
-router.patch("/admin/customer/update/password", PassportCheck, api.updateCustomerPassword);
+router.patch(
+  "/admin/customer/update/password",
+  PassportCheck,
+  api.updateCustomerPassword
+);
 
 //admin - order
-router.get('/admin/order', PassportCheck, api.getOrder);
+router.get("/admin/order", PassportCheck, api.getOrder);
 router.patch("/admin/order/status", PassportCheck, api.changeOrderStatus);
-router.delete('/admin/order/delete', PassportCheck, api.deleteOrder);
+router.delete("/admin/order/delete", PassportCheck, api.deleteOrder);
 
 //admin - transaction
 router.post("/admin/transaction/create", PassportCheck, api.createTransaction);
-
-
-
-  
 
 module.exports = router;

@@ -57,9 +57,9 @@ const CustomerList = () => {
           </thead>
           <tbody className=" w-full h-32 text-xl">
             {admin.items &&
-              admin.items.map((item, index) => (
-                <div>
-                  <tr className="h-20 flex gap-5 items-center" key={index}>
+              admin.items.map((item) => (
+                <div key={item.id}>
+                  <tr className="h-20 flex gap-5 items-center">
                     <td className="text-center w-24">
                       <input
                         type="checkbox"
@@ -69,8 +69,8 @@ const CustomerList = () => {
                     <td className="text-center w-44 text-ellipsis overflow-hidden">
                       {item.id}
                     </td>
-                    <td className="text-left w-60 text-ellipsis overflow-hidden">
-                      {item.name}
+                    <td className="text-left w-60 pl-6 text-ellipsis overflow-hidden">
+                      {item.fullname}
                     </td>
                     <td className="text-left w-44 text-ellipsis overflow-hidden">
                       {item.email}
@@ -84,17 +84,6 @@ const CustomerList = () => {
                     <td className="text-left w-64 text-ellipsis overflow-hidden">
                       {item.address}
                     </td>
-                    {/* <td className="text-left w-24 text-ellipsis overflow-hidden"></td>
-                  {item.spend ? (
-                    <td className="text-left w-28 text-ellipsis overflow-hidden">
-                      {item.spend}
-                    </td>
-                  ) : (
-                    <td className="text-left pl-10">0 đ</td>
-                  )}
-                  <td className="text-left w-24 text-ellipsis overflow-hidden">
-                    {item.orders}
-                  </td> */}
                   </tr>
                   <hr className="w-full"></hr>
                 </div>

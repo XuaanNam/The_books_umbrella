@@ -53,17 +53,6 @@ const CartPage = () => {
     setTotal(subTotal);
   }, [carts]);
 
-  // useEffect(() => {
-  //   setDisable(true);
-  //   carts.map((cart) => {
-  //     if (cart.isChecked) {
-  //       setDisable(false);
-  //       dispatch(getTotals());
-  //     } else {
-  //     }
-  //     return 0;
-  //   });
-  // }, [carts]);
   const handleChange = (e) => {
     const { name, checked } = e.target;
     let tempCart = [];
@@ -144,6 +133,22 @@ const CartPage = () => {
   const handleClearCart = () => {
     dispatch(clearCart());
   };
+
+  const parseInterger = (intCurrency) => {
+    return parseInt(
+      intCurrency.split(",")[0] +
+        intCurrency.split(",")[1] +
+        intCurrency.split(",")[2] +
+        intCurrency.split(",")[3]
+    );
+  };
+  const convertPrice = (price) => {
+    const formatter = new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  };
   return (
     <div className="bg-slate-50 min-h-screen text-xl">
       <HeaderUser></HeaderUser>
@@ -191,12 +196,12 @@ const CartPage = () => {
                 </div>
                 <div
                   className="col-start-4 col-span-3 text-2xl font-medium text-cyan-700 text-left cursor-pointer"
-                  onClick={() => Navigate(`/detail/${cartItem.id})`)}
+                  onClick={() => Navigate(`/detail/${cartItem.id}`)}
                 >
                   {cartItem.productName}
                 </div>
                 <div className="col-start-7 text-center text-2xl font-medium text-red-600">
-                  {cartItem.price} đ
+                  {convertPrice(cartItem.price)} đ
                 </div>
                 <div className="col-start-8 col-span-2">
                   <div className="w-36 h-8 rounded-lg border border-black grid grid-cols-3 place-items-center">
@@ -216,7 +221,7 @@ const CartPage = () => {
                   </div>
                 </div>
                 <div className="col-start-10 text-center text-2xl font-medium text-red-600">
-                  {cartItem.price * cartItem.cartQuantity} đ
+                  {convertPrice(cartItem.price * cartItem.cartQuantity)} đ
                 </div>
                 <BsTrash
                   className="col-start-11 col-span-2 h-7 w-7 cursor-pointer"
@@ -233,7 +238,9 @@ const CartPage = () => {
             <div className="font-normal my-auto">
               <div className="p-3">
                 Tổng tiền
-                <span className="text-2xl font-medium pl-3">{total} đ</span>
+                <span className="text-2xl font-medium pl-3">
+                  {convertPrice(total)} đ
+                </span>
               </div>
               <button
                 className={`${

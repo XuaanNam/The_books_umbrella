@@ -20,14 +20,21 @@ const OrderMethod = () => {
   const [value, setValue] = useState([]);
   const dispatch = useDispatch();
   const Navigate = useNavigate();
+  const [shipingfee, setShipingFee] = useState(1);
+
   useEffect(() => {
     let totalPrice = 0;
     order.orderItems.map((item) => {
       totalPrice += item.price * item.cartQuantity;
+      if (item.deliveryMethod === "fast") {
+        setShipingFee(30000);
+      } else {
+        setShipingFee(20000);
+      }
       return totalPrice;
     });
     setTotal(totalPrice);
-  }, []);
+  }, [order.orderItems]);
   console.log(value);
   useEffect(() => {
     if (value) {
@@ -48,6 +55,7 @@ const OrderMethod = () => {
           deliveryMethod: item.deliveryMethod,
           paymentMethod: item.paymentMethod,
         };
+        console.log(data);
         dispatch(payOrder(data));
         // Navigate("/complete");
         return 0;
@@ -58,11 +66,17 @@ const OrderMethod = () => {
       const dataPaypal = {
         quantity: order.orderItems.length,
         totalPrice: total,
-        listProduct: "zzzz",
+        listProduct: "Order",
       };
       console.log(dataPaypal);
       dispatch(paypal(dataPaypal));
     }
+  };
+  const convertPrice = (price) => {
+    const formatter = new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 0,
+    });
+    return formatter.format(price);
   };
   return (
     <div className="bg-slate-200 h-screen text-lg">
@@ -121,7 +135,7 @@ const OrderMethod = () => {
                             value="fast"
                             checked={watchShip === "fast" ? true : false}
                             label="Giao hàng nhanh"
-                            price={30000}
+                            price={convertPrice(30000)}
                           ></InputRadio>
                           <hr className=""></hr>
 
@@ -133,7 +147,7 @@ const OrderMethod = () => {
                             value="save"
                             checked={watchShip === "save"}
                             label="Giao hàng tiết kiệm"
-                            price={20000}
+                            price={convertPrice(20000)}
                           ></InputRadio>
                         </div>
                         <div className="pt-10 pb-7 text-3xl text-slate-900">
@@ -189,7 +203,7 @@ const OrderMethod = () => {
                     {orderItem.productName}
                   </div>
                   <div className=" text-red-500 font-semibold text-xl flex items-center mx-5">
-                    {orderItem.price * orderItem.cartQuantity} đ
+                    {convertPrice(orderItem.price * orderItem.cartQuantity)} đ
                   </div>
                 </div>
               ))}
@@ -207,16 +221,22 @@ const OrderMethod = () => {
               <hr className="my-3"></hr>
               <div className="grid grid-cols-2 text-2xl py-5 ">
                 <div className="grid place-items-start">Tạm tính</div>
-                <div className="grid place-items-end">{total} đ</div>
+                <div className="grid place-items-end">
+                  {convertPrice(total)} đ
+                </div>
               </div>
               <div className="grid grid-cols-2 text-2xl py-5 ">
                 <div className="grid place-items-start">Phí ship</div>
-                <div className="grid place-items-end">-</div>
+                <div className="grid place-items-end">
+                  {convertPrice(shipingfee)}
+                </div>
               </div>
               <hr className="my-3"></hr>
               <div className="grid grid-cols-2 text-3xl py-5 text-slate-700 font-medium">
                 <div className="grid place-items-start">Tổng tiền</div>
-                <div className="grid place-items-end">{total} đ</div>
+                <div className="grid place-items-end">
+                  {convertPrice(total + shipingfee)} đ
+                </div>
               </div>
             </div>
           </div>

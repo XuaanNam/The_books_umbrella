@@ -28,6 +28,7 @@ export const cartFetch = createAsyncThunk("cartfetch", async () => {
   return await res.json();
 });
 export const addCart = createAsyncThunk("addcart", async (body) => {
+  console.log(body);
   const res = await fetch("http://localhost:5000/api/cart/add", {
     method: "POST",
     headers: {
@@ -235,6 +236,7 @@ const cartSlice = createSlice({
       state.loading = true;
     },
     [addCart.fulfilled]: (state, { payload }) => {
+      console.log(payload);
       state.message = payload.message;
       state.check = payload.checked;
       if (payload.duplicate) {

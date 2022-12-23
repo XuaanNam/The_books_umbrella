@@ -22,7 +22,13 @@ const CompleteOrder = () => {
       return totalPrice;
     });
     setTotal(totalPrice);
-  });
+  }, []);
+  const convertPrice = (price) => {
+    const formatter = new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 0,
+    });
+    return formatter.format(price);
+  };
   return (
     <div className="bg-slate-200 h-screen text-lg">
       <HeaderUser></HeaderUser>
@@ -92,24 +98,28 @@ const CompleteOrder = () => {
                     {orderItem.productName}
                   </div>
                   <div className=" text-red-500 font-semibold text-xl flex items-center mx-5">
-                    {orderItem.price * orderItem.cartQuantity} đ
+                    {convertPrice(orderItem.price * orderItem.cartQuantity)} đ
                   </div>
                 </div>
               ))}
               <hr className="my-3"></hr>
               <div className="grid grid-cols-2 text-2xl py-5 ">
                 <div className="grid place-items-start">Tạm tính</div>
-                <div className="grid place-items-end">{total} đ</div>
+                <div className="grid place-items-end">
+                  {convertPrice(total)} đ
+                </div>
               </div>
               <div className="grid grid-cols-2 text-2xl py-5 ">
                 <div className="grid place-items-start">Phí ship</div>
-                <div className="grid place-items-end">{shipingfee}</div>
+                <div className="grid place-items-end">
+                  {convertPrice(shipingfee)}
+                </div>
               </div>
               <hr className="my-3"></hr>
               <div className="grid grid-cols-2 text-3xl py-5 text-slate-700 font-medium">
                 <div className="grid place-items-start">Tổng tiền</div>
                 <div className="grid place-items-end">
-                  {total + shipingfee} đ
+                  {convertPrice(total + shipingfee)} đ
                 </div>
               </div>
             </div>

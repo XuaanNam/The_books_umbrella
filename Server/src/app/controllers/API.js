@@ -257,7 +257,7 @@ class API {
 
     pool.query(selectSql, genre, function (error, results, fields) {
       if (error) {
-        res.status(200).send({ message: errorMgs, checked: false });
+        res.status(200).send({ message: error, checked: false });
       } else {
         if (results[0].length > 0) {
           res.send({ results: results[0], checked: true });
@@ -379,18 +379,20 @@ class API {
     const customerId = req.user[0].id;
     const productId = req.body.productId;
     const quantity = req.body.quantity;
-
+    console.log(customerId, productId, quantity);
     const checkSql = "call checkQuantity(?)";
     const insertSql =
       "insert into cart (productId, customerId, quantity) value (?, ? ,?)";
+    const updateSql =
+      "update cart set quantity = quantity + ? where customerId = ? and productId = ?";
     const errorMsg = "Lỗi hệ thống, không thể thêm sản phẩm vào giỏ hàng!";
-    const existMsg = "Sản phẩm đã có sẵn trong giỏ hàng!";
+
     const successMsg = "Sản phẩm đã được thêm vào giỏ hàng!";
     const checkMsg = "Số lượng sản phẩm phải bé hơn ";
 
     pool.query(checkSql, productId, function (error, results, fields) {
       if (error) {
-        res.send({ message: "0", checked: false });
+        res.send({ message: errorMsg, checked: false });
       } else {
         if (results[0].length > 0) {
           if (results[0][0].quantity < quantity) {
@@ -405,15 +407,29 @@ class API {
               function (error, results, fields) {
                 if (error) {
                   if ((error.errno = 1062)) {
-                    res.send({ duplicate: true });
+                    pool.query(
+                      updateSql,
+                      [quantity, customerId, productId],
+                      function (err, rs, fields) {
+                        if (err) {
+                          res.send({ message: err, checked: false });
+                        } else if (rs) {
+                          res.send({ duplicate: true, checked: true });
+                        } else {
+                          res.send({ message: rs, checked: false });
+                        }
+                      }
+                    );
                   } else {
-                    res.send({ message: "1", checked: false });
+                    res.send({ message: errorMsg, checked: false });
                   }
                 } else {
                   if (results) {
-                    res.status(200).send({ message: "2", checked: true });
+                    res
+                      .status(200)
+                      .send({ message: successMsg, checked: true });
                   } else {
-                    res.status(200).send({ message: "3", checked: false });
+                    res.status(200).send({ message: errorMsg, checked: false });
                   }
                 }
               }
@@ -743,8 +759,13 @@ class API {
   //[GET] /api/admin/warehouse/search
   searchWarehouse(req, res, next) {
     const auth = req.user[0].authentication;
-    const keywords = req.query.keywords
-    const selectSql = "select * from ListAllProducts where (productName like '%"+ keywords +"%' or author like '%"+ keywords +"%');";
+    const keywords = req.query.keywords;
+    const selectSql =
+      "select * from ListAllProducts where (productName like '%" +
+      keywords +
+      "%' or author like '%" +
+      keywords +
+      "%');";
     const message = "Lỗi hệ thống, vui lòng thử lại!";
 
     if (auth !== 1) {

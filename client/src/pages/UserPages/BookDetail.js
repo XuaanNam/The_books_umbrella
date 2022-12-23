@@ -234,7 +234,7 @@ const BookDetail = () => {
                       </p>
                       <button
                         className="rounded-full bg-violet-600 hover:bg-violet-500 py-2  px-8  font-com text-lg capitalize text-white shadow shadow-black/60"
-                        onClick={() => Navigate("/detail")}
+                        onClick={() => Navigate(`/detail/${item.id}`)}
                       >
                         Xem thêm
                       </button>

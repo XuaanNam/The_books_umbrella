@@ -69,6 +69,26 @@ const Profile = () => {
                     console.log(formik.values);
                     return (
                       <Form className="">
+                        <div className="grid grid-cols-2 gap-x-9 w-full">
+                          <div className="w-full ">
+                            <Input
+                              type="email"
+                              name="email"
+                              placeholder="Email"
+                              id="email"
+                              disabled={true}
+                            ></Input>
+                          </div>
+                          <div className="w-full">
+                            <Input
+                              type="text"
+                              name="username"
+                              placeholder="Tên đăng nhập"
+                              id="username"
+                              disabled={true}
+                            ></Input>
+                          </div>
+                        </div>
                         <div className="grid grid-cols-2 gap-9 w-full">
                           <div className="w-full ">
                             <Input
@@ -77,24 +97,6 @@ const Profile = () => {
                               placeholder="Họ và tên"
                               // defaultValue={user.fullname ? user.fullname : ""}
                               id="fullname"
-                            ></Input>
-                          </div>
-                          <div className="w-full ">
-                            <Input
-                              type="text"
-                              name="username"
-                              placeholder="Tên đăng nhập"
-                              id="username"
-                            ></Input>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-5 w-full">
-                          <div className="w-full ">
-                            <Input
-                              type="email"
-                              name="email"
-                              placeholder="Email"
-                              id="email"
                             ></Input>
                           </div>
                           <div className="w-full ">

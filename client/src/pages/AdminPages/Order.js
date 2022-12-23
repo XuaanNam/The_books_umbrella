@@ -123,11 +123,8 @@ const Order = () => {
           <tbody className=" w-full h-32">
             {orders &&
               orders.map((item) => (
-                <div>
-                  <tr
-                    className="text-lg flex gap-5 h-20 mt-5 items-center"
-                    key={item.id}
-                  >
+                <div key={item.id}>
+                  <tr className="text-lg flex gap-5 h-20 mt-5 items-center">
                     <td className="w-28 text-center">{item.id}</td>
                     <td className="w-32 text-left text-ellipsis overflow-hidden">
                       {item.fullname}

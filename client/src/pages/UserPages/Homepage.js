@@ -16,7 +16,13 @@ const Homepage = () => {
   useEffect(() => {
     dispatch(productsFetch());
   }, [dispatch, token]);
+  const convertPrice = (price) => {
+    const formatter = new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 0,
+    });
 
+    return formatter.format(price);
+  };
   const handleAddToCart = (product) => {
     const productCart = {
       productId: product.id,
@@ -179,11 +185,13 @@ const Homepage = () => {
                     </a>
                     <div className="grid grid-cols-3 px-3 mt-3">
                       <span className="col-start-1 col-span-2 text-red-500 font-bold text-xl">
-                        {product.price} đ
+                        {convertPrice(product.price)} đ
                       </span>
-                      <div className="bg-gray-600 text-white rounded-xl py-0.5 w-18 text-center text-lg">
-                        Tập 11
-                      </div>
+                      {product.chapter && (
+                        <div className="bg-gray-600 text-white rounded-xl py-0.5 w-18 text-center text-lg">
+                          Tập {product.chapter}
+                        </div>
+                      )}
                     </div>
                     <hr className="my-5"></hr>
                   </div>

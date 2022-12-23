@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
 const initialState = {
   auth: "",
@@ -55,7 +56,7 @@ export const getProfile = createAsyncThunk("getProfile", async () => {
 export const changeProfile = createAsyncThunk("changeProfile", async (body) => {
   console.log("body", body);
   const res = await fetch("http://localhost:5000/api/profile/update", {
-    method: "POST",
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem("token"),
@@ -182,6 +183,9 @@ const authSlice = createSlice({
     [changeProfile.fulfilled]: (state, { payload }) => {
       if (payload.checked === true) {
         state.checked = payload.checked;
+        toast.success("Cập nhật thông tin thành công", {
+          position: "bottom-right",
+        });
       } else {
         state.message = payload.message;
       }
