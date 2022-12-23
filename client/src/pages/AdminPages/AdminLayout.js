@@ -16,13 +16,11 @@ const AdminLayout = () => {
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(authentication())
-    if(user.auth.authentication!==1){
-      Navigate('/');
-    }
+   
+    
     
   }, [dispatch]);
-
+  
   
   return (
     <div>
