@@ -6,19 +6,22 @@ import AddProduct from "./AddProduct";
 import CustomerList from "./CustomerList";
 import Order from "./Order";
 import Warehouse from "./Warehouse";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { authentication } from "../../redux-toolkit/authSlice";
 
 const AdminLayout = () => {
   const { adminpage } = useParams();
   const user = useSelector((state) => state.user);
-
+  const Navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(authentication())
+    if(user.auth.authentication!==1){
+      Navigate('/');
+    }
     
-    
-  }, []);
+  }, [dispatch]);
 
   
   return (

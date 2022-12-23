@@ -159,7 +159,6 @@ const authSlice = createSlice({
     },
     [authentication.fulfilled]: (state, { payload }) => {
       state.auth = payload.authentication;
-      state.checked = payload.isAuth;
     },
     [authentication.rejected]: (state, action) => {
       state.loading = true;
